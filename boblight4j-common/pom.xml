@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>boblight4j-common</artifactId>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>gnu.getopt</groupId>
+			<artifactId>java-getopt</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+				</configuration>
+			</plugin>
+			<!-- <plugin>
+				<groupId>org.fusesource.hawtjni</groupId>
+				<artifactId>maven-hawtjni-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+							<goal>build</goal>
+							<goal>package-jar</goal>
+							<goal>package-source</goal>
+						</goals>
+						<configuration>
+							<copyright><![CDATA[ /******************************************************************************* 
+				* Copyright (C) 2009-2011 FuseSource Corp. * * All rights reserved. This 
+				program and the accompanying materials * are made available under the terms 
+				of the Eclipse Public License v1.0 * which accompanies this distribution, 
+				and is available at * http://www.eclipse.org/legal/epl-v10.html *******************************************************************************/ 
+				]]></copyright>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.fusesource.hawtjni
+										</groupId>
+										<artifactId>
+											maven-hawtjni-plugin
+										</artifactId>
+										<versionRange>
+											[1.4-SNAPSHOT,)
+										</versionRange>
+										<goals>
+											<goal>generate</goal>
+											<goal>build</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<parent>
+		<groupId>org.boblight</groupId>
+		<artifactId>boblight4j</artifactId>
+		<version>0.0.2-SNAPSHOT</version>
+	</parent>
+</project>

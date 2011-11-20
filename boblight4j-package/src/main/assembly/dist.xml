@@ -1,0 +1,31 @@
+<assembly>
+	<id>dist</id>
+	<formats>
+		<format>tar.gz</format>
+		<format>tar.bz2</format>
+		<format>zip</format>
+	</formats>
+	<!-- <files> <file> <source> target/dependency </source> <outputDirectory>/</outputDirectory> 
+		</file> </files> -->
+	<!-- <files> <file> <source>../boblight4j-server/target/boblight4j-server-${project.version}.jar 
+		</source> <outputDirectory>/</outputDirectory> <destName>boblight4jd.jar</destName> 
+		</file> <file> <source>../boblight4j-client-X11/target/boblight4j-client-X11-${project.version}.jar 
+		</source> <outputDirectory>/</outputDirectory> <destName>boblight4j-X11.jar</destName> 
+		</file> </files> -->
+	<fileSets>
+		<fileSet>
+			<directory>target/dependency</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target/lib</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>/lib</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>

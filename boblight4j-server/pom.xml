@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>boblight4j</artifactId>
+		<groupId>org.boblight</groupId>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>boblight4j-server</artifactId>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.boblight</groupId>
+			<artifactId>boblight4j-server-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>gnu.io</groupId>
+			<artifactId>rxtx-comm</artifactId>
+			<version>2.2pre2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>gnu.io</groupId>
+			<artifactId>rxtx-comm-native</artifactId>
+			<version>2.2pre2</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+			<classifier>${nativeclassifier}</classifier>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<createSourcesJar>true</createSourcesJar>
+							<artifactSet>
+								<excludes>
+									<exclude>*:*:${nativeclassifier}</exclude>
+								</excludes>
+							</artifactSet>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.boblight4j.server.BoblightDaemon</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>gnu.getopt:java-getopt</artifact>
+									<excludes>
+										<exclude>META-INF/TESTKEY.SF</exclude>
+										<exclude>META-INF/TESTKEY.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>!1.7</id>
+			<activation>
+				<jdk>!1.7</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.boblight</groupId>
+					<artifactId>boblight4j-server-config-jnotify</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>net.contentobjects</groupId>
+					<artifactId>jnotify-native</artifactId>
+					<version>0.93</version>
+					<type>jar</type>
+					<scope>runtime</scope>
+					<classifier>${nativeclassifier}</classifier>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>1.7</id>
+			<activation>
+				<jdk>1.7</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.boblight</groupId>
+					<artifactId>boblight4j-server-config-jdk7</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+</project>
