@@ -118,12 +118,12 @@ public class BoblightX11 extends AbstractBoblightClient {
 				AbstractX11Grabber grabber = null;
 				if (this.flagmanager.method == XGETIMAGE)
 				{
-					grabber = new GrabberXGetImage(boblight, this.stop,
+					grabber = new GrabberXGetImage(boblight,
 							this.flagmanager.isSync());
 				}
 				else if (this.flagmanager.method == XRENDER)
 				{
-					grabber = new GrabberXRender(boblight, this.stop,
+					grabber = new GrabberXRender(boblight,
 							this.flagmanager.isSync());
 				}
 				else
@@ -146,7 +146,7 @@ public class BoblightX11 extends AbstractBoblightClient {
 			catch (final Exception e)
 			{
 				LOG.error(
-						"Exception occured during add pixel or sending rgb values",
+						"Exception occured during add pixel or sending rgb values. Trying again.",
 						e);
 				boblight.destroy();
 				continue;

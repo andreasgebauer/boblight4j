@@ -1,55 +1,44 @@
 package org.boblight4j.client.X11;
 
 import gnu.x11.Display;
-import gnu.x11.Window;
 
 import java.awt.Canvas;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
-import java.util.Timer;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightConfigurationException;
+import org.boblight4j.exception.BoblightException;
 
 public abstract class AbstractX11Grabber {
 
 	private static final Logger LOG = Logger
 			.getLogger(AbstractX11Grabber.class);
 
+	private final boolean sync;
+	private final Client client;
+
 	private int debugWindowHeight;
 	private int debugWindowWidth;
 
-	protected final boolean stop;
-	protected final boolean sync;
-	protected Frame frame;
-	protected Display display;
-	protected Window rootWin;
-	protected int size;
+	private Frame frame;
+	private Display display;
+	private int size;
+	private boolean stop;
 
 	private BufferedImage debugImg;
-	private final Client client;
 	private boolean debug;
 	private double interval;
 	private long lastMeasurement;
 	private long lastUpdate;
 	private long measurements;
 	private int nrMeasurements;
-	private Timer timer;
 
-	public AbstractX11Grabber(final Client client, final boolean stop,
-			final boolean sync) {
+	public AbstractX11Grabber(final Client client, final boolean sync) {
 		this.client = client;
-		this.stop = stop;
 		this.sync = sync;
-	}
-
-	/**
-	 * Overridable method for subclasses to do extended setup.
-	 * 
-	 * @return
-	 */
-	protected void extendedSetup() throws BoblightConfigurationException {
 	}
 
 	public void setDebug(final String debugdpy) {
@@ -83,8 +72,8 @@ public abstract class AbstractX11Grabber {
 		this.size = pixels;
 	}
 
-	protected Client getClient() {
-		return this.client;
+	public Display getDisplay() {
+		return display;
 	}
 
 	public boolean isDebug() {
@@ -95,7 +84,7 @@ public abstract class AbstractX11Grabber {
 		return debugImg;
 	}
 
-	protected void setDebugPixel(int x, int y, int[] rgb) {
+	private void setDebugPixel(int x, int y, int[] rgb) {
 		this.debugImg.getRaster().setPixel(x, y, rgb);
 	}
 
@@ -107,7 +96,7 @@ public abstract class AbstractX11Grabber {
 
 	public void setup() throws BoblightConfigurationException {
 		this.display = new Display();
-		if (this.display == null)
+		if (this.getDisplay() == null)
 		{
 			String error = "unable to open display";
 			if (gnu.util.Environment.value("DISPLAY") != null)
@@ -121,7 +110,6 @@ public abstract class AbstractX11Grabber {
 			throw new BoblightConfigurationException(error);
 		}
 
-		this.rootWin = this.display.default_root;
 		this.updateDimensions();
 
 		if (this.interval > 0.0) // set up timer
@@ -142,7 +130,21 @@ public abstract class AbstractX11Grabber {
 		this.extendedSetup(); // run stuff from derived classes
 	}
 
-	void updateDebugFps() {
+	/**
+	 * Overridable method for subclasses to do extended setup.
+	 * 
+	 * @return
+	 */
+	protected void extendedSetup() throws BoblightConfigurationException {
+	}
+
+	/**
+	 * Overridable
+	 */
+	protected void updateDimensions() {
+	}
+
+	private void updateDebugFps() {
 		if (this.isDebug())
 		{
 			final long now = System.currentTimeMillis(); // current timestamp
@@ -174,41 +176,76 @@ public abstract class AbstractX11Grabber {
 		}
 	}
 
-	protected void updateDimensions() {
-	}
-
-	public boolean Wait() {
-		if (this.interval > 0.0) // wait for timer
-		{
-			synchronized (this.timer)
-			{
-				try
-				{
-					this.timer.wait();
-				}
-				catch (final InterruptedException e)
-				{
-					LOG.warn("Error during Object.wait().", e);
-				}
-			}
-		}
-		// #ifdef HAVE_LIBGL
-		// else //interval is negative, wait for vblanks
-		// {
-		// if (!m_vblanksignal.Wait(Round32(m_interval * -1.0)))
-		// {
-		// m_error = m_vblanksignal.GetError();
-		// return false; //unrecoverable error
-		// }
-		// }
-		// #endif
-
-		return true;
-	}
-
 	/**
 	 * Starts the processing.
 	 */
-	public abstract void run();
+	public final void run() {
+		this.client.setScanRange(this.size, this.size);
+
+		while (!this.stop)
+		{
+			this.updateDimensions();
+
+			grabPixels(this.size, this.size,
+					this.getDisplay().default_screen.width,
+					this.getDisplay().default_screen.height);
+
+			// send rgb values to boblightd
+			try
+			{
+				this.client.sendRgb(this.sync, null);
+			}
+			catch (final IOException e)
+			{
+				// recoverable error
+				return;
+			}
+			catch (final BoblightException e)
+			{
+				// recoverable error
+				return;
+			}
+
+			// put debug image on debug window
+			if (this.isDebug())
+			{
+				this.drawDebugImage();
+
+			}
+			this.updateDebugFps();
+		}
+
+	}
+
+	private void grabPixels(int height, int width, int screenWidth,
+			int screenHeight) {
+
+		for (int y = 0; y < height && !this.stop; y++)
+		{
+			for (int x = 0; x < width && !this.stop; x++)
+			{
+				// position of pixel to capture
+				final double colWidth = (double) screenWidth / (double) width;
+				final double rowHeight = (double) screenHeight
+						/ (double) height;
+
+				final int xpos = (int) (x * colWidth + colWidth / 2);
+				final int ypos = (int) (y * rowHeight + rowHeight / 2);
+
+				final int rgb[] = grabPixelAt(xpos, ypos);
+
+				// add pixel to boblight
+				this.client.addPixel(x, y, rgb);
+
+				// put pixel on debug image
+				if (this.isDebug())
+				{
+					this.setDebugPixel(x, y, rgb);
+				}
+			}
+		}
+	}
+
+	protected abstract int[] grabPixelAt(int xpos, int ypos);
 
 }

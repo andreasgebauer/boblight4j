@@ -138,7 +138,6 @@ public class V4LImageGrabberImpl implements ImageGrabber, CaptureCallback {
 		{
 			for (int x = 0; x < this.flagManager.width; x++)
 			{
-
 				final int resX = (int) (scaledX * x + scaledX / 2);
 				final int resY = (int) (scaledY * y + scaledY / 2);
 
