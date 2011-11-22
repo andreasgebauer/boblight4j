@@ -9,11 +9,11 @@ import gnu.x11.Display;
 import gnu.x11.Screen;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -21,9 +21,11 @@ import org.powermock.reflect.Whitebox;
 
 public class AbstractX11GrabberTest {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+	private static final int SCREEN_WIDTH_MIN = 320;
+	private static final int SCREEN_WIDTH_MAX = 1920;
+
+	private static final int SCREEN_HEIGHT_MIN = 240;
+	private static final int SCREEN_HEIGHT_MAX = 1080;
 
 	private AbstractX11Grabber testable;
 
@@ -43,9 +45,12 @@ public class AbstractX11GrabberTest {
 
 	@Test
 	public void testGrabPixelAt() throws IOException, BoblightException {
-		int scrWidth = 1280;
-		int scrHeight = 720;
-		int size = 16;
+		final Random random = new Random();;
+		int scrWidth = SCREEN_WIDTH_MIN
+				+ random.nextInt(SCREEN_WIDTH_MAX - SCREEN_WIDTH_MIN);
+		int scrHeight = SCREEN_HEIGHT_MIN
+				+ random.nextInt(SCREEN_HEIGHT_MAX - SCREEN_HEIGHT_MIN);
+		int size = 2 + random.nextInt(64 - 2);
 
 		Display display = mock(Display.class);
 		display.default_screen = mock(Screen.class);
@@ -56,7 +61,7 @@ public class AbstractX11GrabberTest {
 		when(testable.getDisplay()).thenReturn(display);
 
 		// stop after first cycle
-		doAnswer(new Answer() {
+		doAnswer(new Answer<Object>() {
 
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -74,11 +79,13 @@ public class AbstractX11GrabberTest {
 		{
 			for (int height = 0; height < size; height++)
 			{
-				verify(testable).grabPixelAt(
-						(int) (cellWidth / 2 + cellWidth * width),
-						(int) (scrHeight / size / 2 + cellHeight * height));
+				final int xpos = (int) (cellWidth / 2 + cellWidth * width);
+				final int ypos = (int) (cellHeight / 2 + cellHeight * height);
+
+				verify(testable).grabPixelAt(xpos, ypos);
 				verify(client).addPixel(width, height, null);
 			}
 		}
 	}
+
 }
