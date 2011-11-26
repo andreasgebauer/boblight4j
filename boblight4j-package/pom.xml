@@ -17,6 +17,8 @@
 			<groupId>org.boblight</groupId>
 			<artifactId>boblight4j-server</artifactId>
 			<version>${project.version}</version>
+			<classifier>dist</classifier>
+			<type>zip</type>
 		</dependency>
 		<dependency>
 			<groupId>org.boblight</groupId>
@@ -43,7 +45,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-subprojects</id>
+						<id>copy-server</id>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -52,6 +54,58 @@
 							<includeScope>compile</includeScope>
 							<actTransitively>false</actTransitively>
 							<transitive>false</transitive>
+							<includeArtifactIds>boblight4j-server</includeArtifactIds>
+							<outputDirectory>${project.build.directory}/server</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-server-libs</id>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<includeClassifiers>${nativeclassifier}</includeClassifiers>
+							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
+							<includeArtifactIds>boblight4j-server</includeArtifactIds>
+							<markersDirectory>${project.build.directory}/markers/server</markersDirectory>
+							<outputDirectory>${project.build.directory}/server/lib</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-clients</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<includeScope>compile</includeScope>
+							<actTransitively>false</actTransitively>
+							<transitive>false</transitive>
+							<excludeArtifactIds>boblight4j-server</excludeArtifactIds>
+							<outputDirectory>${project.build.directory}/clients</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-client-libs</id>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<includeClassifiers>${nativeclassifier}</includeClassifiers>
+							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
+							<excludeArtifactIds>boblight4j-server</excludeArtifactIds>
+							<markersDirectory>${project.build.directory}/markers/clients</markersDirectory>
+							<outputDirectory>${project.build.directory}/clients/lib</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-libs</id>
+						<configuration>
+							<skip>true</skip>
 						</configuration>
 					</execution>
 				</executions>

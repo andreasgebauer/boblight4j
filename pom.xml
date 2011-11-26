@@ -27,6 +27,7 @@
 		<module>boblight4j-client-jmf</module>
 		<module>boblight4j-package</module>
 		<module>boblight4j-jmx-gui</module>
+		<module>boblight4j-xbmc-plugin</module>
 	</modules>
 
 	<dependencies>
@@ -114,7 +115,7 @@
 						</goals>
 						<phase>generate-test-resources</phase>
 						<configuration>
-							<includeScope>runtime</includeScope>
+							<includeScope>provided</includeScope>
 							<includeClassifiers>${nativeclassifier}</includeClassifiers>
 							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
@@ -126,7 +127,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>"-Djava.library.path=${project.build.directory}/lib"</argLine>
+					<argLine>"-Djava.library.path=${project.build.directory}/lib:${project.build.directory}/lib"</argLine>
 					<detail>true</detail>
 				</configuration>
 			</plugin>
