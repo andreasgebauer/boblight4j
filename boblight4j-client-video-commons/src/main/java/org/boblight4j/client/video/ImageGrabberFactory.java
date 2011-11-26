@@ -4,13 +4,16 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
+import org.boblight4j.client.Client;
+import org.boblight4j.client.grabber.Grabber;
 
 public class ImageGrabberFactory {
 
 	private static final Logger LOG = Logger
 			.getLogger(ImageGrabberFactory.class);
 
-	public final ImageGrabber getImageGrabber() {
+	public final Grabber getImageGrabber(Client client, boolean sync,
+			int width, int height) {
 		ServiceLoader<ImageGrabberServiceProvider> load = ServiceLoader
 				.load(ImageGrabberServiceProvider.class);
 
@@ -24,7 +27,7 @@ public class ImageGrabberFactory {
 					+ serviceProvider.getClass().getSimpleName());
 			if (serviceProvider != null)
 			{
-				return serviceProvider.create();
+				return serviceProvider.create(client, sync, width, height);
 			}
 		}
 		throw new RuntimeException(

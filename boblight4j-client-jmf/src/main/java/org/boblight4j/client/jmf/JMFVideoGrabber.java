@@ -9,17 +9,16 @@ import javax.media.CaptureDeviceManager;
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractFlagManager;
 import org.boblight4j.client.Client;
-import org.boblight4j.client.video.ImageGrabber;
+import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
 
-public class JMFVideoGrabber implements ImageGrabber {
+public class JMFVideoGrabber extends AbstractPassiveGrabber {
+
+	public JMFVideoGrabber(Client client, boolean sync, int width, int height) {
+		super(client, sync, width, height);
+	}
 
 	private static final Logger LOG = Logger.getLogger(JMFVideoGrabber.class);
-
-	@Override
-	public void cleanup() {
-
-	}
 
 	@Override
 	public void run() throws BoblightException {
@@ -27,12 +26,17 @@ public class JMFVideoGrabber implements ImageGrabber {
 	}
 
 	@Override
-	public void setup(final AbstractFlagManager flagManager, final Client client)
+	public void setup(final AbstractFlagManager flagManager)
 			throws BoblightException {
 		@SuppressWarnings("unchecked")
 		final List<CaptureDeviceInfo> deviceList = CaptureDeviceManager
 				.getDeviceList(null);
 		LOG.info(Arrays.toString(deviceList.toArray()));
+	}
+
+	@Override
+	public void cleanup() {
+
 	}
 
 }

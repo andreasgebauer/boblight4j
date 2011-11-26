@@ -1,6 +1,6 @@
 package org.boblight4j.client.v4l;
 
-import org.boblight4j.client.video.ImageGrabber;
+import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,7 +23,7 @@ public class VideoGrabberFactoryTest {
 	public void testGetImageGrabber() {
 		thrown.expect(RuntimeException.class);
 
-		ImageGrabber imageGrabber = testable.getImageGrabber();
+		Grabber imageGrabber = testable.getImageGrabber(null, false, 0, 0);
 	}
 
 }

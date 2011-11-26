@@ -1,8 +1,6 @@
 <assembly>
 	<id>dist</id>
 	<formats>
-		<format>tar.gz</format>
-		<format>tar.bz2</format>
 		<format>zip</format>
 	</formats>
 	<!-- <files> <file> <source> target/dependency </source> <outputDirectory>/</outputDirectory> 
@@ -14,18 +12,32 @@
 		</file> </files> -->
 	<fileSets>
 		<fileSet>
-			<directory>target/dependency</directory>
+			<directory>target/server</directory>
 			<includes>
 				<include>*</include>
 			</includes>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>/server</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>target/lib</directory>
+			<directory>target/lib/server</directory>
 			<includes>
 				<include>*</include>
 			</includes>
-			<outputDirectory>/lib</outputDirectory>
+			<outputDirectory>/server/lib</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target/clients</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>/clients</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target/lib/clients</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>/clients/lib</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

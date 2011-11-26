@@ -29,8 +29,8 @@ public class BoblightJMF {
 		final CaptureDeviceInfo devInfo = new CaptureDeviceInfo();
 
 		CaptureDeviceManager.addDevice(devInfo);
-		final List deviceList = CaptureDeviceManager.getDeviceList(new Format(
-				"YUYV"));
+		final List<?> deviceList = CaptureDeviceManager
+				.getDeviceList(new Format("YUYV"));
 
 		LOG.info(Arrays.toString(deviceList.toArray()));
 	}

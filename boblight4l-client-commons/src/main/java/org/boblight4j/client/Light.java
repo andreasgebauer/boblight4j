@@ -25,17 +25,18 @@ public class Light extends LightConfig {
 
 	private final LightConfigMBean globalConfig;
 
+	private String name;
+
+	private int width;
 	private int height;
+
 	// preset
 	private final float hscan[] = new float[2];
-	private String name;
-	private float prevrgb[] = new float[3];
+	private final float vscan[] = new float[2];
 
 	// runtime calculated //
 	public int rgb[] = new int[4];
-
-	private final float vscan[] = new float[2];
-	private int width;
+	private float prevrgb[] = new float[3];
 
 	public Light(final LightConfigMBean globalConfig) {
 

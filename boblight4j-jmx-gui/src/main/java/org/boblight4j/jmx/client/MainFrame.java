@@ -132,8 +132,8 @@ public class MainFrame extends JFrame {
 					.queryMBeans(null, null);
 
 			final List<String> lightNames = new ArrayList<String>();
-			for (final Iterator iterator = queryMBeans.iterator(); iterator
-					.hasNext();)
+			for (final Iterator<ObjectInstance> iterator = queryMBeans
+					.iterator(); iterator.hasNext();)
 			{
 				final ObjectInstance objectInstance = (ObjectInstance) iterator
 						.next();

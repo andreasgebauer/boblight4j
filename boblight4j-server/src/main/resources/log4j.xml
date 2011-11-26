@@ -20,12 +20,12 @@
 	</appender>
 
 	<logger name="org" additivity="true">
-		<level value="trace" />
+		<level value="info" />
 		<appender-ref ref="R" />
 	</logger>
 
 	<logger name="java" additivity="true">
-		<level value="trace" />
+		<level value="info" />
 		<appender-ref ref="R" />
 	</logger>
 

@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;

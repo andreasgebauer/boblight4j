@@ -17,7 +17,7 @@ public class ImageGrabberServiceProviderTest {
 
 	@Test
 	public void test() {
-		new ImageGrabberFactory().getImageGrabber();
+		new ImageGrabberFactory().getImageGrabber(null, false, 0, 0);
 	}
 
 }

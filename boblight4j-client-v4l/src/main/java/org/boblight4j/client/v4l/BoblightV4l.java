@@ -2,10 +2,9 @@ package org.boblight4j.client.v4l;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
-import org.boblight4j.client.AbstractFlagManager;
 import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
-import org.boblight4j.client.video.ImageGrabber;
+import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
 import org.boblight4j.exception.BoblightException;
 
@@ -15,7 +14,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 	private static final Logger LOG = Logger.getLogger(BoblightV4l.class);
 
-	private AbstractFlagManager flagManager;
+	private FlagManagerV4l flagManager;
 
 	public static void main(final String[] args) {
 		System.exit(new BoblightV4l(args).run());
@@ -64,12 +63,12 @@ public class BoblightV4l extends AbstractBoblightClient {
 			}
 
 			// set up videograbber
-
-			final ImageGrabber videograbber = new ImageGrabberFactory()
-					.getImageGrabber();
+			final Grabber grabber = new ImageGrabberFactory().getImageGrabber(
+					boblight, true, this.flagManager.width,
+					this.flagManager.height);
 			try
 			{
-				videograbber.setup(flagManager, boblight);
+				grabber.setup(flagManager);
 			}
 			catch (final BoblightException error)
 			{
@@ -92,17 +91,17 @@ public class BoblightV4l extends AbstractBoblightClient {
 			{
 				// this will keep looping until we should stop or boblight gives
 				// an error
-				videograbber.run();
+				grabber.run();
 			}
 			catch (final Exception error)
 			{
 				LOG.error("Fatal error occurred", error);
-				videograbber.cleanup();
+				grabber.cleanup();
 				boblight.destroy();
 				return 1;
 			}
 
-			videograbber.cleanup();
+			grabber.cleanup();
 
 			boblight.destroy();
 		}

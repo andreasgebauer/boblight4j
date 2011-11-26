@@ -1,7 +1,6 @@
 package org.boblight4j.client.v4l;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -19,7 +18,7 @@ import magick.MagickImage;
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractFlagManager;
 import org.boblight4j.client.Client;
-import org.boblight4j.client.video.ImageGrabber;
+import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
 
 import au.edu.jcu.v4l4j.CaptureCallback;
@@ -34,7 +33,8 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
  * @author agebauer
  * 
  */
-public class V4LImageGrabberImpl implements ImageGrabber, CaptureCallback {
+public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
+		CaptureCallback {
 
 	private static final Logger LOG = Logger
 			.getLogger(V4LImageGrabberImpl.class);
@@ -61,6 +61,11 @@ public class V4LImageGrabberImpl implements ImageGrabber, CaptureCallback {
 	private boolean stop;
 
 	private VideoDevice vd;
+
+	public V4LImageGrabberImpl(final Client client, final boolean sync,
+			final int width, final int height) {
+		super(client, sync, width, height);
+	}
 
 	@Override
 	public final void cleanup() {
@@ -127,46 +132,68 @@ public class V4LImageGrabberImpl implements ImageGrabber, CaptureCallback {
 		// this.stop = true;
 	}
 
-	private void frameToBoblight(final BufferedImage img) {
-		final double scaledX = (double) img.getWidth()
-				/ (double) this.flagManager.width;
-		final double scaledY = (double) img.getHeight()
-				/ (double) this.flagManager.height;
+	@Override
+	public void setup(final AbstractFlagManager flagManager)
+			throws BoblightException {
 
-		// read out pixels and hand them to the boblight client
-		for (int y = 0; y < this.flagManager.height; y++)
+		this.flagManager = (FlagManagerV4l) flagManager;
+
+		try
 		{
-			for (int x = 0; x < this.flagManager.width; x++)
-			{
-				final int resX = (int) (scaledX * x + scaledX / 2);
-				final int resY = (int) (scaledY * y + scaledY / 2);
-
-				// LOG.info("x: " + resX + ", y: " + resY);
-				final int rgbInt = img.getRGB(resX, resY);
-				final int[] rgb = new int[3];
-				final Color color = new Color(rgbInt);
-				rgb[0] = color.getBlue();
-				rgb[1] = color.getGreen();
-				rgb[2] = color.getRed();
-
-				// flip
-				this.boblight.addPixel(this.flagManager.width - x, y, rgb);
-
-				// put pixel on debug image
-				if (this.debug)
-				{
-					this.debugImg.getRaster().setPixel(x, y, rgb);
-				}
-			}
+			this.vd = new VideoDevice(this.flagManager.device);
+		}
+		catch (final V4L4JException e)
+		{
+			throw new BoblightException(e);
 		}
 
-		// put debug image on debug window
-		if (this.debug)
+		try
 		{
-			final Canvas component = (Canvas) this.frame.getComponents()[0];
-			component.getGraphics().drawImage(this.debugImg, 0, 0,
-					this.debugWindowWidth, this.debugWindowHeight, null);
+			this.fg = this.vd.getRawFrameGrabber(64, 64,
+					this.flagManager.getChannel(), 1);
 		}
+		catch (final V4L4JException e)
+		{
+			throw new BoblightException(e);
+		}
+
+		// check if we need to scale with libswscale
+		this.needsScale = this.fg.getWidth() != this.flagManager.width
+				|| this.fg.getHeight() != this.flagManager.height;
+
+		this.client.setScanRange(this.flagManager.width,
+				this.flagManager.height);
+
+		if (this.flagManager.debug)
+		{
+			LOG.info("started in debug mode");
+
+			this.debugWindowWidth = Math.max(200, this.flagManager.width);
+			this.debugWindowHeight = Math.max(200, this.flagManager.height);
+
+			this.frame = new Frame();
+			this.frame.add(new Canvas());
+
+			this.debugImg = new BufferedImage(this.flagManager.width,
+					this.flagManager.height, BufferedImage.TYPE_INT_RGB);
+
+			this.frame.setSize(this.debugWindowWidth, this.debugWindowHeight);
+			this.frame.setVisible(true);
+
+			this.debug = true;
+		}
+
+		this.fg.setCaptureCallback(this);
+
+		try
+		{
+			this.fg.startCapture();
+		}
+		catch (final V4L4JException e1)
+		{
+			throw new BoblightException(e1);
+		}
+
 	}
 
 	@Override
@@ -232,88 +259,8 @@ public class V4LImageGrabberImpl implements ImageGrabber, CaptureCallback {
 	}
 
 	@Override
-	public final void run() throws BoblightException {
+	public void run() {
 
-		this.fg.setCaptureCallback(this);
-
-		try
-		{
-			this.fg.startCapture();
-		}
-		catch (final V4L4JException e1)
-		{
-			throw new BoblightException(e1);
-		}
-
-		while (!this.stop)
-		{
-			if (this.error != null)
-			{
-				throw this.error;
-			}
-
-			try
-			{
-				Thread.sleep(100);
-			}
-			catch (final InterruptedException e)
-			{
-				LOG.warn("Error during Thread.sleep().", e);
-			}
-		}
-	}
-
-	@Override
-	public void setup(final AbstractFlagManager flagManager, final Client client)
-			throws BoblightException {
-
-		this.flagManager = (FlagManagerV4l) flagManager;
-		this.boblight = client;
-
-		try
-		{
-			this.vd = new VideoDevice(this.flagManager.device);
-		}
-		catch (final V4L4JException e)
-		{
-			throw new BoblightException(e);
-		}
-
-		try
-		{
-			this.fg = this.vd.getRawFrameGrabber(64, 64,
-					this.flagManager.getChannel(), 1);
-		}
-		catch (final V4L4JException e)
-		{
-			throw new BoblightException(e);
-		}
-
-		// check if we need to scale with libswscale
-		this.needsScale = this.fg.getWidth() != this.flagManager.width
-				|| this.fg.getHeight() != this.flagManager.height;
-
-		this.boblight.setScanRange(this.flagManager.width,
-				this.flagManager.height);
-
-		if (this.flagManager.debug)
-		{
-			LOG.info("started in debug mode");
-
-			this.debugWindowWidth = Math.max(200, this.flagManager.width);
-			this.debugWindowHeight = Math.max(200, this.flagManager.height);
-
-			this.frame = new Frame();
-			this.frame.add(new Canvas());
-
-			this.debugImg = new BufferedImage(this.flagManager.width,
-					this.flagManager.height, BufferedImage.TYPE_INT_RGB);
-
-			this.frame.setSize(this.debugWindowWidth, this.debugWindowHeight);
-			this.frame.setVisible(true);
-
-			this.debug = true;
-		}
 	}
 
 }

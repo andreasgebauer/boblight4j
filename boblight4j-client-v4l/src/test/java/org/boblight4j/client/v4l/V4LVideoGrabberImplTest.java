@@ -1,5 +1,7 @@
 package org.boblight4j.client.v4l;
 
+import static org.mockito.Mockito.mock;
+
 import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Assert;
@@ -35,13 +37,14 @@ public class V4LVideoGrabberImplTest {
 
 	private static V4LImageGrabberImpl testable;
 
+	private static Client client;
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		testable = new V4LImageGrabberImpl();
-	}
+		client = mock(Client.class);
 
-	@Mock
-	private Client client;
+		testable = new V4LImageGrabberImpl(client, false, 0, 0);
+	}
 
 	@Mock
 	private FlagManagerV4l flagManager;
@@ -118,7 +121,7 @@ public class V4LVideoGrabberImplTest {
 
 	@Test
 	public void testSetup() throws BoblightException {
-		testable.setup(this.flagManager, this.client);
+		testable.setup(this.flagManager);
 	}
 
 }

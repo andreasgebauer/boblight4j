@@ -13,7 +13,7 @@ import org.boblight4j.utils.MathUtils;
 import org.boblight4j.utils.Pair;
 
 /**
- * Runtime class for a light.
+ * Class representing a light section in the configuration.
  * 
  * <br>
  * <br>

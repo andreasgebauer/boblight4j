@@ -10,8 +10,9 @@ import org.boblight4j.client.Client;
  */
 public class GrabberXRender extends AbstractX11Grabber {
 
-	public GrabberXRender(final Client boblight, final boolean sync) {
-		super(boblight, sync);
+	public GrabberXRender(final Client boblight, final boolean sync,
+			final int size, double interval) {
+		super(boblight, sync, size, interval);
 	}
 
 	// @Override
@@ -87,8 +88,13 @@ public class GrabberXRender extends AbstractX11Grabber {
 	// }
 
 	@Override
-	protected int[] grabPixelAt(int xpos, int ypos) {
+	public int[] grabPixelAt(int xpos, int ypos) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void cleanup() {
+
 	}
 }

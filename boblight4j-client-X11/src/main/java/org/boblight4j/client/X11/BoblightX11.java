@@ -119,12 +119,14 @@ public class BoblightX11 extends AbstractBoblightClient {
 				if (this.flagmanager.method == XGETIMAGE)
 				{
 					grabber = new GrabberXGetImage(boblight,
-							this.flagmanager.isSync());
+							this.flagmanager.isSync(), this.flagmanager.pixels,
+							this.flagmanager.interval);
 				}
 				else if (this.flagmanager.method == XRENDER)
 				{
 					grabber = new GrabberXRender(boblight,
-							this.flagmanager.isSync());
+							this.flagmanager.isSync(), this.flagmanager.pixels,
+							this.flagmanager.interval);
 				}
 				else
 				{
@@ -132,15 +134,12 @@ public class BoblightX11 extends AbstractBoblightClient {
 							+ this.flagmanager.method + " not supported.");
 				}
 
-				grabber.setInterval(this.flagmanager.interval);
-				grabber.setSize(this.flagmanager.pixels);
-
 				if (this.flagmanager.debug)
 				{
-					grabber.setDebug(this.flagmanager.debugdpy);
+					grabber.setupDebug();
 				}
 
-				grabber.setup();
+				grabber.setup(this.flagmanager);
 				grabber.run();
 			}
 			catch (final Exception e)

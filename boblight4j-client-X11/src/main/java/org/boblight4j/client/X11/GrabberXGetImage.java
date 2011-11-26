@@ -17,11 +17,12 @@ public class GrabberXGetImage extends AbstractX11Grabber {
 
 	private static final int ALL_PLANES = 0x00ffffff;
 
-	public GrabberXGetImage(final Client boblight, final boolean sync) {
-		super(boblight, sync);
+	public GrabberXGetImage(final Client boblight, final boolean sync,
+			int size, double interval) {
+		super(boblight, sync, size, interval);
 	}
 
-	protected int[] grabPixelAt(final int xpos, final int ypos) {
+	public int[] grabPixelAt(final int xpos, final int ypos) {
 		final int rgb[] = new int[3];
 		// get an image of size 1x1 at the location
 		ZPixmap pixMap = (ZPixmap) this.getDisplay().default_root.image(xpos,
@@ -33,5 +34,10 @@ public class GrabberXGetImage extends AbstractX11Grabber {
 		rgb[1] = pixMap.get_green(0, 0);
 		rgb[2] = pixMap.get_blue(0, 0);
 		return rgb;
+	}
+
+	@Override
+	public void cleanup() {
+
 	}
 }
