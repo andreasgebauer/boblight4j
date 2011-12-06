@@ -7,7 +7,7 @@ import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 
-public class DioderBuilder extends DeviceBuilder {
+public class DioderBuilder extends AbstractDeviceBuilder {
 
 	public DioderBuilder(final List<ConfigGroup> devicelines,
 			final String filename) {

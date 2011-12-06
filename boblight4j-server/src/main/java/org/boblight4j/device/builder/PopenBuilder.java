@@ -7,7 +7,7 @@ import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 
-public class PopenBuilder extends DeviceBuilder {
+public class PopenBuilder extends AbstractDeviceBuilder {
 
 	public PopenBuilder(final List<ConfigGroup> devicelines,
 			final String filename) {

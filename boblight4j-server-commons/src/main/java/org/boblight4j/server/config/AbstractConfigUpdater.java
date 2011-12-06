@@ -12,7 +12,7 @@ import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
 
-public class AbstractConfigUpdater {
+public abstract class AbstractConfigUpdater {
 
 	private static final Logger LOG = Logger
 			.getLogger(AbstractConfigUpdater.class);

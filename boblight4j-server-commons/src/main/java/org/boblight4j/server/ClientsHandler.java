@@ -27,6 +27,12 @@ public interface ClientsHandler {
 	void handleMessages(SocketChannel socketChannel, byte[] array, int numRead)
 			throws BoblightException;
 
+	/**
+	 * Removes a client by disconnecting it from the server.
+	 * 
+	 * @param socketChannel
+	 *            the socket channel the client uses
+	 */
 	void removeClient(SocketChannel socketChannel);
 
 	/**
@@ -37,6 +43,7 @@ public interface ClientsHandler {
 	 * @param port
 	 *            the port
 	 * @throws UnknownHostException
+	 *             in case of address cannot be resolved
 	 */
 	void setInterface(InetAddress address, int port)
 			throws UnknownHostException;

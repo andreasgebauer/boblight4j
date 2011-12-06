@@ -14,11 +14,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
-import org.boblight4j.device.builder.DioderBuilder;
-import org.boblight4j.device.builder.LtblBuilder;
-import org.boblight4j.device.builder.PopenBuilder;
-import org.boblight4j.device.builder.RS232Builder;
-import org.boblight4j.device.builder.SoundBuilder;
+import org.boblight4j.device.builder.DeviceBuilder;
+import org.boblight4j.device.builder.DeviceBuilderFactory;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightParseException;
@@ -187,53 +184,10 @@ public class ConfigImpl implements Config {
 
 			final String type = Misc.getWord(line);
 
-			if (type.equals("popen"))
-			{
-				final PopenBuilder bldr = new PopenBuilder(this.deviceLines,
-						this.fileName);
-				devices.add(bldr.build(i, clients, type));
-			}
-			else if (type.equals("momo") || type.equals("atmo")
-					|| type.equals("karate"))
-			{
-				final RS232Builder bldr = new RS232Builder(this.deviceLines,
-						this.fileName);
-				devices.add(bldr.build(i, clients, type));
-			}
-			else if (type.equals("ltbl"))
-			{
-				final LtblBuilder bldr = new LtblBuilder(this.deviceLines,
-						this.fileName);
-				devices.add(bldr.build(i, clients, type));
-			}
-			else if (type.equals("sound"))
-			{
-				if (this.hasLibPortAudio())
-				{
-					final SoundBuilder bldr = new SoundBuilder(
-							this.deviceLines, this.fileName);
-					devices.add(bldr.build(i, clients, type));
-				}
-				else
-				{
-					final String msg = String
-							.format("%s line %d: boblightd was built without portaudio, no support for sound devices",
-									this.fileName, linenr);
-					throw new BoblightConfigurationException(msg);
-				}
-			}
-			else if (type.equals("dioder"))
-			{
-				final DioderBuilder bldr = new DioderBuilder(this.deviceLines,
-						this.fileName);
-				devices.add(bldr.build(i, clients, type));
-			}
-			else
-			{
-				final String msg = String.format("%s line %d: unknown type %s",
-						this.fileName, linenr, type);
-				throw new BoblightConfigurationException(msg);
-			}
+			DeviceBuilder devBldr = DeviceBuilderFactory.createBuilder(type,
+					this.deviceLines, linenr, this.fileName);
+			devices.add(devBldr.build(i, clients, type));
+
 		}
 		return devices;
 	}
@@ -460,11 +414,6 @@ public class ConfigImpl implements Config {
 			}
 		}
 		return -1;
-	}
-
-	private boolean hasLibPortAudio() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

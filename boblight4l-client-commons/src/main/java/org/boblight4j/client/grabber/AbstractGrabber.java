@@ -50,6 +50,7 @@ public abstract class AbstractGrabber implements Grabber {
 	/**
 	 * Initialises the debug window.
 	 */
+	@Override
 	public void setupDebug() {
 
 		this.debugWindowWidth = Math.max(200, this.width);

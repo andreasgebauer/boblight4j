@@ -22,10 +22,6 @@ public class LightsAccessor implements LightsAccessorMBean {
 			final float speed = l.getSpeed();
 			globalSpeed += speed;
 			// not the same for all lights
-			if (globalSpeed / lightCnt != speed)
-			{
-
-			}
 		}
 		return globalSpeed / lightCnt;
 	}

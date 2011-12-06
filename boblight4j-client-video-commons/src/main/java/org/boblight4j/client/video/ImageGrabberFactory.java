@@ -22,11 +22,10 @@ public class ImageGrabberFactory {
 		while (iterator.hasNext())
 		{
 			ImageGrabberServiceProvider serviceProvider = iterator.next();
-
-			LOG.debug("Found ImageGrabberServiceProvider implementation "
-					+ serviceProvider.getClass().getSimpleName());
 			if (serviceProvider != null)
 			{
+				LOG.debug("Found ImageGrabberServiceProvider implementation "
+						+ serviceProvider.getClass().getSimpleName());
 				return serviceProvider.create(client, sync, width, height);
 			}
 		}

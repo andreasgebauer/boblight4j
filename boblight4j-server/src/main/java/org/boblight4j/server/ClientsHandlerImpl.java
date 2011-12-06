@@ -502,6 +502,12 @@ public class ClientsHandlerImpl implements ClientsHandler {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.boblight4j.server.ClientsHandler#removeClient(java.nio.channels.
+	 * SocketChannel)
+	 */
 	@Override
 	public void removeClient(final SocketChannel socketChannel) {
 		synchronized (this.mutex)

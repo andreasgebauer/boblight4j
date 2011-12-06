@@ -12,7 +12,19 @@ import org.boblight4j.server.config.ConfigGroup;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
 
-public class RS232Builder extends DeviceBuilder {
+/**
+ * The class RS232Builder provides an implementation to build accessors for
+ * RS232 devices.<br>
+ * <br>
+ * Currently supported device types are<br>
+ * <ul>
+ * <li>momo</li>
+ * </ul>
+ * 
+ * @author agebauer
+ * 
+ */
+public class RS232Builder extends AbstractDeviceBuilder {
 
 	private static final Logger LOG = Logger.getLogger(RS232Builder.class);
 

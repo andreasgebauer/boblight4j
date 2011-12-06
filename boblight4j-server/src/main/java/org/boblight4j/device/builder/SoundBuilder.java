@@ -7,7 +7,7 @@ import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 
-public class SoundBuilder extends DeviceBuilder {
+public class SoundBuilder extends AbstractDeviceBuilder {
 
 	public SoundBuilder(final List<ConfigGroup> deviceLines,
 			final String filename) {

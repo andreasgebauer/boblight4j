@@ -232,6 +232,15 @@ public class Client {
 	 * Destroy the client. Does nothing right now.
 	 */
 	public void destroy() {
+		try
+		{
+			this.socketChannel.close();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

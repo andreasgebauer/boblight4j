@@ -25,4 +25,6 @@ public interface Grabber {
 	 */
 	void cleanup();
 
+	public abstract void setupDebug();
+
 }

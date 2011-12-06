@@ -19,7 +19,7 @@ final class DCTRunnable implements Runnable {
 	DCTRunnable(final double[] samples, final Client boblight) {
 		this.boblight = boblight;
 		this.doubleDCT_1D = new DoubleDCT_1D(samples.length);
-		this.samples = samples;
+		this.samples = samples.clone();
 	}
 
 	@Override

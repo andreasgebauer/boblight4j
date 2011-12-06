@@ -1,6 +1,7 @@
 package org.boblight4j.client;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class ClientTest {
 		Whitebox.setInternalState(this.socketChannel, "open", true);
 		this.socket = Mockito.mock(Socket.class);
 		Mockito.when(this.socketChannel.socket()).thenReturn(this.socket);
+
 	}
 
 	@Test
@@ -130,8 +132,15 @@ public class ClientTest {
 	}
 
 	@Test
-	public void testDestroy() {
+	public void testDestroy() throws IOException {
+		this.stubSocketChannel();
+		Whitebox.setInternalState(testable, SocketChannel.class, socketChannel);
+		Whitebox.setInternalState(socketChannel, "closeLock", new Object());
+		Whitebox.setInternalState(socketChannel, "keyLock", new Object());
+
 		this.testable.destroy();
+
+		verify(this.socketChannel).close();
 	}
 
 	@Test

@@ -163,7 +163,7 @@ public class MainFrame extends JFrame {
 					{
 
 						final MainFrame frame = new MainFrame(queryMBeans,
-								lightNames.toArray(new String[] {}));
+								lightNames.toArray(new String[3]));
 						frame.setVisible(true);
 					}
 					catch (final Exception e)
@@ -225,7 +225,7 @@ public class MainFrame extends JFrame {
 										LightAccessorMBean.class);
 
 						newMXBeanProxy.setColorAdjustments(model.colorIndex,
-								model.points.toArray(new Point[] {}));
+								model.points.toArray(new Point[10]));
 						break;
 					}
 
