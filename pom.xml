@@ -69,7 +69,7 @@
 		</repository>
 		<repository>
 			<id>local2</id>
-			<url>file:${basedir}/maven-artifacts</url>
+			<url>file://${basedir}/maven-artifacts</url>
 		</repository>
 	</repositories>
 	
