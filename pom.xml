@@ -78,6 +78,10 @@
 			<name>nativelibs4java Maven2 Repository</name>
 			<url>http://nativelibs4java.sourceforge.net/maven</url>
 		</repository>
+		<repository>
+			<id>local2</id>
+			<url>file:${basedir}/maven-artifacts</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
