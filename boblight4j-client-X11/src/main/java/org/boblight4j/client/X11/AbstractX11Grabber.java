@@ -60,6 +60,7 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
 		if (this.interval > 0.0) // set up timer
 		{
+			// TODO use interval
 			// m_timer.SetInterval(Round64(m_interval * 1000000.0));
 		}
 		// #ifdef HAVE_LIBGL

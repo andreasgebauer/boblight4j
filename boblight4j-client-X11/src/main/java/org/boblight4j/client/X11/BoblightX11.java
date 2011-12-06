@@ -3,6 +3,7 @@ package org.boblight4j.client.X11;
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
 import org.boblight4j.client.Client;
+import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 
@@ -115,7 +116,7 @@ public class BoblightX11 extends AbstractBoblightClient {
 			{
 				// set up grabber, based on whether we want to use xrender or
 				// xgetimage
-				AbstractX11Grabber grabber = null;
+				Grabber grabber = null;
 				if (this.flagmanager.method == XGETIMAGE)
 				{
 					grabber = new GrabberXGetImage(boblight,
@@ -144,10 +145,18 @@ public class BoblightX11 extends AbstractBoblightClient {
 			}
 			catch (final Exception e)
 			{
-				LOG.error(
-						"Exception occured during add pixel or sending rgb values. Trying again.",
-						e);
 				boblight.destroy();
+				LOG.error(
+						"Exception occured during add pixel or sending rgb values. Trying again in a few seconds.",
+						e);
+				try
+				{
+					Thread.sleep(10000);
+				}
+				catch (final InterruptedException ex)
+				{
+					LOG.error("", ex);
+				}
 				continue;
 			}
 
