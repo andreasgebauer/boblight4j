@@ -25,9 +25,8 @@
 		<module>boblight4j-server-commons</module>
 		<module>boblight4j-client-video-commons</module>
 		<module>boblight4j-client-jmf</module>
-		<module>boblight4j-package</module>
 		<module>boblight4j-jmx-gui</module>
-		<!-- <module>boblight4j-xbmc-plugin</module> -->
+		<module>boblight4j-package</module>
 	</modules>
 
 	<dependencies>

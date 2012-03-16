@@ -22,7 +22,7 @@ public class JMFVideoGrabber extends AbstractPassiveGrabber {
 
 	@Override
 	public void run() throws BoblightException {
-
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class JMFVideoGrabber extends AbstractPassiveGrabber {
 
 	@Override
 	public void cleanup() {
-
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 }

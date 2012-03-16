@@ -28,5 +28,13 @@
 			</includes>
 			<outputDirectory>/lib/native</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/scripts</directory>
+			<fileMode>0644</fileMode>
+			<includes>
+				<include>**/**</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly>

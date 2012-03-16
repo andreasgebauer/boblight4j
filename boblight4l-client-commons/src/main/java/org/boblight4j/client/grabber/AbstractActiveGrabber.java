@@ -6,7 +6,7 @@ import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
 
 /**
- * This is base class for a grabber implementation which actively grabs pixels
+ * This is a base class for a grabber implementation which actively grabs pixels
  * from a device such as a screen.
  * 
  * @author agebauer

@@ -62,6 +62,13 @@ public class Client {
 				new ClientAccessor(this));
 	}
 
+	/**
+	 * Sets the color of a screen pixel.
+	 * 
+	 * @param xPos
+	 * @param yPos
+	 * @param rgb
+	 */
 	public void addPixel(final int xPos, final int yPos, final int[] rgb) {
 		for (int i = 0; i < this.lights.size(); i++)
 		{
@@ -87,9 +94,12 @@ public class Client {
 	}
 
 	/**
+	 * Sets the color of a light.
 	 * 
 	 * @param lightnr
+	 *            the index of the light
 	 * @param rgb
+	 *            the RGB value
 	 * @throws BoblightException
 	 */
 	public final void addPixel(final int lightnr, final int[] rgb)
@@ -128,6 +138,13 @@ public class Client {
 
 	}
 
+	/**
+	 * Checks if a light with the index given exists. Throws
+	 * {@link BoblightException} when the light doesn't exist.
+	 * 
+	 * @param lightNr
+	 * @throws BoblightException
+	 */
 	private void checkLightExists(final int lightNr) throws BoblightException {
 		if (lightNr >= this.lights.size())
 		{
@@ -136,6 +153,17 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Connects the client to the server.
+	 * 
+	 * @param address
+	 *            the server address
+	 * @param port
+	 *            the port to connect to
+	 * @param usectimeout
+	 *            the connection timeout in milliseconds
+	 * @throws BoblightException
+	 */
 	public void connect(final String address, final int port,
 			final int usectimeout) throws BoblightException {
 

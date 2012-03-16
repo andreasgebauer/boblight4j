@@ -1,0 +1,23 @@
+#!/bin/sh
+
+ADDON_DIR="$HOME/.xbmc/addons/${addonName}"
+ADDON_HOME="$HOME/.xbmc/userdata/addon_data/${addonName}"
+LOG_FILE="$ADDON_HOME/service.log"
+ADDON_SETTINGS="$ADDON_HOME/settings.xml"
+
+if [ ! -f "$ADDON_SETTINGS" ]; then
+  cp $ADDON_DIR/settings-default.xml $ADDON_SETTINGS
+fi
+
+# create addon_data directory for this service plug-in
+mkdir -p $ADDON_HOME
+
+# grep the process id of a potentially running boblight program 
+PID=`ps aux | grep ${processName} | grep -v grep | awk '{print $1}'`
+# determine if program is running
+if [ -n "${PID+x}" ];then
+  echo "${processName} already running"
+else
+  echo "Starting ${processName}"
+  /storage/programs/boblight4j/start-server.sh &>$LOG_FILE
+fi

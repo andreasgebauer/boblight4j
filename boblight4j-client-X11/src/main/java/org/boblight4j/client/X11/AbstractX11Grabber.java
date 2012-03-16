@@ -28,16 +28,16 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 	}
 
 	@Override
-	protected int getScreenWidth() {
+	protected final int getScreenWidth() {
 		return this.display.default_screen.width;
 	}
 
 	@Override
-	protected int getScreenHeight() {
+	protected final int getScreenHeight() {
 		return this.display.default_screen.height;
 	}
 
-	public void setup(final AbstractFlagManager flagManager)
+	public final void setup(final AbstractFlagManager flagManager)
 			throws BoblightConfigurationException {
 		LOG.debug("Setting up.");
 

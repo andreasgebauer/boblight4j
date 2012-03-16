@@ -15,6 +15,13 @@ import org.boblight4j.server.config.ConfigImpl;
 import org.boblight4j.server.config.ConfigUpdater;
 import org.boblight4j.utils.Pointer;
 
+/**
+ * This class represents the main entry point for the boblight4j server
+ * application.
+ * 
+ * @author agebauer
+ * 
+ */
 public class BoblightDaemon {
 
 	private static final Logger LOG = Logger.getLogger(BoblightDaemon.class

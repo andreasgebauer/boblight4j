@@ -1,5 +1,6 @@
 package org.boblight4j.client;
 
+import static junit.framework.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -33,7 +34,7 @@ public class AbstractFlagManagerTest {
 	}
 
 	@Test
-	public void testParseBoblightOptions() throws BoblightException {
+	public void testParseDefaultBoblightOptions() throws BoblightException {
 
 		this.testable.parseFlags("-o saturation=2.0".split("\\s"));
 
@@ -41,6 +42,14 @@ public class AbstractFlagManagerTest {
 		this.testable.parseBoblightOptions(client);
 
 		Mockito.verify(client).setOption(-1, "saturation 2.0");
+	}
+
+	@Test
+	public void testParseBoblightOptionsPrintHelp() throws BoblightException {
+
+		this.testable.parseFlags("-l".split("\\s"));
+
+		assertTrue(this.testable.isPrintOptions());
 	}
 
 	@Test

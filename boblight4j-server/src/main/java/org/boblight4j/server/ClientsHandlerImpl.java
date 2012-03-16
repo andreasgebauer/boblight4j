@@ -134,9 +134,9 @@ public class ClientsHandlerImpl implements ClientsHandler {
 
 	private void doFillChannels(final List<Channel> channels, final long time,
 			final Device device, final Set<Light> usedLights) {
-		// get the oldest client with the highest priority
 		for (int i = 0; i < channels.size(); i++)
 		{
+			// get the oldest client with the highest priority
 			final Channel channel = channels.get(i);
 			final int light = channel.getLight();
 			final int color = channel.getColor();

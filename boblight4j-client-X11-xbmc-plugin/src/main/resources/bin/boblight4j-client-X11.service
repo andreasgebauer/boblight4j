@@ -1,0 +1,7 @@
+#!/bin/sh
+
+BOBLIGHT_DIR=/storage/programs/clients
+JAVA=/storage/programs/jre/bin/java
+
+echo "Starting ${processName}"
+$JAVA -jar $BOBLIGHT_DIR/boblight4j-client-X11-0.0.2-SNAPSHOT.jar -u 20 -x -o speed=70 -o interpolation=true -o threshold=30 -o saturation=1.5 -o value=10

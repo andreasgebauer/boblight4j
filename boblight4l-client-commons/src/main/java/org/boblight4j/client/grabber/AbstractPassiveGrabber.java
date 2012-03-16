@@ -5,6 +5,17 @@ import java.awt.image.BufferedImage;
 
 import org.boblight4j.client.Client;
 
+/**
+ * This is a base class for a grabber implementation which passively grabs
+ * pixels from a device such as a screen.<br>
+ * <br>
+ * The method {@link #frameToBoblight(BufferedImage)} accepts a
+ * {@link BufferedImage} as argument which can be invoked by a passively acting
+ * Grabber implementation.
+ * 
+ * @author agebauer
+ * 
+ */
 public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 		PassiveGrabber {
 
@@ -13,7 +24,14 @@ public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 		super(client, sync, width, height);
 	}
 
-	protected void frameToBoblight(final BufferedImage img) {
+	/**
+	 * Use this method in your passive grabber implementation to let the passed
+	 * BufferedImage get converted to .
+	 * 
+	 * @param img
+	 */
+	@Override
+	public void frameToBoblight(final BufferedImage img) {
 		final double scaledX = (double) img.getWidth() / (double) this.width;
 		final double scaledY = (double) img.getHeight() / (double) this.height;
 

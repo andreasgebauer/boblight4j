@@ -14,17 +14,12 @@
 		<fileSet>
 			<directory>target/server</directory>
 			<includes>
-				<include>*</include>
+				<include>**/**</include>
 			</includes>
-			<outputDirectory>/server</outputDirectory>
+			<outputDirectory>/</outputDirectory>
 		</fileSet>
-		<fileSet>
-			<directory>target/lib/server</directory>
-			<includes>
-				<include>*</include>
-			</includes>
-			<outputDirectory>/server/lib</outputDirectory>
-		</fileSet>
+		<!-- <fileSet> <directory>target/lib/server</directory> <includes> <include>*</include> 
+			</includes> <outputDirectory>/server/lib</outputDirectory> </fileSet> -->
 		<fileSet>
 			<directory>target/clients</directory>
 			<includes>

@@ -10,37 +10,45 @@
 
 	<artifactId>boblight4j-server</artifactId>
 
-	<dependencies>
+	<name>Boblight4J Server</name>
 
+	<dependencies>
 		<dependency>
 			<groupId>org.boblight</groupId>
 			<artifactId>boblight4j-server-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>gnu.io</groupId>
 			<artifactId>rxtx-comm</artifactId>
 			<version>2.2pre2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>gnu.io</groupId>
 			<artifactId>rxtx-comm-native</artifactId>
+			<classifier>${nativeclassifier}</classifier>
 			<version>2.2pre2</version>
 			<type>jar</type>
 			<scope>provided</scope>
-			<classifier>${nativeclassifier}</classifier>
 		</dependency>
-
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/scripts</directory>
+				<targetPath>${project.build.directory}/scripts</targetPath>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -67,38 +75,8 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
-							<excludeScope>provided</excludeScope>
+							<includeScope>compile</includeScope>
 							<excludeGroupIds>org.boblight</excludeGroupIds>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<createSourcesJar>true</createSourcesJar>
-							<artifactSet>
-								<includes>
-									<include>org.boblight:*</include>
-								</includes>
-								<excludes>
-									<exclude>*:*:${nativeclassifier}</exclude>
-								</excludes>
-							</artifactSet>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.boblight4j.server.BoblightDaemon</mainClass>
-								</transformer>
-							</transformers>
 						</configuration>
 					</execution>
 				</executions>

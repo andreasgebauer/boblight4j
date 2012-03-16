@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+
+	<!-- BOBLIGHT4J X11 -->
+	<string id="1000">JAVA</string>
+	<string id="1001">Directory where Java is installed</string>
+
+</strings>

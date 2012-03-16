@@ -22,7 +22,7 @@ public interface ClientsHandler {
 	 */
 	void blockConnect(boolean b);
 
-	void fillChannels(List<Channel> m_channels, long now, Device deviceRS232);
+	void fillChannels(List<Channel> channels, long timestamp, Device device);
 
 	void handleMessages(SocketChannel socketChannel, byte[] array, int numRead)
 			throws BoblightException;

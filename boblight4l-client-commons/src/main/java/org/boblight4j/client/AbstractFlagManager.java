@@ -7,8 +7,9 @@ import java.util.List;
 
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.exception.BoblightParseException;
-import org.boblight4j.utils.BooleanParser;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
 /**
  * Base class for all <code>FlagManager</code> implementations.
@@ -17,6 +18,26 @@ import org.boblight4j.utils.BooleanParser;
  * 
  */
 public abstract class AbstractFlagManager implements FlagManager {
+
+	public class CommandLineArgs {
+		@Option(name = "-l")
+		boolean printBoblightOptions;
+
+		@Option(name = "options", aliases = { "-o" }, handler = CustomOptionHandler.class)
+		List<String> options;
+
+		@Option(name = "-p")
+		int priority;
+
+		@Option(name = "-s", usage = "server address to connect to (eg localhost[:12345])")
+		String server;
+
+		@Option(name = "-y", handler = BooleanOptionHandler.class)
+		boolean sync;
+
+		@Option(name = "-h")
+		boolean printHelp;
+	}
 
 	private String address;
 	private String flags;
@@ -161,93 +182,76 @@ public abstract class AbstractFlagManager implements FlagManager {
 	@Override
 	public void parseFlags(final String[] args)
 			throws BoblightConfigurationException {
+
+		final CommandLineArgs commandLineArgs = new CommandLineArgs();
+		CmdLineParser parser = new CmdLineParser(commandLineArgs);
+		try
+		{
+			parser.parseArgument(args);
+		}
+		catch (CmdLineException e1)
+		{
+			e1.printStackTrace();
+			throw new RuntimeException(e1);
+		}
+
+		this.printBoblightOptions = commandLineArgs.printBoblightOptions;
+
+		if (this.printBoblightOptions)
+		{
+			return;
+		}
+
+		this.priority = commandLineArgs.priority;
+
+		if (priority == -1 || priority < 0 || priority > 255)
+		{
+			throw new RuntimeException("Wrong option " + priority
+					+ " for argument -p");
+		}
+
+		this.address = commandLineArgs.server;
+
+		// check if we have a port
+		if (commandLineArgs.server != null
+				&& commandLineArgs.server.indexOf(':') != -1)
+		{
+			this.address = commandLineArgs.server.substring(0,
+					commandLineArgs.server.indexOf(':'));
+			commandLineArgs.server = commandLineArgs.server
+					.substring(commandLineArgs.server.indexOf(':') + 1);
+			try
+			{
+				this.port = Integer.valueOf(commandLineArgs.server);
+			}
+			catch (final NumberFormatException nfe)
+			{
+			}
+
+			if (this.port != -1 && this.port < 0 || this.port > 65535)
+			{
+				throw new RuntimeException("Wrong option "
+						+ commandLineArgs.server + " for argument -s");
+			}
+		}
+
+		this.printHelp = commandLineArgs.printHelp;
+
+		this.sync = commandLineArgs.sync;
+
+		if (commandLineArgs.options != null)
+		{
+			this.options.addAll(commandLineArgs.options);
+		}
+
 		final String[] argv = args.clone();
-		String option;
 		int optChar;
 
 		final Getopt getopt = new Getopt("flagmanager", args, this.flags);
 		while ((optChar = getopt.getopt()) != -1)
 		{
-			// priority
-			if (optChar == 'p')
-			{
-				option = getopt.getOptarg();
-				int priority = -1;
-				try
-				{
-					priority = Integer.valueOf(option);
-				}
-				catch (final NumberFormatException nfe)
-				{
-					// nothing
-				}
-				if (priority == -1 || priority < 0 || priority > 255)
-				{
-					throw new RuntimeException("Wrong option " + option
-							+ " for argument -p");
-				}
-				this.priority = priority;
-			}
-			// address[:port]
-			else if (optChar == 's')
-			{
-				option = getopt.getOptarg();
-				// store address
-				this.address = option;
-
-				// check if we have a port
-				if (option.indexOf(':') != -1)
-				{
-					this.address = option.substring(0, option.indexOf(':'));
-					option = option.substring(option.indexOf(':') + 1);
-					try
-					{
-						this.port = Integer.valueOf(option);
-					}
-					catch (final NumberFormatException nfe)
-					{
-					}
-
-					if (this.port != -1 && this.port < 0 || this.port > 65535)
-					{
-						throw new RuntimeException("Wrong option " + option
-								+ " for argument -s");
-					}
-				}
-			}
-			// option for libboblight
-			else if (optChar == 'o')
-			{
-				this.options.add(getopt.getOptarg());
-			}
-			// list libboblight options
-			else if (optChar == 'l')
-			{
-				this.printBoblightOptions = true;
-				return;
-			}
-			// print help message
-			else if (optChar == 'h')
-			{
-				this.printHelp = true;
-				return;
-			}
-			// sync
-			else if (optChar == 'y')
-			{
-				final String optarg = getopt.getOptarg();
-				try
-				{
-					this.sync = BooleanParser.parse(optarg);
-				}
-				catch (final BoblightParseException e)
-				{
-					throw new BoblightConfigurationException("Wrong value "
-							+ optarg + " for sync mode", e);
-				}
-			}
 			// unknown option
-			else if (optChar == '?')
+			if (optChar == '?')
 			{
 				// check if we know this option, but expected an argument
 				if (this.flags.indexOf((char) getopt.getOptopt() + ":") == -1)

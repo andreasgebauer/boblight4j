@@ -100,7 +100,7 @@ public class Light {
 				return;
 			}
 		}
-		// set single change
+		// FIXME set single change
 		this.users.add(new Pair<Device, Float>(device, (float) 0.0));
 	}
 

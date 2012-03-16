@@ -92,8 +92,8 @@ public class Light extends LightConfig {
 	}
 
 	public final float[] getRgb() {
-		// if no pixels are set, the denominator is 0, so just return black
 		final float[] rgbNew = new float[4];
+		// if no pixels are set, the denominator is 0, so just return black
 		if (this.rgb[3] == 0)
 		{
 			for (int i = 0; i < 3; i++)
@@ -110,12 +110,11 @@ public class Light extends LightConfig {
 					/ (float) this.rgb[3] / 255.0f, 0.0f, 1.0f);
 		}
 
+		// reset values
 		this.rgb[0] = 0;
 		this.rgb[1] = 0;
 		this.rgb[2] = 0;
 		this.rgb[3] = 0;
-
-		// memset(m_rgbd, 0, sizeof(m_rgbd));
 
 		// this tries to set the speed based on how fast the input is changing
 		// it needs sync mode to work properly

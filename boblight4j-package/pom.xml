@@ -47,7 +47,7 @@
 					<execution>
 						<id>copy-server</id>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>unpack-dependencies</goal>
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>

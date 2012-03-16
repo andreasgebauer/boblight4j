@@ -11,8 +11,8 @@
 
 	<repositories>
 		<repository>
-			<id>signalml</id>
-			<url>http://signalml.org/maven/repository/</url>
+			<id>octopussy</id>
+			<url>http://octopussy.ecs.soton.ac.uk/m2/releases/</url>
 		</repository>
 	</repositories>
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+
+	<!-- BOBLIGHT4J X11 -->
+	<category label="1000">
+		<setting label="1010" type="lsep" />
+		<setting type="sep" />
+		<setting id="JAVA_HOME" type="text" label="1001" values=""
+			default="" />
+	</category>
+</settings>
