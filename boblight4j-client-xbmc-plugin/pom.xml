@@ -61,4 +61,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.boblight</groupId>
+			<artifactId>boblight4j-client-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

@@ -27,7 +27,6 @@ public class CustomOptionHandler extends OptionHandler<String> {
 			final String parameter = params.getParameter(i);
 			if (parameter.startsWith("-"))
 			{
-				i--;
 				break;
 			}
 			setter.addValue(parameter);

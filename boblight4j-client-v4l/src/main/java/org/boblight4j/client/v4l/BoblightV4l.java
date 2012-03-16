@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
 import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
+import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
 import org.boblight4j.exception.BoblightException;
@@ -87,23 +88,28 @@ public class BoblightV4l extends AbstractBoblightClient {
 				continue;
 			}
 
-			try
+			if (grabber instanceof ActiveGrabber)
 			{
-				// this will keep looping until we should stop or boblight gives
-				// an error
-				grabber.run();
-			}
-			catch (final Exception error)
-			{
-				LOG.error("Fatal error occurred", error);
+				try
+				{
+					// this will keep looping until we should stop or boblight
+					// gives
+					// an error
+					((ActiveGrabber) grabber).run();
+				}
+				catch (final Exception error)
+				{
+					LOG.error("Fatal error occurred", error);
+					grabber.cleanup();
+					boblight.destroy();
+					return 1;
+				}
+
 				grabber.cleanup();
+
 				boblight.destroy();
-				return 1;
 			}
 
-			grabber.cleanup();
-
-			boblight.destroy();
 		}
 
 		LOG.info("Exiting\n");

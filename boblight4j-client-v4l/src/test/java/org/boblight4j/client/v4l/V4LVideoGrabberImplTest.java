@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 
 import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -32,6 +31,7 @@ import au.edu.jcu.v4l4j.VideoFrame;
 		RawFrameGrabber.class })
 @PrepareOnlyThisForTest(fullyQualifiedNames = { "au.edu.jcu.v4l4j.AbstractGrabber" })
 @SuppressStaticInitializationFor({ "au.edu.jcu.v4l4j.VideoDevice" })
+// TODO make fit for test
 @Ignore
 public class V4LVideoGrabberImplTest {
 
@@ -90,16 +90,6 @@ public class V4LVideoGrabberImplTest {
 	}
 
 	@Test
-	public void testCleanup() {
-		Assert.fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetError() {
-		Assert.fail("Not yet implemented");
-	}
-
-	@Test
 	public void testNextFrame() {
 		final VideoFrame frame = Mockito.mock(VideoFrame.class);
 		Mockito.when(frame.getCaptureTime()).thenAnswer(new Answer<Long>() {
@@ -112,11 +102,6 @@ public class V4LVideoGrabberImplTest {
 		});
 
 		testable.nextFrame(frame);
-	}
-
-	@Test
-	public void testRun() throws BoblightException {
-		testable.run();
 	}
 
 	@Test

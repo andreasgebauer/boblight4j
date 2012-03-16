@@ -5,6 +5,8 @@ import org.boblight4j.client.Client;
 /**
  * clients/boblight-X11/grabber-xrender.cpp
  * 
+ * Does not work right now.
+ * 
  * @author agebauer
  * 
  */

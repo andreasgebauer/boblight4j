@@ -1,11 +1,37 @@
 package org.boblight4j.client.v4l;
 
 import org.boblight4j.client.AbstractFlagManager;
+import org.boblight4j.client.v4l.FlagManagerV4l.V4lArgs;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.utils.StdIO;
+import org.kohsuke.args4j.Option;
 
-class FlagManagerV4l extends AbstractFlagManager {
+class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
+
+	public class V4lArgs extends AbstractFlagManager.CommandLineArgs {
+
+		@Option(name = "-c")
+		String device;
+
+		@Option(name = "-w")
+		String sscanf;
+
+		@Option(name = "-v")
+		String standard;
+
+		@Option(name = "-i")
+		int channel;
+
+		@Option(name = "-d")
+		boolean debug;
+
+		@Option(name = "-n")
+		boolean checkSignal;
+
+		@Option(name = "-e")
+		public String customCodec;
+	}
 
 	private int channel;
 	protected boolean debug;
@@ -16,7 +42,6 @@ class FlagManagerV4l extends AbstractFlagManager {
 	private String customcodec;
 	private String standard;
 	private String strdebugdpy;
-	private String strstandard;
 
 	FlagManagerV4l() {
 		// c = device, w == widthxheight, v = video standard, i = input, d =
@@ -36,7 +61,7 @@ class FlagManagerV4l extends AbstractFlagManager {
 		// channel of -1 means ffmpeg doesn't change it
 		this.channel = -1;
 
-		// emptpy standard meands ffmpeg doesn't change it
+		// empty standard means ffmpeg doesn't change it
 		this.standard = null;
 
 		this.checksignal = false;
@@ -49,18 +74,22 @@ class FlagManagerV4l extends AbstractFlagManager {
 	}
 
 	@Override
-	protected void parseFlagsExtended(final String[] argv, final int c,
+	protected V4lArgs getArgBean() {
+		return new V4lArgs();
+	}
+
+	@Override
+	protected void parseFlagsExtended(final V4lArgs argv, final int c,
 			final String optarg) throws BoblightConfigurationException {
-		if (c == 'c')
-		{
-			this.device = optarg;
-		}
-		else if (c == 'w')
+
+		this.device = argv.device;
+
+		if (argv.sscanf != null)
 		{
 			Object[] sscanf;
 			try
 			{
-				sscanf = StdIO.sscanf(optarg, "%ix%i");
+				sscanf = StdIO.sscanf(argv.sscanf, "%ix%i");
 
 				if (sscanf.length != 2)
 				{
@@ -78,41 +107,17 @@ class FlagManagerV4l extends AbstractFlagManager {
 			{
 				throw new BoblightConfigurationException("", e);
 			}
+		}
 
-		}
-		else if (c == 'v')
-		{
-			this.strstandard = optarg;
-			this.standard = this.strstandard;
-		}
-		else if (c == 'i')
-		{
-			try
-			{
-				this.channel = Integer.valueOf(optarg);
-			}
-			catch (final NumberFormatException e)
-			{
-				throw new RuntimeException("Wrong value " + optarg
-						+ " for channel", e);
-			}
-		}
-		else if (c == 'd')
-		{
-			this.debug = true;
-			// if (optarg != null && !optarg.isEmpty()) // optional debug dpy
-			// {
-			// this.strdebugdpy = optarg;
-			// }
-		}
-		else if (c == 'n')
-		{
-			this.checksignal = true;
-		}
-		else if (c == 'e')
-		{
-			this.customcodec = optarg;
-		}
+		this.standard = argv.standard;
+
+		this.channel = argv.channel;
+
+		this.debug = argv.debug;
+
+		this.checksignal = argv.checkSignal;
+
+		this.customcodec = argv.customCodec;
 	}
 
 	@Override

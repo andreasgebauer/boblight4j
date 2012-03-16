@@ -40,7 +40,6 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			.getLogger(V4LImageGrabberImpl.class);
 
 	private final boolean blackBarDetection = true;
-	private Client boblight;
 
 	private boolean debug;
 
@@ -247,7 +246,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 			this.frameToBoblight(bufferedImage);
 
-			this.boblight.sendRgb(false, null);
+			this.client.sendRgb(false, null);
 		}
 		catch (final Exception e)
 		{
@@ -256,11 +255,6 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			// stop = true;
 		}
 		frame.recycle();
-	}
-
-	@Override
-	public void run() {
-
 	}
 
 }

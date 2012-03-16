@@ -590,10 +590,14 @@ public class Client {
 
 	/**
 	 * Sets the scan range for each light. Must be called before any pixel is
-	 * added with addPixel.
+	 * added with addPixel.<br>
+	 * <br>
+	 * Calls {@link Light#calculateScaledScanRange(int, int)} for each light.
 	 * 
 	 * @param width
+	 *            the width of the scan area
 	 * @param height
+	 *            the height of the scan area
 	 */
 	public void setScanRange(final int width, final int height) {
 		for (int i = 0; i < this.lights.size(); i++)

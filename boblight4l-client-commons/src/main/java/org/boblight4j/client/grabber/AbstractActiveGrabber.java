@@ -22,6 +22,8 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 		super(client, sync, width, height);
 	}
 
+	// TODO: getDimensions();
+
 	protected abstract int getScreenHeight();
 
 	protected abstract int getScreenWidth();

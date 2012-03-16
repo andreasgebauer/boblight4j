@@ -14,13 +14,6 @@ public interface Grabber {
 	void setup(final AbstractFlagManager flagManager) throws BoblightException;
 
 	/**
-	 * Run loop.
-	 * 
-	 * @throws BoblightException
-	 */
-	void run() throws BoblightException;
-
-	/**
 	 * Cleanup.
 	 */
 	void cleanup();

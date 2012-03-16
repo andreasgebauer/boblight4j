@@ -27,9 +27,6 @@ public class Light extends LightConfig {
 
 	private String name;
 
-	private int width;
-	private int height;
-
 	// preset
 	private final float hscan[] = new float[2];
 	private final float vscan[] = new float[2];
@@ -49,9 +46,6 @@ public class Light extends LightConfig {
 		}
 
 		this.setSingleChange(0.0f);
-
-		this.width = -1;
-		this.height = -1;
 	}
 
 	/**
@@ -61,9 +55,6 @@ public class Light extends LightConfig {
 	 * @param height
 	 */
 	public final void calculateScaledScanRange(final int width, final int height) {
-		this.width = width;
-		this.height = height;
-
 		this.setHscanScaledStart((int) (this.hscan[0] / HUNDRET * height));
 		this.setHscanScaledEnd((int) (this.hscan[1] / HUNDRET * height));
 		this.getVScanScaled()[0] = (int) (this.vscan[0] / HUNDRET * width);

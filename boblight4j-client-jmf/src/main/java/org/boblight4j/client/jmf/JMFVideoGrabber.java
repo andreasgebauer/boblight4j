@@ -21,11 +21,6 @@ public class JMFVideoGrabber extends AbstractPassiveGrabber {
 	private static final Logger LOG = Logger.getLogger(JMFVideoGrabber.class);
 
 	@Override
-	public void run() throws BoblightException {
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
-
-	@Override
 	public void setup(final AbstractFlagManager flagManager)
 			throws BoblightException {
 		@SuppressWarnings("unchecked")

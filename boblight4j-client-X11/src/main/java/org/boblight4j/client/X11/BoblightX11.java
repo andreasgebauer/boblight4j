@@ -3,6 +3,7 @@ package org.boblight4j.client.X11;
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
 import org.boblight4j.client.Client;
+import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
@@ -141,7 +142,11 @@ public class BoblightX11 extends AbstractBoblightClient {
 				}
 
 				grabber.setup(this.flagmanager);
-				grabber.run();
+
+				if (grabber instanceof ActiveGrabber)
+				{
+					((ActiveGrabber) grabber).run();
+				}
 			}
 			catch (final Exception e)
 			{

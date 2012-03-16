@@ -5,6 +5,7 @@ import gnu.getopt.Getopt;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.boblight4j.client.AbstractFlagManager.CommandLineArgs;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.kohsuke.args4j.CmdLineException;
@@ -17,7 +18,9 @@ import org.kohsuke.args4j.Option;
  * @author agebauer
  * 
  */
-public abstract class AbstractFlagManager implements FlagManager {
+@SuppressWarnings("rawtypes")
+public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
+		FlagManager {
 
 	public class CommandLineArgs {
 		@Option(name = "-l")
@@ -183,7 +186,7 @@ public abstract class AbstractFlagManager implements FlagManager {
 	public void parseFlags(final String[] args)
 			throws BoblightConfigurationException {
 
-		final CommandLineArgs commandLineArgs = new CommandLineArgs();
+		final T commandLineArgs = getArgBean();
 		CmdLineParser parser = new CmdLineParser(commandLineArgs);
 		try
 		{
@@ -269,11 +272,16 @@ public abstract class AbstractFlagManager implements FlagManager {
 			else
 			{
 				// pass our argument to a derived class
-				this.parseFlagsExtended(argv, optChar, getopt.getOptarg());
+				this.parseFlagsExtended(commandLineArgs, optChar,
+						getopt.getOptarg());
 			}
 		}
 		// some postprocessing
 		this.postGetopt(getopt.getOptind(), argv);
+	}
+
+	protected T getArgBean() {
+		return (T) new CommandLineArgs();
 	}
 
 	/**
@@ -287,7 +295,7 @@ public abstract class AbstractFlagManager implements FlagManager {
 	 *            the option argument
 	 * @throws BoblightConfigurationException
 	 */
-	protected void parseFlagsExtended(final String[] args, final int option,
+	protected void parseFlagsExtended(final T cmdLineArgs, final int option,
 			final String optarg) throws BoblightConfigurationException {
 	}
 

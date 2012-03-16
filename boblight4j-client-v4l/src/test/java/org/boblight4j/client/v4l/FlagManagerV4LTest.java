@@ -21,7 +21,6 @@ public class FlagManagerV4LTest {
 		this.testable.parseFlags(args);
 
 		Assert.assertTrue(this.testable.debug);
-
 	}
 
 	@Test
