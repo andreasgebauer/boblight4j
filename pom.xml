@@ -13,7 +13,8 @@
 	 	The last but not least is a spectrum analyzer.</description>
 
 	<scm>
-		<developerConnection>scm:https://subversion.assembla.com/svn/boblight4j/trunk</developerConnection>
+		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/trunk/</developerConnection>
+		<connection>http://boblight4j.googlecode.com/svn/trunk/</connection>
 	</scm>
 
 	<modules>
