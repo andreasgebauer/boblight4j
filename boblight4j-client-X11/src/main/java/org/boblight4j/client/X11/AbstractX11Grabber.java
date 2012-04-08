@@ -3,8 +3,8 @@ package org.boblight4j.client.X11;
 import gnu.x11.Display;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.client.AbstractFlagManager;
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractActiveGrabber;
 import org.boblight4j.exception.BoblightConfigurationException;
 
@@ -17,7 +17,7 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
 	private double interval;
 
-	public AbstractX11Grabber(final Client client, final boolean sync,
+	public AbstractX11Grabber(final ClientImpl client, final boolean sync,
 			int size, double interval) {
 		super(client, sync, size, size);
 		this.interval = interval;
@@ -37,7 +37,7 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 		return this.display.default_screen.height;
 	}
 
-	public final void setup(final AbstractFlagManager flagManager)
+	public final void setup(final FlagManager flagManager)
 			throws BoblightConfigurationException {
 		LOG.debug("Setting up.");
 

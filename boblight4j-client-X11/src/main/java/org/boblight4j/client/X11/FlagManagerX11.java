@@ -1,7 +1,7 @@
 package org.boblight4j.client.X11;
 
 import org.boblight4j.client.AbstractFlagManager;
-import org.boblight4j.client.AbstractFlagManager.CommandLineArgs;
+import org.boblight4j.client.CommandLineArgs;
 import org.boblight4j.client.X11.FlagManagerX11.X11Flags;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.kohsuke.args4j.Option;
@@ -15,6 +15,13 @@ import org.kohsuke.args4j.Option;
  */
 public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 
+	/**
+	 * extend the base getopt flags <br>
+	 * i = interval, u = pixels, x = xgetimage, d = debug
+	 * 
+	 * @author agebauer
+	 * 
+	 */
 	public class X11Flags extends CommandLineArgs {
 		@Option(name = "-i")
 		String interval;
@@ -39,9 +46,6 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	int pixels;
 
 	public FlagManagerX11() {
-		// extend the base getopt flags
-		// i = interval, u = pixels, x = xgetimage, d = debug
-		this.addFlags("i:u:xd::");
 
 		this.interval = 0.1; // default interval is 100 milliseconds
 		this.pixels = -1; // -1 says to the capture classes to use default
@@ -52,8 +56,8 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	}
 
 	@Override
-	protected void parseFlagsExtended(final X11Flags argv, final int c,
-			final String optarg) throws BoblightConfigurationException {
+	protected void parseFlagsExtended(final X11Flags argv)
+			throws BoblightConfigurationException {
 
 		// starting interval with v means vblank interval
 		if (argv.interval.charAt(0) == 'v')
@@ -65,15 +69,15 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 		this.interval = Float.parseFloat(argv.interval);
 		if (this.interval <= 0.0f)
 		{
-			throw new BoblightConfigurationException("Wrong value " + optarg
-					+ " for interval");
+			throw new BoblightConfigurationException("Wrong value "
+					+ this.interval + " for interval");
 		}
 
 		this.pixels = argv.pixels;
 		if (this.pixels <= 0)
 		{
-			throw new BoblightConfigurationException("Wrong value " + optarg
-					+ " for pixels");
+			throw new BoblightConfigurationException("Wrong value "
+					+ this.pixels + " for pixels");
 		}
 
 		this.method = argv.useXRender ? this.method = BoblightX11.XGETIMAGE
@@ -139,32 +143,33 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 		// }
 	}
 
-	@Override
-	public void printHelpMessage() {
-		StringBuilder msg = new StringBuilder();
-
-		msg.append("Usage: boblight-X11 [OPTION]\n");
-		msg.append("\n");
-		msg.append("  options:\n");
-		msg.append("\n");
-		msg.append("  -p  priority, from 0 to 255, default is 128\n");
-		msg.append("  -s  address:[port], set the address and optional port to connect to\n");
-		msg.append("  -o  add libboblight option, syntax: [light:]option=value\n");
-		msg.append("  -l  list libboblight options\n");
-		msg.append("  -i  set the interval in seconds, default is 0.1\n");
-		// #ifdef HAVE_LIBGL
-		// msg.append("      prefix the value with v to wait for a number of vertical blanks instead\n");
-		// #endif
-		msg.append("  -u  set the number of pixels/rows to use\n");
-		msg.append("      default is 64 for xrender and 16 for xgetimage\n");
-		msg.append("  -x  use XGetImage instead of XRender\n");
-		msg.append("  -d  debug mode\n");
-		msg.append("  -f  fork\n");
-		msg.append("  -y  set the sync mode, default is on, valid options are \"on\" and \"off\"\n");
-		msg.append("\n");
-
-		System.out.print(msg.toString());
-	}
+	// @Override
+	// public void printHelpMessage() {
+	// StringBuilder msg = new StringBuilder();
+	//
+	// msg.append("Usage: boblight-X11 [OPTION]\n");
+	// msg.append("\n");
+	// msg.append("  options:\n");
+	// msg.append("\n");
+	// msg.append("  -p  priority, from 0 to 255, default is 128\n");
+	// msg.append("  -s  address:[port], set the address and optional port to connect to\n");
+	// msg.append("  -o  add libboblight option, syntax: [light:]option=value\n");
+	// msg.append("  -l  list libboblight options\n");
+	// msg.append("  -i  set the interval in seconds, default is 0.1\n");
+	// // #ifdef HAVE_LIBGL
+	// //
+	// msg.append("      prefix the value with v to wait for a number of vertical blanks instead\n");
+	// // #endif
+	// msg.append("  -u  set the number of pixels/rows to use\n");
+	// msg.append("      default is 64 for xrender and 16 for xgetimage\n");
+	// msg.append("  -x  use XGetImage instead of XRender\n");
+	// msg.append("  -d  debug mode\n");
+	// msg.append("  -f  fork\n");
+	// msg.append("  -y  set the sync mode, default is on, valid options are \"on\" and \"off\"\n");
+	// msg.append("\n");
+	//
+	// System.out.print(msg.toString());
+	// }
 
 	@Override
 	protected X11Flags getArgBean() {

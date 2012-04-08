@@ -24,5 +24,12 @@
 			</excludes>
 			<outputDirectory>/</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<includes>
+				<include>${project.build.finalName}.jar</include>
+			</includes>
+			<outputDirectory>/bin</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly>

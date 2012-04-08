@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>boblight4j-server</artifactId>
+		<groupId>org.boblight</groupId>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>boblight4j-server-xbmc-plugin</artifactId>
+
+	<name>Boblight4J server XBMC service</name>
+
+	<properties>
+		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' 
+			directory) -->
+		<addonName>service.multimedia.boblight4j-server</addonName>
+		<!-- This property is used to lookup the process id by program arguments -->
+		<processName>boblight4j-server</processName>
+	</properties>
+
+	<build>
+		<finalName>service.multimedia.boblight4j-server</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/python</directory>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/resources</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/resources</targetPath>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-deps</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.boblight</groupId>
+									<artifactId>boblight4j-tcp-server</artifactId>
+									<version>${project.version}</version>
+									<classifier>dist</classifier>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>assemble-addon</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<descriptor>src/main/assembly/addon.xml</descriptor>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

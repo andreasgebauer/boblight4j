@@ -4,12 +4,6 @@
 	<artifactId>boblight4j-common</artifactId>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>gnu.getopt</groupId>
-			<artifactId>java-getopt</artifactId>
-			<version>1.0.13</version>
-		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -102,4 +96,5 @@
 		<artifactId>boblight4j</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
 	</parent>
+	<name>Boblight4J Common Library</name>
 </project>

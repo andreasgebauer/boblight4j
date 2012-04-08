@@ -1,6 +1,7 @@
 package org.boblight4j.client.v4l;
 
 import org.boblight4j.client.AbstractFlagManager;
+import org.boblight4j.client.CommandLineArgs;
 import org.boblight4j.client.v4l.FlagManagerV4l.V4lArgs;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -9,27 +10,34 @@ import org.kohsuke.args4j.Option;
 
 class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 
-	public class V4lArgs extends AbstractFlagManager.CommandLineArgs {
+	/**
+	 * -c &lt;device> = device, w == widthxheight, v = video standard, i =
+	 * input, d = debug mode, e = codec
+	 * 
+	 * @author agebauer
+	 * 
+	 */
+	public class V4lArgs extends CommandLineArgs {
 
-		@Option(name = "-c")
-		String device;
+		@Option(name = "-c", usage = "set the device to use, default is /dev/video0")
+		String device = "/dev/video0";
 
-		@Option(name = "-w")
+		@Option(name = "-w", usage = "widthxheight of the captured image, example: -w 400x300")
 		String sscanf;
 
-		@Option(name = "-v")
+		@Option(name = "-v", usage = "video standard")
 		String standard;
 
-		@Option(name = "-i")
-		int channel;
+		@Option(name = "-i", usage = "video input number")
+		int channel = -1;
 
-		@Option(name = "-d")
+		@Option(name = "-d", metaVar = "debug", usage = "debug mode")
 		boolean debug;
 
-		@Option(name = "-n")
+		@Option(name = "-n", usage = "only turn on boblight client when there's a video signal")
 		boolean checkSignal;
 
-		@Option(name = "-e")
+		@Option(name = "-e", usage = "use custom codec, default is video4linux2 or video4linux")
 		public String customCodec;
 	}
 
@@ -44,12 +52,6 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 	private String strdebugdpy;
 
 	FlagManagerV4l() {
-		// c = device, w == widthxheight, v = video standard, i = input, d =
-		// debug mode, e = codec
-		this.addFlags("c:w:v:i:d::ne:");
-
-		// default device
-		this.device = "/dev/video0";
 
 		// default size
 		this.width = 64;
@@ -58,15 +60,6 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 		// sync mode enabled by default
 		this.setSync(true);
 
-		// channel of -1 means ffmpeg doesn't change it
-		this.channel = -1;
-
-		// empty standard means ffmpeg doesn't change it
-		this.standard = null;
-
-		this.checksignal = false;
-
-		this.debug = false;
 	}
 
 	public int getChannel() {
@@ -79,8 +72,8 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 	}
 
 	@Override
-	protected void parseFlagsExtended(final V4lArgs argv, final int c,
-			final String optarg) throws BoblightConfigurationException {
+	protected void parseFlagsExtended(final V4lArgs argv)
+			throws BoblightConfigurationException {
 
 		this.device = argv.device;
 
@@ -98,7 +91,7 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 
 					if (this.width < 1 || this.height < 1)
 					{
-						throw new RuntimeException("Wrong value " + optarg
+						throw new RuntimeException("Wrong value " + argv.sscanf
 								+ " for widthxheight");
 					}
 				}
@@ -118,31 +111,6 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 		this.checksignal = argv.checkSignal;
 
 		this.customcodec = argv.customCodec;
-	}
-
-	@Override
-	public void printHelpMessage() {
-		final StringBuilder msg = new StringBuilder();
-		msg.append("Usage: boblight-v4l [OPTION]\n");
-		msg.append("\n");
-		msg.append("  options:\n");
-		msg.append("\n");
-		msg.append("  -p  priority, from 0 to 255, default is 128\n");
-		msg.append("  -s  address:[port], set the address and optional port to connect to\n");
-		msg.append("  -o  add libboblight option, syntax: [light:]option=value\n");
-		msg.append("  -l  list libboblight options\n");
-		msg.append("  -f  fork\n");
-		msg.append("  -c  set the device to use, default is /dev/video0\n");
-		msg.append("  -w  widthxheight of the captured image, example: -w 400x300\n");
-		msg.append("  -v  video standard\n");
-		msg.append("  -i  video input number\n");
-		msg.append("  -n  only turn on boblight client when there's a video signal\n");
-		msg.append("  -e  use custom codec, default is video4linux2 or video4linux\n");
-		msg.append("  -d  debug mode\n");
-		msg.append("  -y  set the sync mode, default is on, valid options are \"on\" and \"off\"\n");
-		msg.append("\n");
-
-		System.out.println(msg.toString());
 	}
 
 }

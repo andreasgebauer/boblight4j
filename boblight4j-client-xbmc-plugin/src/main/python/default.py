@@ -1,31 +1,34 @@
 '''
-    Boblight for XBMC
-    Copyright (C) 2011 Team XBMC
+	Boblight for XBMC
+	Copyright (C) 2011 Team XBMC
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import xbmc
 import xbmcaddon
 import xbmcgui
 import time, datetime
-import os
+import os, subprocess
 from array import array
 
-__settings__ = xbmcaddon.Addon(id='script.xbmc.boblight')
+__settings__ = xbmcaddon.Addon(id='${project.build.finalName}')
 __cwd__ = __settings__.getAddonInfo('path')
 __icon__ = os.path.join(__cwd__, "icon.png")
 __scriptname__ = "XBMC Boblight4J"
+__java__ = "/storage/programs/jre/bin/java"
+__jar__ =  os.path.join(__cwd__, "bin/${project.build.finalName}.jar")
+__stop__       = xbmc.translatePath( os.path.join( __cwd__, 'bin', "boblight4j-client.stop") )
 
 baseDir = __cwd__
 resDir = xbmc.translatePath(os.path.join(baseDir, 'resources'))
@@ -36,107 +39,66 @@ cacheDir = os.path.join(xbmc.translatePath('special://masterprofile/addon_data/'
 BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib'))
 sys.path.append (BASE_RESOURCE_PATH)
 
+from settings import *
+
 LOG_FILE = cacheDir + '/client.log'
 
-#global g_failedConnectionNotified
+capture_width = 20
+capture_height = 20
 
-capture_width = 15
-capture_height = 15
-
+client = None
 
 def writeToLogFile(message):
-    if os.path.isfile(LOG_FILE) == False:
-      logFile = open(LOG_FILE, 'w')
-    else:    
-      logFile = open(LOG_FILE, 'r+')
-      logFile.seek(0, 2)
-    logFile.write(str(datetime.datetime.now()) + ": " + message + '\n')
-    logFile.close()
+	if os.path.isfile(LOG_FILE) == False:
+		logFile = open(LOG_FILE, 'w')
+	else:
+		logFile = open(LOG_FILE, 'r+')
+		logFile.seek(0, 2)
+	logFile.write(str(datetime.datetime.now()) + ": " + message + '\n')
+	logFile.close()
 
 def process_boblight():
-  writeToLogFile("Starting Processing. Failed: " + str(xbmc.CAPTURE_STATE_FAILED));
-  capture = xbmc.RenderCapture()
-  capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
-  while not xbmc.abortRequested:
-    
-#    if settings_checkForNewSettings() or not bob_ping():
-#      reconnectBoblight()
-#      settings_setup()                    #after reconnect reload settings
-#    if settings_getBobDisable():
-#      bob_set_priority(255)
-#      time.sleep(1)
-#      continue
-    result = capture.waitForCaptureStateChangeEvent(1000)
-    #writeToLogFile("Capturing loop: " + str(result));
-    if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
-#      if not bob_set_priority(128):
-#        return
-      #writeToLogFile("Capture state DONE");
-      width = capture.getWidth();
-      height = capture.getHeight();
-      pixels = capture.getImage();
-#      bob_setscanrange(width, height)
-      rgb = array('l',[0,0,0])
-      
-      message = ''
-      for y in range(height):
-        row = width * y * 4
-        for x in range(width):
-          rgb[0] = pixels[row + x * 4 + 2]
-          rgb[1] = pixels[row + x * 4 + 1]
-          rgb[2] = pixels[row + x * 4]
-          message += 'RGB (' + str(x) + ',' + str(y) + '):' + str(rgb[0]) + "," + str(rgb[1]) + "," + str(rgb[2])
+	writeToLogFile("Starting Processing. Failed: " + str(xbmc.CAPTURE_STATE_FAILED))
+	capture = xbmc.RenderCapture()
+	capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
 
-      writeToLogFile(message);
-
-#          bob_addpixelxy(x, y, byref(rgb))
-
-#      if not bob_sendrgb():
-#        print "boblight: error sending values: " + bob_geterror()
-#        return
-    else:
-        #writeToLogFile("Capture state: " + str(capture.getCaptureState()));
-        continue
-#      if not settings_isStaticBobActive():  #don't kill the lights in accident here
-#        if not bob_set_priority(255):
-#          return
-
-def initGlobals():
-  global g_failedConnectionNotified
-
-  g_failedConnectionNotified = False   
-  settings_initGlobals()
-
-def printLights():
-  nrLights = bob_getnrlights()
-  print "boblight: Found " + str(nrLights) + " lights:"
-
-  for i in range(0, nrLights):
-    lightname = bob_getlightname(i)
-    print "boblight: " + lightname
-
-#do a initial bling bling with the lights
-def showRgbBobInit():
-  settings_confForBobInit()
-  bob_set_priority(128)   #allow lights to be turned on
-  rgb = (c_int * 3)(255, 0, 0)
-  bob_set_static_color(byref(rgb))
-  time.sleep(0.3)
-  rgb = (c_int * 3)(0, 255, 0)
-  bob_set_static_color(byref(rgb))
-  time.sleep(0.3)
-  rgb = (c_int * 3)(0, 0, 255)
-  bob_set_static_color(byref(rgb))
-  time.sleep(0.3)
-  rgb = (c_int * 3)(0, 0, 0)
-  bob_set_static_color(byref(rgb))
-  time.sleep(3)
-  bob_set_priority(255) #turn the lights off 
+	while not xbmc.abortRequested:
+		if settings_checkForNewSettings():
+			settings_setup()
+		if settings_getBobDisable():
+			bob_set_priority(255)
+	  		time.sleep(1)
+			continue
+		result = capture.waitForCaptureStateChangeEvent(1000)
+		if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
+			width = capture.getWidth()
+			height = capture.getHeight()
+			pixels = capture.getImage()
+			bob_setscanrange(width, height)
+			rgb = array('l', [0, 0, 0])
+			message = ''
+			for y in range(height):
+				row = width * y * 4
+				for x in range(width):
+					rgb[0] = pixels[row + x * 4 + 2]
+					rgb[1] = pixels[row + x * 4 + 1]
+					rgb[2] = pixels[row + x * 4]
+					message = str(x) + ',' + str(y) + ':' + str(rgb[0]) + "," + str(rgb[1]) + "," + str(rgb[2]) + "\n"
+					client.stdin.write(message)
+			client.stdin.write("send\n")
+	
+	# set to black
+	for y in range(capture_height):
+		for x in range(capture_width):
+			client.stdin.write(str(x) + ',' + str(y) + ":0,0,0\n")
+	client.stdin.write("send\n")
+	client.stdin.write("send\n")
+	client.stdin.write("send\n")
 
 def reconnectBoblight():
   global g_failedConnectionNotified
   
-  hostip = settings_getHostIp()
+  hostip   = settings_getHostIp()
   hostport = settings_getHostPort()
   
   if hostip == None:
@@ -148,7 +110,7 @@ def reconnectBoblight():
     #check for new settingsk
     if settings_checkForNewSettings():    #networksettings changed?
       g_failedConnectionNotified = False  #reset notification flag
-    hostip = settings_getHostIp()
+    hostip   = settings_getHostIp()
     hostport = settings_getHostPort()    
     ret = bob_connect(hostip, hostport)
 
@@ -161,53 +123,42 @@ def reconnectBoblight():
       if not g_failedConnectionNotified:
         g_failedConnectionNotified = True
         text = __settings__.getLocalizedString(500)
-        xbmc.executebuiltin("XBMC.Notification(%s,%s,%s,%s)" % (__scriptname__, text, 10, __icon__))
+        xbmc.executebuiltin("XBMC.Notification(%s,%s,%s,%s)" % (__scriptname__,text,10,__icon__))
     else:
       text = __settings__.getLocalizedString(501)
-      xbmc.executebuiltin("XBMC.Notification(%s,%s,%s,%s)" % (__scriptname__, text, 10, __icon__))
+      xbmc.executebuiltin("XBMC.Notification(%s,%s,%s,%s)" % (__scriptname__,text,10,__icon__))
       print "boblight: connected to boblightd"
-      settings_initGlobals()        #invalidate settings after reconnect
+      settings_initGlobals()		#invalidate settings after reconnect
       break
   return True
 
-#MAIN - entry point
-#initGlobals()
-#loaded = bob_loadLibBoblight()
-#
-#if loaded == 1:            #libboblight not found
-##ask user if we should fetch the lib for osx and windows
-#  if xbmc.getCondVisibility('system.platform.osx') or xbmc.getCondVisibility('system.platform.windows'):
-#    t1 = __settings__.getLocalizedString(504)
-#    t2 = __settings__.getLocalizedString(509)
-#    if xbmcgui.Dialog().yesno(__scriptname__,t1,t2):
-#      tools_downloadLibBoblight()
-#      loaded = bob_loadLibBoblight()
-#  
-#  if xbmc.getCondVisibility('system.platform.linux'):
-#    t1 = __settings__.getLocalizedString(504)
-#    t2 = __settings__.getLocalizedString(505)
-#    t3 = __settings__.getLocalizedString(506)
-#    xbmcgui.Dialog().ok(__scriptname__,t1,t2,t3)
-#elif loaded == 2:        #no ctypes available
-#  t1 = __settings__.getLocalizedString(507)
-#  t2 = __settings__.getLocalizedString(508)
-#  xbmcgui.Dialog().ok(__scriptname__,t1,t2) 
+def initGlobals():
+  global g_failedConnectionNotified
 
-xbmc.log("XBMC XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Boblight")
+  g_failedConnectionNotified = False   
+  settings_initGlobals()
 
-loaded = 0
-if loaded == 0:
-  #main loop
-  while not xbmc.abortRequested:
+def printLights():
+	nrLights = bob_getnrlights()
+	print "boblight: Found " + str(nrLights) + " lights:"
 
-#    if reconnectBoblight():
-#      printLights()         #print found lights to debuglog
-#      print "boblight: setting up with user settings"
-#      showRgbBobInit()      #init light bling bling
-#      settings_setup()
-    process_boblight()    #boblight loop
+	for i in range(0, nrLights):
+		lightname = bob_getlightname(i)
+    	print "boblight: " + lightname
 
-    time.sleep(1)
 
-#cleanup
-#bob_destroy()
+
+initGlobals()
+loaded = bob_loadLibBoblight()
+
+xbmc.log("XBMC XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Boblight started")
+
+#main loop
+while not xbmc.abortRequested:
+	if reconnectBoblight():
+		printLights()		 #print found lights to debuglog
+		xbmc.log("Starting Loop")
+		process_boblight()	#boblight loop
+
+subprocess.Popen([__stop__], shell=True, close_fds=True)
+xbmc.log("XBMC XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Boblight stopped")

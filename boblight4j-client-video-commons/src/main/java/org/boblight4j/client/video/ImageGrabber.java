@@ -1,6 +1,6 @@
 package org.boblight4j.client.video;
 
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.AbstractFlagManager;
 import org.boblight4j.exception.BoblightException;
 
@@ -17,7 +17,7 @@ public interface ImageGrabber {
 	 * @param client
 	 * @throws BoblightException
 	 */
-	void setup(AbstractFlagManager flagManager, Client client)
+	void setup(AbstractFlagManager flagManager, ClientImpl client)
 			throws BoblightException;
 
 	void run() throws BoblightException;

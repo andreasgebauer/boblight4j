@@ -23,7 +23,7 @@ public class BoblightConstant extends AbstractBoblightClient {
 
 		while (!isStop())
 		{
-			Client boblight = new Client();
+			ClientImpl boblight = new ClientImpl();
 
 			if (!trySetup(boblight))
 			{

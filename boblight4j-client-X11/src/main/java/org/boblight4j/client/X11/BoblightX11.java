@@ -2,7 +2,7 @@ package org.boblight4j.client.X11;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -65,7 +65,7 @@ public class BoblightX11 extends AbstractBoblightClient {
 
 		while (!this.stop)
 		{
-			final Client boblight = new Client();
+			final ClientImpl boblight = new ClientImpl();
 			try
 			{
 				// init boblight

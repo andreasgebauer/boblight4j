@@ -4,9 +4,12 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.boblight4j.client.ClientImpl;
+import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +22,6 @@ public class InputStreamRGBReaderTest {
 
 		@Override
 		public void setScanRange(String substring) {
-
 		}
 
 		@Override
@@ -30,6 +32,16 @@ public class InputStreamRGBReaderTest {
 		@Override
 		public void stop() {
 			this.stop = true;
+		}
+
+		@Override
+		public void sendRgb(boolean b, Object object) throws IOException,
+				BoblightException {
+		}
+
+		@Override
+		public ClientImpl getClient() {
+			return null;
 		}
 	}
 
@@ -44,7 +56,8 @@ public class InputStreamRGBReaderTest {
 	@Test
 	public void test() throws InterruptedException {
 		final InputStreamRGBReader inputStreamRGBReader = new InputStreamRGBReader();
-		final byte[] bytes = "10,10:255,255,255\n\n\n\r\n".getBytes();
+		final byte[] bytes = "scan20,20\n10,10:255,255,255\n\n\n\r\n"
+				.getBytes();
 		final ByteArrayInputStream is = new ByteArrayInputStream(bytes);
 		final RGBHandlerImplementation handler = new RGBHandlerImplementation();
 		inputStreamRGBReader.setup(is, handler);

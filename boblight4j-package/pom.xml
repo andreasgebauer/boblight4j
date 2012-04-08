@@ -12,10 +12,12 @@
 	<artifactId>boblight4j-package</artifactId>
 	<packaging>pom</packaging>
 
+	<name>Boblight4J Package Module</name>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.boblight</groupId>
-			<artifactId>boblight4j-server</artifactId>
+			<artifactId>boblight4j-tcp-server</artifactId>
 			<version>${project.version}</version>
 			<classifier>dist</classifier>
 			<type>zip</type>

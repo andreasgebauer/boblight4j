@@ -16,8 +16,8 @@ import magick.MagickException;
 import magick.MagickImage;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.client.AbstractFlagManager;
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
 
@@ -61,7 +61,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	private VideoDevice vd;
 
-	public V4LImageGrabberImpl(final Client client, final boolean sync,
+	public V4LImageGrabberImpl(final ClientImpl client, final boolean sync,
 			final int width, final int height) {
 		super(client, sync, width, height);
 	}
@@ -132,8 +132,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 	}
 
 	@Override
-	public void setup(final AbstractFlagManager flagManager)
-			throws BoblightException {
+	public void setup(final FlagManager flagManager) throws BoblightException {
 
 		this.flagManager = (FlagManagerV4l) flagManager;
 

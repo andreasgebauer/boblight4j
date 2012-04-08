@@ -1,6 +1,6 @@
 package org.boblight4j.client.v4l;
 
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,7 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Client.class, BoblightV4l.class })
+@PrepareForTest({ ClientImpl.class, BoblightV4l.class })
 public class BoblightV4lTest {
 
 	@Before
@@ -26,8 +26,8 @@ public class BoblightV4lTest {
 
 		// Boblight mock = Mockito.mock(Boblight.class);
 		// PowerMockito.whenNew(Boblight.class).withNoArguments().thenReturn(mock);
-		final Client mockClient = Mockito.mock(Client.class);
-		PowerMockito.whenNew(Client.class).withNoArguments()
+		final ClientImpl mockClient = Mockito.mock(ClientImpl.class);
+		PowerMockito.whenNew(ClientImpl.class).withNoArguments()
 				.thenReturn(mockClient);
 
 		PowerMockito

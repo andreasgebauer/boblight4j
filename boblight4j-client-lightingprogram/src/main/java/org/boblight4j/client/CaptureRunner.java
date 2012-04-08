@@ -16,7 +16,7 @@ final class CaptureRunner implements Runnable {
 
 	private static final Logger LOG = Logger.getLogger(CaptureRunner.class);
 
-	private final Client boblight;
+	private final ClientImpl boblight;
 	private byte buffer[];
 	private int bufferSize;
 
@@ -39,7 +39,7 @@ final class CaptureRunner implements Runnable {
 	private final WindowFunction windowFunction;
 
 	CaptureRunner(final TargetDataLine line, final AudioFormat format,
-			final Client boblight) {
+			final ClientImpl boblight) {
 		this.line = line;
 		this.format = format;
 		this.boblight = boblight;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.xbmc.boblight4j" name="XBMC Boblight4J" version="1.0.1" provider-name="agebauer">
+<addon id="${project.build.finalName}" name="XBMC Boblight4J" version="1.0.1" provider-name="agebauer">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
@@ -9,4 +9,4 @@
     <description>XBMC output to boblight4j http://code.google.com/p/boblight4j/</description>
     <platform>all</platform>
   </extension>
-</addon
+</addon>

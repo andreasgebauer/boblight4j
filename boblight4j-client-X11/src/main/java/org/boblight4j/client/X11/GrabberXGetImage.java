@@ -3,7 +3,7 @@ package org.boblight4j.client.X11;
 import gnu.x11.image.Image.Format;
 import gnu.x11.image.ZPixmap;
 
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 
 /**
  * This class is the fast X11 grabber version.
@@ -17,7 +17,7 @@ public class GrabberXGetImage extends AbstractX11Grabber {
 
 	private static final int ALL_PLANES = 0x00ffffff;
 
-	public GrabberXGetImage(final Client boblight, final boolean sync,
+	public GrabberXGetImage(final ClientImpl boblight, final boolean sync,
 			int size, double interval) {
 		super(boblight, sync, size, interval);
 	}
@@ -38,6 +38,5 @@ public class GrabberXGetImage extends AbstractX11Grabber {
 
 	@Override
 	public void cleanup() {
-
 	}
 }

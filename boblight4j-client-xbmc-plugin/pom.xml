@@ -7,20 +7,27 @@
 		<version>0.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	
+
 	<artifactId>boblight4j-client-plugin</artifactId>
 
 	<properties>
 		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' 
 			directory) -->
-		<addonName>script.xbmc.boblight4j-client</addonName>
+		<addonName>service.multimedia.boblight4j-client</addonName>
 		<!-- This property is used to lookup the process id by program arguments -->
-		<processName>boblight4j-client-X11</processName>
+		<processName>boblight4j-client</processName>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.boblight</groupId>
+			<artifactId>boblight4j-client-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	
 	<build>
-		<finalName>script.xbmc.boblight4j-client</finalName>
-
+		<finalName>service.multimedia.boblight4j-client</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/python</directory>
@@ -36,6 +43,37 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<finalName>service.multimedia.boblight4j-client</finalName>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>de.gebauer.boblight4j.xbmc.InputStreamGrabber</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>gnu.getopt:java-getopt</artifact>
+									<excludes>
+										<exclude>META-INF/TESTKEY.SF</exclude>
+										<exclude>META-INF/TESTKEY.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>de.gebauer.maven.plugins</groupId>
 				<artifactId>maven-xbmc-addon-plugin</artifactId>
 				<version>0.1-SNAPSHOT</version>
@@ -47,7 +85,7 @@
 				<version>2.2.1</version>
 				<executions>
 					<execution>
-						<id>assemble</id>
+						<id>assemble-addon</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -61,12 +99,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.boblight</groupId>
-			<artifactId>boblight4j-client-commons</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+
+
 </project>

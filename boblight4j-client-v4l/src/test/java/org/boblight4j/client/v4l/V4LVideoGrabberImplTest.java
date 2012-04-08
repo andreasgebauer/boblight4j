@@ -2,7 +2,7 @@ package org.boblight4j.client.v4l;
 
 import static org.mockito.Mockito.mock;
 
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,11 +37,11 @@ public class V4LVideoGrabberImplTest {
 
 	private static V4LImageGrabberImpl testable;
 
-	private static Client client;
+	private static ClientImpl client;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		client = mock(Client.class);
+		client = mock(ClientImpl.class);
 
 		testable = new V4LImageGrabberImpl(client, false, 0, 0);
 	}

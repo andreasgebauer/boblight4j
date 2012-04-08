@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. /etc/profile
+
+LOCKDIR="/var/lock/"
+LOCKFILE="boblight4j-client-XBMC.disabled"
+
+# grep the process id of a potentially running boblight program 
+PID=`ps aux | grep boblight4j-client.jar | grep java | grep -v grep | awk '{print $1}'`
+
+if [ "$PID" ];then
+  mkdir -p "$LOCKDIR"
+  touch "$LOCKDIR/$LOCKFILE"
+  kill $PID
+fi

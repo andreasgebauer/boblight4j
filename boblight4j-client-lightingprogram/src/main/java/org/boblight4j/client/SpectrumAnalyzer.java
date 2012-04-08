@@ -22,7 +22,7 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 		super(args);
 	}
 
-	private void captureAudio(final Client boblight) {
+	private void captureAudio(final ClientImpl boblight) {
 		try
 		{
 			final AudioFormat format = this.getFormat();
@@ -56,7 +56,7 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 	@Override
 	protected int run() {
 
-		final Client boblight = new Client();
+		final ClientImpl boblight = new ClientImpl();
 		if (!this.trySetup(boblight))
 		{
 			return 1;

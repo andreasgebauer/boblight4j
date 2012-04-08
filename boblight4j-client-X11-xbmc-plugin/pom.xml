@@ -1,18 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>boblight4j</artifactId>
 		<groupId>org.boblight</groupId>
 		<version>0.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+
 	<artifactId>boblight4j-client-X11-xbmc-plugin</artifactId>
 
 	<name></name>
 
 	<properties>
-		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' directory)-->
+		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' 
+			directory) -->
 		<addonName>service.multimedia.boblight4j-client-X11</addonName>
 		<!-- This property is used to lookup the process id by program arguments -->
 		<processName>boblight4j-client-X11</processName>
@@ -40,6 +43,27 @@
 				<artifactId>maven-xbmc-addon-plugin</artifactId>
 				<version>0.1-SNAPSHOT</version>
 				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-deps</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.boblight</groupId>
+									<artifactId>boblight4j-client-X11</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -2,7 +2,7 @@ package org.boblight4j.client.v4l;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.client.AbstractBoblightClient;
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
@@ -42,7 +42,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 		{
 			// init boblight
 			// void* boblight = boblight_init();
-			final Client boblight = new Client();
+			final ClientImpl boblight = new ClientImpl();
 
 			if (!this.trySetup(boblight))
 			{

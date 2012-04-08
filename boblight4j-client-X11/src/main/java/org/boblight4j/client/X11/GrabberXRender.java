@@ -1,6 +1,6 @@
 package org.boblight4j.client.X11;
 
-import org.boblight4j.client.Client;
+import org.boblight4j.client.ClientImpl;
 
 /**
  * clients/boblight-X11/grabber-xrender.cpp
@@ -12,7 +12,7 @@ import org.boblight4j.client.Client;
  */
 public class GrabberXRender extends AbstractX11Grabber {
 
-	public GrabberXRender(final Client boblight, final boolean sync,
+	public GrabberXRender(final ClientImpl boblight, final boolean sync,
 			final int size, double interval) {
 		super(boblight, sync, size, interval);
 	}

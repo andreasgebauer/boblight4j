@@ -1,0 +1,36 @@
+#!/bin/sh
+
+. /etc/profile
+
+LOCKDIR="/var/lock/"
+LOCKFILE="boblight4j-client-XBMC.disabled"
+
+ADDON_DIR="$HOME/.xbmc/addons/service.multimedia.boblight4j-client"
+ADDON_HOME="$HOME/.xbmc/userdata/addon_data/service.multimedia.boblight4j-client"
+ADDON_BIN="boblight4j-client"
+LOG_FILE="$ADDON_HOME/service.log"
+ADDON_SETTINGS="$ADDON_HOME/settings.xml"
+
+if [ ! -f "$ADDON_SETTINGS" ]; then
+  cp $ADDON_DIR/settings-default.xml $ADDON_SETTINGS
+fi
+
+mkdir -p $ADDON_HOME
+
+# grep the process id of a potentially running boblight program 
+PID=`ps aux | grep boblight4j-client.jar | grep java | grep -v grep | awk '{print $1}'`
+
+if [ ! "$PID" ]; then
+  if [ -f "$LOCKDIR/$LOCKFILE" ] ; then
+    rm -rf "$LOCKDIR/$LOCKFILE"
+  fi
+
+  while [ true ] ; do
+    if [ -f "$LOCKDIR/$LOCKFILE" ] ; then
+      break
+    fi
+    export LOG_FILE
+    $ADDON_BIN &> $LOG_FILE
+    sleep 1
+  done
+fi

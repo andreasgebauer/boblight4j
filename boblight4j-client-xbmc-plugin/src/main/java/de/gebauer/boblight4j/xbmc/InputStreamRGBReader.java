@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
+import org.boblight4j.exception.BoblightException;
+
 public class InputStreamRGBReader implements Runnable {
 
 	private boolean stop;
@@ -29,18 +31,28 @@ public class InputStreamRGBReader implements Runnable {
 				readLine = lineNumberReader.readLine();
 				if (readLine == null)
 				{
-					System.out.println("Stopping because of end of stream");
+					System.err.println("Stopping because of end of stream");
 					this.rgbHandler.stop();
 
 					break;
 				}
 
-				if (readLine.startsWith("---"))
+				if (readLine.startsWith("getNrLights"))
 				{
-					rgbHandler.setScanRange(readLine.substring(3));
+					final String nrLights = String.valueOf(rgbHandler
+							.getClient().getNrLights());
+					System.out.println(nrLights);
+					System.out.flush();
+				}
+				else if (readLine.startsWith("scan"))
+				{
+					rgbHandler.setScanRange(readLine.substring(4));
+				}
+				else if (readLine.startsWith("send"))
+				{
+					rgbHandler.sendRgb(false, null);
 				}
 
-				System.out.println(">READ:" + readLine);
 				final RGBValue rgbValue = RGBValue.parse(readLine);
 				if (rgbValue != null)
 				{
@@ -48,6 +60,10 @@ public class InputStreamRGBReader implements Runnable {
 				}
 			}
 			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (BoblightException e)
 			{
 				e.printStackTrace();
 			}

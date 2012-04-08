@@ -1,0 +1,6 @@
+#!/bin/sh
+
+JAVA=/storage/programs/jre/bin/java
+ADDON_DIR="$HOME/.xbmc/addons/service.multimedia.boblight4j-client"
+
+$JAVA -jar $ADDON_DIR/bin/service.multimedia.boblight4j-client.jar

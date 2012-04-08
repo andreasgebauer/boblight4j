@@ -1,5 +1,10 @@
 package de.gebauer.boblight4j.xbmc;
 
+import java.io.IOException;
+
+import org.boblight4j.client.ClientImpl;
+import org.boblight4j.exception.BoblightException;
+
 public interface RGBHandler {
 
 	void setScanRange(String substring);
@@ -7,5 +12,10 @@ public interface RGBHandler {
 	void handle(RGBValue parse);
 
 	void stop();
+
+	void sendRgb(boolean b, Object object) throws IOException,
+			BoblightException;
+
+	ClientImpl getClient();
 
 }
