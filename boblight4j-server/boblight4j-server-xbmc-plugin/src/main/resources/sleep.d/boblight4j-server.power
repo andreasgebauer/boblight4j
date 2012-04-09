@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. /etc/profile
+
+case "$1" in
+  hibernate|suspend)
+    if [ "${pidof boblight4j-client-X11.service}" ];then
+      progress "Shutting down boblight4j-server for suspending..."
+      ${processName}.stop
+    fi
+    ;;
+
+  thaw|resume)
+    progress "Restarting boblight4j-server for wake-up ..."
+    # start plugin via XBMC
+    xbmc-send --host=127.0.0.1 -a "XBMC.RunScript(service.multimedia.boblight4j-server)" &
+    ;;
+
+  *) exit $NA
+    ;;
+esac

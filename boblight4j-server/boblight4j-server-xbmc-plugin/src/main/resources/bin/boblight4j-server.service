@@ -5,6 +5,10 @@ ADDON_HOME="$HOME/.xbmc/userdata/addon_data/${addonName}"
 LOG_FILE="$ADDON_HOME/service.log"
 ADDON_SETTINGS="$ADDON_HOME/settings.xml"
 
+JAVA_HOME=`grep JAVA_HOME $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+
+echo "JAVA-HOME: "$JAVA_HOME
+
 if [ ! -f "$ADDON_SETTINGS" ]; then
   cp $ADDON_DIR/settings-default.xml $ADDON_SETTINGS
 fi
@@ -13,11 +17,26 @@ fi
 mkdir -p $ADDON_HOME
 
 # grep the process id of a potentially running boblight program 
-PID=`ps aux | grep ${processName} | grep -v grep | awk '{print $1}'`
+PID=`ps aux | grep '${processName}' | grep -v grep | awk '{print $1}'`
 # determine if program is running
-if [ -n "${PID+x}" ];then
+if [ -z "$PID" ];then
   echo "${processName} already running"
 else
   echo "Starting ${processName}"
-  /storage/programs/boblight4j/start-server.sh &>$LOG_FILE
+  
+  BOBLIGHT_DIR=/storage/programs/boblight4j-server-0.0.2-SNAPSHOT
+  DEBUGPORT=8000
+  JAVA=/storage/programs/jre/bin/java
+  JVM_MEM_OPTIONS="-Xms32m -Xmx64m -Xmn16m -XX:MaxPermSize=8m "
+  JVM_DEBUG_OPTIONS="-Xdebug -Xrunjdwp:transport=dt_socket,address="$DEBUGPORT",server=y,suspend=n"
+  JVM_OPTIONS="-Djava.rmi.server.hostname=zbox.local -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false "$JVM_DEBUG_OPTIONS" "$JVM_MEM_OPTIONS
+
+  if [ ! -d /dev/ttyUSB0 ];then
+	ln -s /dev/ttyACM0 /dev/ttyUSB0
+  fi
+
+  CMD="$JAVA $JVM_OPTIONS -Djava.library.path=$BOBLIGHT_DIR/lib/native -jar $BOBLIGHT_DIR/boblight4j-server-0.0.2-SNAPSHOT.jar -c $BOBLIGHT_DIR/boblight.15pc.conf"
+
+  echo "executing boblight4j server with: "$CMD
+  $CMD
 fi

@@ -18,6 +18,7 @@
 		<addonName>service.multimedia.boblight4j-server</addonName>
 		<!-- This property is used to lookup the process id by program arguments -->
 		<processName>boblight4j-server</processName>
+		<jarFile>boblight4j-tcp-server-${project.version}-SNAPSHOT.jar</jarFile>
 	</properties>
 
 	<build>
@@ -43,7 +44,7 @@
 					<execution>
 						<id>copy-deps</id>
 						<goals>
-							<goal>unpack</goal>
+							<goal>copy</goal>
 						</goals>
 						<configuration>
 							<artifactItems>
@@ -51,8 +52,7 @@
 									<groupId>org.boblight</groupId>
 									<artifactId>boblight4j-tcp-server</artifactId>
 									<version>${project.version}</version>
-									<classifier>dist</classifier>
-									<type>zip</type>
+									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

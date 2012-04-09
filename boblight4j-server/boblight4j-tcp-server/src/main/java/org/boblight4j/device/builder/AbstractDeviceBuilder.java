@@ -2,7 +2,6 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.Device;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -11,6 +10,8 @@ import org.boblight4j.server.config.ConfigLine;
 import org.boblight4j.utils.BooleanParser;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -29,7 +30,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 	public static final int DIODER = 6;
 	public static final int KARATE = 7;
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractDeviceBuilder.class);
 
 	protected final List<ConfigGroup> deviceLines;
@@ -41,6 +42,15 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		this.fileName = filename;
 	}
 
+	/**
+	 * Retrieves a line from the given lines which contains instructions for the
+	 * key given.
+	 * 
+	 * @param key
+	 * @param lines
+	 * @param line
+	 * @return
+	 */
 	protected int getLineWithKey(final String key,
 			final List<ConfigLine> lines, final Pointer<String> line) {
 		for (int i = 0; i < lines.size(); i++)
@@ -113,6 +123,16 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 
 	}
 
+	/**
+	 * Sets the debug flag to the device according to information found in the
+	 * settings.
+	 * 
+	 * @param device
+	 *            the device to set the debug flag for
+	 * @param devicenr
+	 *            the device number
+	 * @throws BoblightConfigurationException
+	 */
 	void setDeviceDebug(final Device device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
@@ -256,6 +276,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 
 	boolean setDeviceOutput(final Device device, final int devicenr)
 			throws BoblightConfigurationException {
+
 		final Pointer<String> line = new Pointer<String>();
 		try
 		{
