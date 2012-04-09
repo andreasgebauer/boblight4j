@@ -11,7 +11,7 @@
 
 	<artifactId>boblight4j-client-X11-xbmc-plugin</artifactId>
 
-	<name></name>
+	<name>Boblight4J XBMC Client for X11</name>
 
 	<properties>
 		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' 
@@ -39,12 +39,6 @@
 
 		<plugins>
 			<plugin>
-				<groupId>de.gebauer.maven.plugins</groupId>
-				<artifactId>maven-xbmc-addon-plugin</artifactId>
-				<version>0.1-SNAPSHOT</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -59,6 +53,8 @@
 									<groupId>org.boblight</groupId>
 									<artifactId>boblight4j-client-X11</artifactId>
 									<version>${project.version}</version>
+									<classifier>dist</classifier>
+									<type>zip</type>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

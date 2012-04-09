@@ -8,7 +8,9 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<artifactId>boblight4j-client-plugin</artifactId>
+	<artifactId>boblight4j-client-xbmc-plugin</artifactId>
+
+	<name>Boblight4J XBMC Client (native grabber)</name>
 
 	<properties>
 		<!-- This property is used as add-on directory name (beneath xbmc's 'addons' 
@@ -25,7 +27,7 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>service.multimedia.boblight4j-client</finalName>
 		<resources>
@@ -74,12 +76,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>de.gebauer.maven.plugins</groupId>
-				<artifactId>maven-xbmc-addon-plugin</artifactId>
-				<version>0.1-SNAPSHOT</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
@@ -99,6 +95,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
