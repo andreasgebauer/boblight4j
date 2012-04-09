@@ -21,6 +21,14 @@
 		<jarFile>boblight4j-tcp-server-${project.version}-SNAPSHOT.jar</jarFile>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.boblight</groupId>
+			<artifactId>boblight4j-tcp-server</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	
 	<build>
 		<finalName>service.multimedia.boblight4j-server</finalName>
 		<resources>
@@ -79,4 +87,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.boblight</groupId>
+			<artifactId>boblight4j-tcp-server</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
