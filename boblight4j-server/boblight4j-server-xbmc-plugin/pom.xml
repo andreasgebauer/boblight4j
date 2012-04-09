@@ -87,11 +87,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.boblight</groupId>
-			<artifactId>boblight4j-tcp-server</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 </project>
