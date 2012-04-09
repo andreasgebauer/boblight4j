@@ -1,5 +1,7 @@
 package org.boblight4j.utils;
 
+import org.boblight4j.exception.BoblightRuntimeException;
+
 public final class MathUtils {
 
 	private MathUtils() {
@@ -77,7 +79,7 @@ public final class MathUtils {
 					((Long) low).longValue(), ((Long) high).longValue()));
 		}
 
-		throw new RuntimeException("Type " + value.getClass()
+		throw new BoblightRuntimeException("Type " + value.getClass()
 				+ " currently not supported");
 	}
 }

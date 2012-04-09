@@ -4,6 +4,9 @@ import org.boblight4j.exception.BoblightParseException;
 
 public class Misc {
 
+	private Misc() {
+	}
+
 	/**
 	 * get the first word (separated by whitespace) from string data and place
 	 * that in word then remove that word from string data

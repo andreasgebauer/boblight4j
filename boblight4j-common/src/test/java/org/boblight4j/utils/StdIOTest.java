@@ -9,8 +9,6 @@ public class StdIOTest {
 
 	@Test
 	public void testSscanf() throws BoblightParseException {
-		final Integer width = null, height = null;
-
 		Object[] sscanf = StdIO.sscanf("70x75", "%ix%i");
 
 		assertEquals(70, sscanf[0]);
