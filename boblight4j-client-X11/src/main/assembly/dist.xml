@@ -1,0 +1,29 @@
+<assembly>
+	<id>dist</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<directory>src/main/scripts</directory>
+			<includes>
+				<include>**/**</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target</directory>
+			<includes>
+				<include>${project.build.finalName}.jar</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target/lib</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>/clients/lib</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>
