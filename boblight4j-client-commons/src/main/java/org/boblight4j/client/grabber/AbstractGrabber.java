@@ -32,15 +32,12 @@ public abstract class AbstractGrabber implements Grabber {
 	private long measurements;
 	private int nrMeasurements;
 
-	public AbstractGrabber(ClientImpl client, boolean sync, int width, int height) {
+	public AbstractGrabber(ClientImpl client, boolean sync, int width,
+			int height) {
 		this.client = client;
 		this.sync = sync;
 		this.width = width;
 		this.height = height;
-	}
-
-	public BufferedImage getDebugImg() {
-		return this.debugImg;
 	}
 
 	protected void setDebugPixel(final int x, final int y, final int[] rgb) {
@@ -76,7 +73,7 @@ public abstract class AbstractGrabber implements Grabber {
 
 	public void drawDebugImage() {
 		final Canvas component = (Canvas) this.frame.getComponents()[0];
-		component.getGraphics().drawImage(this.getDebugImg(), 0, 0,
+		component.getGraphics().drawImage(this.debugImg, 0, 0,
 				this.debugWindowWidth, this.debugWindowHeight, null);
 	}
 
