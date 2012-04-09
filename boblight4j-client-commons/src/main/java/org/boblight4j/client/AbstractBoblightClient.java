@@ -1,8 +1,17 @@
 package org.boblight4j.client;
 
 import org.apache.log4j.Logger;
+import org.boblight4j.Constants;
+import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
+import org.boblight4j.exception.BoblightRuntimeException;
 
+/**
+ * Base class for runnable clients.
+ * 
+ * @author agebauer
+ * 
+ */
 public abstract class AbstractBoblightClient {
 
 	private static final Logger LOG = Logger
@@ -25,9 +34,10 @@ public abstract class AbstractBoblightClient {
 	}
 
 	/**
-	 * Registers a shutdown hook and calls {@link #run()}.
+	 * Registers a shutdown hook and calls {@link #run()}. The shutdown hook
+	 * will cause the client thread to stop.
 	 * 
-	 * @return
+	 * @return the exit code
 	 */
 	public final int doRun() {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -55,7 +65,7 @@ public abstract class AbstractBoblightClient {
 	/**
 	 * Returns if the client should stop.
 	 * 
-	 * @return
+	 * @return whether the client should stop
 	 */
 	public final boolean isStop() {
 		return this.stop;
@@ -75,13 +85,15 @@ public abstract class AbstractBoblightClient {
 		{
 			flagmanager.parseFlags(args);
 		}
-		catch (final BoblightException error)
+		catch (final BoblightConfigurationException error)
 		{
-			LOG.fatal("Error occured", error);
+			LOG.fatal(
+					"Error occured configuring client with passed program arguments.",
+					error);
 			flagmanager.printHelpMessage();
 			System.exit(1);
 		}
-		catch (final Exception error)
+		catch (final BoblightRuntimeException error)
 		{
 			flagmanager.printHelpMessage();
 			System.exit(1);
@@ -126,7 +138,7 @@ public abstract class AbstractBoblightClient {
 			// try to connect, if we can't then bitch to stderr and destroy
 			// boblight
 			client.connect(this.flagManager.getAddress(),
-					this.flagManager.getPort(), 5000);
+					this.flagManager.getPort(), Constants.CONNECTION_TIMEOUT);
 
 			client.setPriority(this.flagManager.getPriority());
 		}
@@ -136,7 +148,7 @@ public abstract class AbstractBoblightClient {
 			client.destroy();
 			try
 			{
-				Thread.sleep(10000);
+				Thread.sleep(Constants.RETRY_DELAY_ERROR);
 			}
 			catch (final InterruptedException ex)
 			{

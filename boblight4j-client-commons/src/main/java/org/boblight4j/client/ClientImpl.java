@@ -36,16 +36,20 @@ import org.boblight4j.utils.StdIO;
  */
 public class ClientImpl {
 
+	private static final String CMD_SET_LIGHT = "set light ";
+
 	private static final Logger LOG = Logger.getLogger(ClientImpl.class);
 
 	private static final String PROTOCOLVERSION = "5";
 	private static final int DEFAULT_PORT = 19333;
 	private static final int MAXDATA = 100000;
 
+	private static final int MAX_VALUE_BYTE = 255;
+
 	private String address;
 	private int port;
 	/**
-	 * timeout in milliseconds
+	 * timeout in milliseconds.
 	 */
 	private int mSecTimeout;
 
@@ -66,8 +70,11 @@ public class ClientImpl {
 	 * Sets the color of a screen pixel.
 	 * 
 	 * @param xPos
+	 *            the x coordinate to add an rgb value to
 	 * @param yPos
+	 *            the x coordinate to add an rgb value to
 	 * @param rgb
+	 *            the color to add
 	 */
 	public void addPixel(final int xPos, final int yPos, final int[] rgb) {
 		for (int i = 0; i < this.lights.size(); i++)
@@ -84,9 +91,9 @@ public class ClientImpl {
 						|| rgb[1] >= light.getThreshold()
 						|| rgb[2] >= light.getThreshold())
 				{
-					light.rgb[0] += MathUtils.clamp(rgb[0], 0, 255);
-					light.rgb[1] += MathUtils.clamp(rgb[1], 0, 255);
-					light.rgb[2] += MathUtils.clamp(rgb[2], 0, 255);
+					light.rgb[0] += MathUtils.clamp(rgb[0], 0, MAX_VALUE_BYTE);
+					light.rgb[1] += MathUtils.clamp(rgb[1], 0, MAX_VALUE_BYTE);
+					light.rgb[2] += MathUtils.clamp(rgb[2], 0, MAX_VALUE_BYTE);
 				}
 				light.rgb[3]++;
 			}
@@ -101,6 +108,7 @@ public class ClientImpl {
 	 * @param rgb
 	 *            the RGB value
 	 * @throws BoblightException
+	 *             if {@link #checkLightExists(int)} throws error
 	 */
 	public final void addPixel(final int lightnr, final int[] rgb)
 			throws BoblightException {
@@ -267,8 +275,7 @@ public class ClientImpl {
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Error during close socket.", e);
 		}
 	}
 
@@ -444,7 +451,7 @@ public class ClientImpl {
 		{
 			try
 			{
-				final Integer valueOf = Integer.valueOf(word);
+				Integer.valueOf(word);
 				if ((word = Misc.getWord(message.message)) == null)
 				{
 					throw new BoblightException(this.address + ":" + this.port
@@ -528,12 +535,12 @@ public class ClientImpl {
 		for (int i = 0; i < this.lights.size(); i++)
 		{
 			final float[] rgb = this.lights.get(i).getRgb();
-			data.append("set light " + this.lights.get(i).getName() + " rgb "
+			data.append(CMD_SET_LIGHT + this.lights.get(i).getName() + " rgb "
 					+ rgb[0] + " " + rgb[1] + " " + rgb[2] + "\n");
 			if (this.lights.get(i).getAutospeed() > 0.0
 					&& this.lights.get(i).getSinglechange() > 0.0)
 			{
-				data.append("set light " + this.lights.get(i).getName()
+				data.append(CMD_SET_LIGHT + this.lights.get(i).getName()
 						+ " singlechange "
 						+ this.lights.get(i).getSinglechange() + "\n");
 			}
@@ -577,8 +584,8 @@ public class ClientImpl {
 				final Light light = this.lights.get(i);
 				if (light.setOption(option))
 				{
-					this.writeDataToSocket("set light " + light.getName() + " "
-							+ option + "\n");
+					this.writeDataToSocket(CMD_SET_LIGHT + light.getName()
+							+ " " + option + "\n");
 				}
 			}
 		}
@@ -587,7 +594,7 @@ public class ClientImpl {
 			final Light light = this.lights.get(lightnr);
 			if (light.setOption(option))
 			{
-				this.writeDataToSocket("set light " + light.getName() + " "
+				this.writeDataToSocket(CMD_SET_LIGHT + light.getName() + " "
 						+ option + "\n");
 			}
 		}

@@ -5,15 +5,16 @@ import java.util.List;
 
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
+import org.boblight4j.exception.BoblightRuntimeException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-/*
+/**
+ * Base class for all flag managers (program argument handlers).
  * 
  * @author agebauer
  * 
  */
-@SuppressWarnings("rawtypes")
 public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		FlagManager {
 
@@ -75,8 +76,8 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	 */
 	public final void parseBoblightOptions(final ClientImpl client)
 			throws BoblightException {
-		final int nrlights = client.getNrLights();
 
+		final int nrlights = client.getNrLights();
 		for (int i = 0; i < this.options.size(); i++)
 		{
 			String option = this.options.get(i);
@@ -86,17 +87,18 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 			int lightnr = -1;
 
 			// check if we have a light name, otherwise we use all lights
-			if (option.indexOf(':') != -1)
+			final int indexOfColon = option.indexOf(':');
+			if (indexOfColon != -1)
 			{
-				lightname = option.substring(0, option.indexOf(':'));
+				lightname = option.substring(0, indexOfColon);
 				// check if : isn't the last char in the string
-				if (option.indexOf(':') == option.length() - 1)
+				if (indexOfColon == option.length() - 1)
 				{
 					throw new BoblightException("wrong option \"" + option
 							+ "\", syntax is [light:]option=value");
 				}
 				// shave off the light name
-				option = option.substring(option.indexOf(':') + 1);
+				option = option.substring(indexOfColon + 1);
 
 				// check which light this is
 				boolean lightfound = false;
@@ -119,7 +121,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 			// check if '=' exists and it's not at the end of the string
 			if (option.indexOf('=') == -1
-					|| option.indexOf(':') == option.length() - 1)
+					|| indexOfColon == option.length() - 1)
 			{
 				throw new BoblightException("wrong option \"" + option
 						+ "\", syntax is [light:]option=value");
@@ -160,8 +162,8 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		}
 		catch (CmdLineException e1)
 		{
-			e1.printStackTrace();
-			throw new RuntimeException(e1);
+			throw new BoblightRuntimeException(
+					"Error parsing program arguments.", e1);
 		}
 
 		this.printBoblightOptions = commandLineArgs.printBoblightOptions;
@@ -175,7 +177,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 		if (priority == -1 || priority < 0 || priority > 255)
 		{
-			throw new RuntimeException("Wrong option " + priority
+			throw new BoblightRuntimeException("Wrong option " + priority
 					+ " for argument -p");
 		}
 
@@ -200,7 +202,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 			if (this.port != -1 && this.port < 0 || this.port > 65535)
 			{
-				throw new RuntimeException("Wrong option "
+				throw new BoblightRuntimeException("Wrong option "
 						+ commandLineArgs.server + " for argument -s");
 			}
 		}
