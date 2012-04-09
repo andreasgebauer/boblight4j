@@ -14,6 +14,10 @@
 	<url>http://boblight4j.googlecode.com/</url>
 	<inceptionYear>2011</inceptionYear>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<scm>
 		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/trunk/</developerConnection>
 		<connection>http://boblight4j.googlecode.com/svn/trunk/</connection>
@@ -29,6 +33,7 @@
 		<module>boblight4j-client-jmf</module>
 		<module>boblight4j-jmx-gui</module>
 		<module>boblight4j-package</module>
+		<module>boblight4j-client-xbmc-plugin</module>
 	</modules>
 
 	<dependencies>
@@ -50,6 +55,11 @@
 			<version>1.4.10</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -68,10 +78,6 @@
 			<name>nativelibs4java Maven2 Repository</name>
 			<url>http://nativelibs4java.sourceforge.net/maven</url>
 		</repository>
-		<repository>
-			<id>local2</id>
-			<url>file://${basedir}/maven-artifacts</url>
-		</repository>
 	</repositories>
 
 	<build>
@@ -89,9 +95,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<verbose>true</verbose>
+				</configuration>
+				<inherited>true</inherited>
 				<executions>
 					<execution>
-						<id>copy-libs</id>
+						<id>unpack-native-libs</id>
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
@@ -101,6 +111,26 @@
 							<includeClassifiers>${nativeclassifier}</includeClassifiers>
 							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<tasks>
+								<property name="localRepository" value="${settings.localRepository}" />
+								<ant antfile="build.xml" />
+							</tasks>
 						</configuration>
 					</execution>
 				</executions>
@@ -125,13 +155,23 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.3</version>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -159,9 +199,10 @@
 										<artifactId>maven-dependency-plugin</artifactId>
 										<versionRange>[2.3,)</versionRange>
 										<goals>
+											<goal>copy</goal>
 											<goal>copy-dependencies</goal>
-											<goal>unpack-dependencies</goal>
 											<goal>unpack</goal>
+											<goal>unpack-dependencies</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -202,6 +243,7 @@
 			<modules>
 				<module>boblight4j-client-v4l</module>
 				<module>boblight4j-client-X11</module>
+				<module>boblight4j-client-X11-xbmc-plugin</module>
 			</modules>
 		</profile>
 		<profile>

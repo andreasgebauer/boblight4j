@@ -1,0 +1,8 @@
+<project name="boblight4j" default="deploy-artifacts-locally">
+	<target name="deploy-artifacts-locally">
+		<copy todir="${localRepository}" verbose="true">
+			<fileset dir="${basedir}/maven-artifacts">
+			</fileset>
+		</copy>
+	</target>
+</project>
