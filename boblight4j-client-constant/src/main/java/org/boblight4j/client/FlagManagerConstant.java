@@ -35,6 +35,7 @@ class FlagManagerConstant extends AbstractFlagManager<ConstantClientArgs> {
 		return argBean;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void postGetopt(final CmdLineParser parser)
 			throws BoblightConfigurationException {
