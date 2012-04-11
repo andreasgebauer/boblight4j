@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.AbstractDevice.DeviceTypes;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -34,8 +35,9 @@ public class RS232Builder extends AbstractDeviceBuilder {
 	}
 
 	@Override
-	public AbstractDevice build(final int devicenr, final ClientsHandler clients,
-			final String type) throws BoblightConfigurationException {
+	public AbstractDevice build(final int devicenr,
+			final ClientsHandler clients, final String type)
+			throws BoblightConfigurationException {
 		final DeviceRS232 device = new DeviceRS232(clients);
 
 		this.setDeviceName(device, devicenr);
@@ -50,21 +52,16 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		this.setDeviceBits(device, devicenr);
 		this.setDeviceDelayAfterOpen(device, devicenr);
 
-		if (type.equals("momo"))
-		{
-			device.setType(MOMO);
+		if (type.equals("momo")) {
+			device.setType(DeviceTypes.MOMO);
 			this.setDevicePrefix(device, devicenr);
 			this.setDevicePostfix(device, devicenr);
 			this.setDeviceEscapeFlag(device, devicenr);
 			device.getProtocol().checkValid();
-		}
-		else if (type.equals("atmo"))
-		{
-			device.setType(ATMO);
-		}
-		else if (type.equals("karate"))
-		{
-			device.setType(KARATE);
+		} else if (type.equals("atmo")) {
+			device.setType(DeviceTypes.ATMO);
+		} else if (type.equals("karate")) {
+			device.setType(DeviceTypes.KARATE);
 		}
 		return device;
 	}
@@ -77,18 +74,14 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("bits",
 				this.deviceLines.get(devicebits).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return;
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'bits'", e);
 		}
@@ -103,19 +96,15 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int postfix = 0;
 		final int linenr = this.getLineWithKey("escape",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return; // postfix is optional, so this is not an error
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
 			postfix = Integer.valueOf(strvalue, 16);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key channels", e);
 		}
@@ -129,19 +118,15 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int postfix = 0;
 		final int linenr = this.getLineWithKey("postfix",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			throw new BoblightConfigurationException(
 					"No postfix given for device " + devicenr);
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'postfix'", e);
 		}
@@ -156,18 +141,14 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int prefix = 0;
 		final int linenr = this.getLineWithKey("prefix",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return; // prefix is optional, so this is not an error
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'prefix'", e);
 		}

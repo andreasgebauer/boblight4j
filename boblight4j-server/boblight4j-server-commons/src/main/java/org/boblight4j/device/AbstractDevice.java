@@ -16,9 +16,11 @@ import org.boblight4j.server.config.Channel;
  */
 public abstract class AbstractDevice implements Runnable {
 
-	private static final Logger LOG = Logger.getLogger(AbstractDevice.class);
+	public enum DeviceTypes {
+		NOTHING, MOMO, ATMO, POPEN, LTBL, SOUND, DIODER, KARATE,
+	}
 
-	private static final int NOTHING = 0;
+	private static final Logger LOG = Logger.getLogger(AbstractDevice.class);
 
 	private boolean allowSync;
 	protected List<Channel> channels = new ArrayList<Channel>();
@@ -33,11 +35,13 @@ public abstract class AbstractDevice implements Runnable {
 	private String output;
 	private int rate;
 	private boolean stop;
-	private int type;
+	private DeviceTypes type;
+
+	private float singleChange;
 
 	protected AbstractDevice(final ClientsHandler clients) {
 		this.clientsHandler = clients;
-		this.type = NOTHING;
+		this.type = DeviceTypes.NOTHING;
 		this.allowSync = true;
 		this.debug = false;
 		this.delayafteropen = 0;
@@ -109,8 +113,8 @@ public abstract class AbstractDevice implements Runnable {
 	}
 
 	// virtual
-	public void setType(final int type) {
-		this.type = type;
+	public void setType(final DeviceTypes momo) {
+		this.type = momo;
 	}
 
 	public void addChannel(final Channel channel) {
@@ -122,31 +126,23 @@ public abstract class AbstractDevice implements Runnable {
 		LOG.info(String.format("%s: starting with output \"%s\"", new Object[] {
 				this.name, this.output }));
 
-		while (!this.stop)
-		{
+		while (!this.stop) {
 			// keep trying to set up the device every 10 seconds
-			while (!this.stop)
-			{
+			while (!this.stop) {
 				LOG.info(String.format("%s: setting up", this.name));
-				if (!this.setup())
-				{
+				if (!this.setup()) {
 					this.close();
 					final int millis = 1000;
 					LOG.warn(String.format(
 							"%s: setting up failed, retrying in " + millis
 									+ " ms", this.name));
-					try
-					{
+					try {
 						Thread.sleep(millis);
-					}
-					catch (final InterruptedException e)
-					{
+					} catch (final InterruptedException e) {
 						LOG.warn("sleep failed", e);
 					}
 					// USleep(10000000L, m_stop);
-				}
-				else
-				{
+				} else {
 					LOG.info(String.format("%s: setup succeeded", this.name));
 					break;
 				}
@@ -154,24 +150,17 @@ public abstract class AbstractDevice implements Runnable {
 
 			// keep calling #writeOutput until we're asked to stop or
 			// #writeOutput fails
-			while (!this.stop)
-			{
-				try
-				{
+			while (!this.stop) {
+				try {
 					this.writeOutput();
-				}
-				catch (final BoblightDeviceException e1)
-				{
+				} catch (final BoblightDeviceException e1) {
 					LOG.error(this.name, e1);
 					break;
 				}
 
-				try
-				{
+				try {
 					Thread.sleep(this.interval / 1000);
-				}
-				catch (final InterruptedException e)
-				{
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -201,5 +190,13 @@ public abstract class AbstractDevice implements Runnable {
 	protected abstract void close();
 
 	protected abstract void writeOutput() throws BoblightDeviceException;
+
+	public void setSingleChange(float f) {
+		this.singleChange = f;
+	}
+
+	public float getSingleChange() {
+		return this.singleChange;
+	}
 
 }

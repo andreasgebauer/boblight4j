@@ -24,7 +24,7 @@ public class DeviceRS232 extends AbstractDevice {
 
 	public DeviceRS232(final ClientsHandler clients) {
 		super(clients);
-		this.setType(-1);
+		this.setType(DeviceTypes.NOTHING);
 		// m_buff = null;
 		this.bits = 8;
 		// m_buffsize = 0;
@@ -34,8 +34,7 @@ public class DeviceRS232 extends AbstractDevice {
 	@Override
 	protected final void close() {
 
-		if (this.serialPort != null)
-		{
+		if (this.serialPort != null) {
 			this.serialPort.close();
 		}
 		// this.output.close();
@@ -57,40 +56,33 @@ public class DeviceRS232 extends AbstractDevice {
 
 		CommPortIdentifier portId = null;
 
-		try
-		{
+		try {
 			final Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier
 					.getPortIdentifiers();
 
 			// iterate through, looking for the port
-			while (portEnum.hasMoreElements())
-			{
+			while (portEnum.hasMoreElements()) {
 				final CommPortIdentifier currPortId = portEnum.nextElement();
 
 				LOG.info("Got available CommPort: " + currPortId.getName());
-				if (super.getOutput().equals(currPortId.getName()))
-				{
+				if (super.getOutput().equals(currPortId.getName())) {
 					portId = currPortId;
 					break;
 				}
 			}
 
-		}
-		catch (final UnsatisfiedLinkError e)
-		{
+		} catch (final UnsatisfiedLinkError e) {
 			this.stopThread();
 			LOG.error("No txrx on java.library.path?", e);
 			System.exit(1);
 		}
 
-		if (portId == null)
-		{
+		if (portId == null) {
 			LOG.warn("Could not find COM port.");
 			return false;
 		}
 
-		try
-		{
+		try {
 			// open serial port, and use class name for the appName.
 			this.serialPort = (SerialPort) portId.open(this.getClass()
 					.getName(), 10000);
@@ -115,36 +107,27 @@ public class DeviceRS232 extends AbstractDevice {
 			// m_serialport.addEventListener(this);
 			// m_serialport.notifyOnDataAvailable(true);
 
-		}
-		catch (final Exception e)
-		{
+		} catch (final Exception e) {
 			LOG.error("Error occurred", e);
 			return false;
 		}
 
-		if (this.getDelayAfterOpen() > 0)
-		{
-			try
-			{
+		if (this.getDelayAfterOpen() > 0) {
+			try {
 				Thread.sleep(this.getDelayAfterOpen());
-			}
-			catch (final InterruptedException e1)
-			{
+			} catch (final InterruptedException e1) {
 				LOG.error("Interrupted while delaying.", e1);
 			}
 		}
 
-		try
-		{
+		try {
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			LOG.error("Error during initialization.", e);
 			return false;
 		}
@@ -186,10 +169,8 @@ public class DeviceRS232 extends AbstractDevice {
 
 	@Override
 	public final void sync() {
-		if (this.isAllowSync())
-		{
-			synchronized (this.timer)
-			{
+		if (this.isAllowSync()) {
+			synchronized (this.timer) {
 				this.timer.notifyAll();
 			}
 
@@ -205,19 +186,16 @@ public class DeviceRS232 extends AbstractDevice {
 
 		final int maxvalue = (1 << this.bits) - 1;
 
-		try
-		{
+		try {
 
 			StringBuilder buf = null;
-			if (this.isDebug())
-			{
+			if (this.isDebug()) {
 				buf = new StringBuilder();
 			}
 
 			this.deviceOutput.begin();
 
-			for (int i = 0; i < this.channels.size(); i++)
-			{
+			for (int i = 0; i < this.channels.size(); i++) {
 				final Channel cChannel = this.channels.get(i);
 				final double value = cChannel.getValue(now);
 				final int output = MathUtils.clamp((int) (value * maxvalue), 0,
@@ -228,26 +206,21 @@ public class DeviceRS232 extends AbstractDevice {
 
 			this.deviceOutput.end();
 
-			if (this.isDebug())
-			{
+			if (this.isDebug()) {
 				final String format = String.format("%x",
 						this.protocol.getEndFlag()).toUpperCase();
 				buf.append(format);
-				if (format.length() == 1)
-				{
+				if (format.length() == 1) {
 					buf.append("0");
 				}
 			}
 
-			if (this.isDebug())
-			{
+			if (this.isDebug()) {
 				LOG.debug(buf.toString());
 			}
 			// LOG.info(buf.toString());
 
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			throw new BoblightDeviceException(this.getName(), e);
 		}
 

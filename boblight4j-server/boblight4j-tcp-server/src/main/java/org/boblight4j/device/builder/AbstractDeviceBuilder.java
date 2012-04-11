@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 
 	// device types
-	public static final int NOTHING = 0;
-	public static final int MOMO = 1;
-	public static final int ATMO = 2;
-	public static final int POPEN = 3;
-	public static final int LTBL = 4;
-	public static final int SOUND = 5;
-	public static final int DIODER = 6;
-	public static final int KARATE = 7;
+//	public static final int NOTHING = 0;
+//	public static final int MOMO = 1;
+//	public static final int ATMO = 2;
+//	public static final int POPEN = 3;
+//	public static final int LTBL = 4;
+//	public static final int SOUND = 5;
+//	public static final int DIODER = 6;
+//	public static final int KARATE = 7;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractDeviceBuilder.class);
@@ -53,19 +53,14 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 	 */
 	protected int getLineWithKey(final String key,
 			final List<ConfigLine> lines, final Pointer<String> line) {
-		for (int i = 0; i < lines.size(); i++)
-		{
+		for (int i = 0; i < lines.size(); i++) {
 			line.assign(lines.get(i).line);
-			try
-			{
+			try {
 				final String word = Misc.getWord(line);
-				if (word.equals(key))
-				{
+				if (word.equals(key)) {
 					return lines.get(i).linenr;
 				}
-			}
-			catch (final BoblightParseException e)
-			{
+			} catch (final BoblightParseException e) {
 			}
 		}
 		line.assign(null);
@@ -77,18 +72,14 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("allowsync",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return;
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'allowsync'", e);
 		}
@@ -102,21 +93,17 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("channels",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			throw new BoblightConfigurationException(String.format(
 					"%s: device %s has no channels", this.fileName,
 					device.getName()));
 		}
 
-		try
-		{
+		try {
 			final String strvalue = Misc.getWord(line);
 			final int nrchannels = Integer.valueOf(strvalue);
 			device.setNrChannels(nrchannels);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key channels", e);
 		}
@@ -138,20 +125,16 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("debug",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return;
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
 			final boolean value = BooleanParser.parse(strvalue);
 			device.setDebug(value);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'debug'", e);
 		}
@@ -202,18 +185,14 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("delayafteropen",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			return;
 		}
 
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'delayafteropen'", e);
 		}
@@ -227,19 +206,15 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("interval",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			throw new BoblightConfigurationException(String.format(
 					"%s: device %s has no interval", this.fileName,
 					device.getName()));
 		}
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'interval'", e);
 		}
@@ -253,12 +228,10 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		int linenr;
-		try
-		{
+		try {
 			linenr = this.getLineWithKey("name",
 					this.deviceLines.get(devicenr).lines, line);
-			if (linenr == -1)
-			{
+			if (linenr == -1) {
 				throw new BoblightConfigurationException(String.format(
 						"%s: device %d has no name", this.fileName,
 						devicenr + 1));
@@ -266,9 +239,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 			String strvalue;
 			strvalue = Misc.getWord(line);
 			device.setName(strvalue);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key name", e);
 		}
@@ -278,21 +249,17 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 			throws BoblightConfigurationException {
 
 		final Pointer<String> line = new Pointer<String>();
-		try
-		{
+		try {
 			final int linenr = this.getLineWithKey("output",
 					this.deviceLines.get(devicenr).lines, line);
-			if (linenr == -1)
-			{
+			if (linenr == -1) {
 				throw new BoblightConfigurationException(String.format(
 						"%s: device %s has no output", this.fileName,
 						device.getName()));
 			}
 			final String strvalue = Misc.getWord(line);
 			device.setOutput(strvalue + line.get());
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key output", e);
 		}
@@ -305,19 +272,15 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("rate",
 				this.deviceLines.get(devicenr).lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			throw new BoblightConfigurationException(String.format(
 					"%s: device %s has no rate", this.fileName,
 					device.getName()));
 		}
 		String strvalue;
-		try
-		{
+		try {
 			strvalue = Misc.getWord(line);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'rate'", e);
 		}
