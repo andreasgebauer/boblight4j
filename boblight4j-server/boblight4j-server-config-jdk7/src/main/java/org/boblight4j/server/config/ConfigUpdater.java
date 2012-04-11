@@ -11,7 +11,7 @@ import java.nio.file.WatchService;
 import java.util.List;
 import java.util.Vector;
 
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandler;
 
@@ -20,7 +20,7 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 	private boolean stop;
 
 	public ConfigUpdater(final File file, final ClientsHandler clients,
-			final Config config, final Vector<Device> devices,
+			final Config config, final Vector<AbstractDevice> devices,
 			final Vector<Light> lights) {
 		super(file, clients, config, devices, lights);
 	}

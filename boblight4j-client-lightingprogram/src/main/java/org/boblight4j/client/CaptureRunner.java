@@ -65,7 +65,7 @@ final class CaptureRunner implements Runnable {
 				{
 					final int hi = this.buffer[i];
 					final int sampVal = hi;
-					samples[i] = sampVal / this.spectralScale;
+					samples[i] = sampVal / spectralScale;
 				}
 
 				this.windowFunction.applyWindow(samples);

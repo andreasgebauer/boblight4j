@@ -1,5 +1,7 @@
 package org.boblight4j.client;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightException;
 
@@ -106,7 +108,11 @@ final class DCTRunnable implements Runnable {
 			}
 
 		}
-		catch (final Exception e)
+		catch (final BoblightException e)
+		{
+			LOG.error("", e);
+		}
+		catch (IOException e)
 		{
 			LOG.error("", e);
 		}

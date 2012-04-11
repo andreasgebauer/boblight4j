@@ -9,6 +9,12 @@ import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
 import org.boblight4j.exception.BoblightException;
 
+/**
+ * Boblight4J V4L client.
+ * 
+ * @author agebauer
+ * 
+ */
 public class BoblightV4l extends AbstractBoblightClient {
 
 	private static final int SLEEP_AFTER_ERROR = 5000;
@@ -17,12 +23,24 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 	private FlagManagerV4l flagManager;
 
+	/**
+	 * Main entry point.
+	 * 
+	 * @param args
+	 *            the program arguments
+	 */
 	public static void main(final String[] args) {
 		System.exit(new BoblightV4l(args).run());
 	}
 
 	private boolean stop;
 
+	/**
+	 * Creates a new V4L client.
+	 * 
+	 * @param args
+	 *            the program arguments
+	 */
 	public BoblightV4l(final String[] args) {
 		super(args);
 	}

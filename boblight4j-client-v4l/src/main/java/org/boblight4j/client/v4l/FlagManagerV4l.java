@@ -5,6 +5,7 @@ import org.boblight4j.client.CommandLineArgs;
 import org.boblight4j.client.v4l.FlagManagerV4l.V4lArgs;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
+import org.boblight4j.exception.BoblightRuntimeException;
 import org.boblight4j.utils.StdIO;
 import org.kohsuke.args4j.Option;
 
@@ -17,28 +18,28 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 	 * @author agebauer
 	 * 
 	 */
-	public class V4lArgs extends CommandLineArgs {
+	public static class V4lArgs extends CommandLineArgs {
 
 		@Option(name = "-c", usage = "set the device to use, default is /dev/video0")
-		String device = "/dev/video0";
+		private String device = "/dev/video0";
 
 		@Option(name = "-w", usage = "widthxheight of the captured image, example: -w 400x300")
-		String sscanf;
+		private String sscanf;
 
 		@Option(name = "-v", usage = "video standard")
-		String standard;
+		private String standard;
 
 		@Option(name = "-i", usage = "video input number")
-		int channel = -1;
+		private int channel = -1;
 
 		@Option(name = "-d", metaVar = "debug", usage = "debug mode")
-		boolean debug;
+		private boolean debug;
 
 		@Option(name = "-n", usage = "only turn on boblight client when there's a video signal")
-		boolean checkSignal;
+		private boolean checkSignal;
 
 		@Option(name = "-e", usage = "use custom codec, default is video4linux2 or video4linux")
-		public String customCodec;
+		private String customCodec;
 	}
 
 	private int channel;
@@ -46,10 +47,11 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 	protected String device;
 	int width;
 	int height;
-	private boolean checksignal;
-	private String customcodec;
-	private String standard;
-	private String strdebugdpy;
+
+	// private boolean checksignal;
+	// private String customcodec;
+	// private String standard;
+	// private String strdebugdpy;
 
 	FlagManagerV4l() {
 
@@ -91,8 +93,8 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 
 					if (this.width < 1 || this.height < 1)
 					{
-						throw new RuntimeException("Wrong value " + argv.sscanf
-								+ " for widthxheight");
+						throw new BoblightRuntimeException("Wrong value "
+								+ argv.sscanf + " for widthxheight");
 					}
 				}
 			}
@@ -102,15 +104,15 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 			}
 		}
 
-		this.standard = argv.standard;
-
-		this.channel = argv.channel;
-
+		// this.standard = argv.standard;
+		//
+		// this.channel = argv.channel;
+		//
 		this.debug = argv.debug;
-
-		this.checksignal = argv.checkSignal;
-
-		this.customcodec = argv.customCodec;
+		//
+		// this.checksignal = argv.checkSignal;
+		//
+		// this.customcodec = argv.customCodec;
 	}
 
 }

@@ -2,7 +2,13 @@
 <strings>
 
 	<!-- BOBLIGHT4J X11 -->
-	<string id="1000">JAVA</string>
-	<string id="1001">Directory where Java is installed</string>
+	<string id="1000">Java-Home</string>
+	<string id="1101">Speed</string>
+	<string id="1102">Saturation</string>
+	<string id="1103">Value</string>
+	<string id="1104">Interpolation</string>
+	<string id="1105">Threshold</string>
+	<string id="1114">Pixels</string>
+	<string id="1001">Activate Debug Log</string>
 
 </strings>

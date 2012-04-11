@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.ConfigImpl;
@@ -103,7 +103,7 @@ public class BoblightDaemon {
 		config.checkConfig();
 
 		// where we store devices
-		final List<Device> devices = new ArrayList<Device>();
+		final List<AbstractDevice> devices = new ArrayList<AbstractDevice>();
 		config.buildConfig(clients, devices, lights);
 
 		final ConfigUpdater updater = new ConfigUpdater(this.args.configFile,

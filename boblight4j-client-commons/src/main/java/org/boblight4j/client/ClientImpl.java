@@ -639,7 +639,7 @@ public class ClientImpl {
 			throws BoblightException {
 		if (this.socketChannel == null)
 		{
-			throw new BoblightException(
+			throw new IllegalStateException(
 					"Ensure to connect to server before writing data.");
 		}
 		if (!this.socketChannel.isConnected() || !this.socketChannel.isOpen()

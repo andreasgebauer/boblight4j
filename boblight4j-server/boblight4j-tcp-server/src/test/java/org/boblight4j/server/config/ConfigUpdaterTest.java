@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandlerImpl;
 import org.boblight4j.server.NioServer;
@@ -23,7 +23,7 @@ public class ConfigUpdaterTest {
 	private static final Logger LOG = Logger.getLogger(ConfigUpdaterTest.class);
 
 	private ClientsHandlerImpl clients;
-	private List<Device> devices;
+	private List<AbstractDevice> devices;
 	private File file;
 	private List<Light> lights;
 	private ConfigUpdater testable;
@@ -40,8 +40,8 @@ public class ConfigUpdaterTest {
 		field.set(this.clients, Mockito.mock(NioServer.class));
 
 		ConfigImpl config = new ConfigImpl();
-		this.devices = new ArrayList<Device>();
-		final Device device = Mockito.mock(Device.class);
+		this.devices = new ArrayList<AbstractDevice>();
+		final AbstractDevice device = Mockito.mock(AbstractDevice.class);
 		Mockito.when(device.getName()).thenReturn("arduino");
 		Mockito.when(device.getNrChannels()).thenReturn(60);
 		this.devices.add(device);

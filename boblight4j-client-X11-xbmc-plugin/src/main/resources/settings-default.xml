@@ -1,2 +1,11 @@
 <settings>
+    <setting id="java_home" value="/storage/programs/jre/" />
+    <setting id="autospeed" value="0" />
+    <setting id="hscanstart" value="-1" />
+    <setting id="speed" value="75" />
+    <setting id="saturation" value="1.5" />
+    <setting id="interpolation" value="true" />
+    <setting id="threshold" value="30" />
+    <setting id="pixels" value="20" />
+    <setting id="debug" value="false" />
 </settings>

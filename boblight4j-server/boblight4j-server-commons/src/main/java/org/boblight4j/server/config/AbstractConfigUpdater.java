@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
@@ -19,13 +19,13 @@ public abstract class AbstractConfigUpdater {
 
 	private final ClientsHandler clients;
 	private final Config config;
-	private final List<Device> devices;
+	private final List<AbstractDevice> devices;
 	private final List<Light> lights;
 	protected File watchFile;
 
 	public AbstractConfigUpdater(final File watchFile,
 			final ClientsHandler clients, final Config config,
-			final List<Device> devices, final List<Light> lights) {
+			final List<AbstractDevice> devices, final List<Light> lights) {
 		super();
 		this.config = config;
 		this.devices = devices;
@@ -56,14 +56,14 @@ public abstract class AbstractConfigUpdater {
 
 			this.config.checkConfig();
 
-			final List<Device> newDevices = this.config
+			final List<AbstractDevice> newDevices = this.config
 					.buildDeviceConfig(this.clients);
-			final Vector<Device> unhandledNewDevices = new Vector<Device>();
+			final Vector<AbstractDevice> unhandledNewDevices = new Vector<AbstractDevice>();
 
-			for (final Device newDevice : newDevices)
+			for (final AbstractDevice newDevice : newDevices)
 			{
 				boolean oldDeviceFound = false;
-				for (final Device oldDevice : this.devices)
+				for (final AbstractDevice oldDevice : this.devices)
 				{
 					if (newDevice.getName().equals(oldDevice.getName()))
 					{

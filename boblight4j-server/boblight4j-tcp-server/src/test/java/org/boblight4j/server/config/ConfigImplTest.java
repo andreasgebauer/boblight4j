@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandler;
@@ -48,7 +48,7 @@ public class ConfigImplTest {
 	@Test
 	public void testBuildConfig() throws Exception {
 
-		final List<Device> devices = new ArrayList<Device>();
+		final List<AbstractDevice> devices = new ArrayList<AbstractDevice>();
 		final List<Light> lights = new ArrayList<Light>();
 
 		this.testable.buildConfig(this.clientsHandler, devices, lights);
@@ -80,7 +80,7 @@ public class ConfigImplTest {
 		((Collection<ConfigGroup>) Whitebox.getInternalState(testable,
 				"deviceLines")).add(cfgGrp);
 
-		final List<Device> devices = this.testable
+		final List<AbstractDevice> devices = this.testable
 				.buildDeviceConfig(this.clientsHandler);
 
 		final DeviceRS232 device = (DeviceRS232) devices.get(0);
@@ -92,7 +92,7 @@ public class ConfigImplTest {
 
 	@Test
 	public void testBuildLightConfig() throws Exception {
-		final List<Device> devices = new ArrayList<Device>();
+		final List<AbstractDevice> devices = new ArrayList<AbstractDevice>();
 		final List<Color> colors = new ArrayList<Color>();
 		this.testable.buildLightConfig(devices, colors);
 	}

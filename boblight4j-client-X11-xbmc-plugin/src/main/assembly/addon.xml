@@ -6,14 +6,15 @@
 	<formats>
 		<format>zip</format>
 	</formats>
-	<!-- <files> <file> <source> target/dependency </source> <outputDirectory>/</outputDirectory> 
-		</file> </files> -->
-	<!-- <files> <file> <source>../boblight4j-server/target/boblight4j-server-${project.version}.jar 
-		</source> <outputDirectory>/</outputDirectory> <destName>boblight4jd.jar</destName> 
-		</file> <file> <source>../boblight4j-client-X11/target/boblight4j-client-X11-${project.version}.jar 
-		</source> <outputDirectory>/</outputDirectory> <destName>boblight4j-X11.jar</destName> 
-		</file> </files> -->
 	<fileSets>
+		<!-- the client executable -->
+		<fileSet>
+			<directory>${project.build.directory}/dependency/boblight4j-X11-${project.version}</directory>
+			<includes>
+				<include>**/*.jar</include>
+			</includes>
+			<outputDirectory>/bin/client</outputDirectory>
+		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/resources</directory>
 			<includes>

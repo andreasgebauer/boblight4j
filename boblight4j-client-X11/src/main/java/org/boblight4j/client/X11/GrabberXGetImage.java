@@ -18,8 +18,8 @@ public class GrabberXGetImage extends AbstractX11Grabber {
 	private static final int ALL_PLANES = 0x00ffffff;
 
 	public GrabberXGetImage(final ClientImpl boblight, final boolean sync,
-			int size, double interval) {
-		super(boblight, sync, size, interval);
+			int width, int height, double interval) {
+		super(boblight, sync, width, height, interval);
 	}
 
 	public int[] grabPixelAt(final int xpos, final int ypos) {

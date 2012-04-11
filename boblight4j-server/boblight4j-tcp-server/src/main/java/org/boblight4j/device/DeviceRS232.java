@@ -12,7 +12,7 @@ import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.Channel;
 import org.boblight4j.utils.MathUtils;
 
-public class DeviceRS232 extends Device {
+public class DeviceRS232 extends AbstractDevice {
 
 	private static final Logger LOG = Logger.getLogger(DeviceRS232.class);
 

@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>boblight4j-client-X11-xbmc-plugin</artifactId>
+	<!-- TODO make this a zip packaging -->
+	<packaging>jar</packaging>
 
 	<name>Boblight4J XBMC Client for X11</name>
 
@@ -28,7 +30,7 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>service.multimedia.boblight4j-client-X11</finalName>
 		<resources>

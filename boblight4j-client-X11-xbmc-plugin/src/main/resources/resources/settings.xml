@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-
-	<!-- BOBLIGHT4J X11 -->
-	<category label="1000">
-		<setting label="1010" type="lsep" />
-		<setting type="sep" />
-		<setting id="JAVA_HOME" type="text" label="1001" values=""
-			default="" />
-	</category>
+  <category label="100">
+    <setting id="java_home" type="folder" label="1000" default="" />
+    <setting id="speed" type="slider" label="1101" default="70" range="0,100" option="int" />
+    <setting id="saturation" type="slider" label="1102" default="1.5" range="0,0.1,20"/>
+    <setting id="value" type="slider" label="1103" default="1" range="1,0.1,20" />
+    <setting id="interpolation" type="bool" label="1104" default="1" />
+    <setting id="threshold" type="slider" label="1105" default="30" range="0,1,255"/>
+    <setting id="pixels" type="slider" label="1114" default="20" range="5,100" option="int" />
+    <setting id="debug" type="bool" label="1001" default="false" />
+  </category>
 </settings>

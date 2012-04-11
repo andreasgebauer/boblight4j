@@ -14,9 +14,9 @@ import org.boblight4j.server.config.Channel;
  * @author agebauer
  * 
  */
-public abstract class Device implements Runnable {
+public abstract class AbstractDevice implements Runnable {
 
-	private static final Logger LOG = Logger.getLogger(Device.class);
+	private static final Logger LOG = Logger.getLogger(AbstractDevice.class);
 
 	private static final int NOTHING = 0;
 
@@ -35,7 +35,7 @@ public abstract class Device implements Runnable {
 	private boolean stop;
 	private int type;
 
-	protected Device(final ClientsHandler clients) {
+	protected AbstractDevice(final ClientsHandler clients) {
 		this.clientsHandler = clients;
 		this.type = NOTHING;
 		this.allowSync = true;

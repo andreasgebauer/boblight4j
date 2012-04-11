@@ -11,9 +11,7 @@
 		<platform>all</platform>
 		<summary lang="en">A Boblight4J connector service</summary>
 		<description lang="en">
-			This Boblight4J connector service will
-			start the boblight4j server on startup and
-			close it on shutdown
+			This Boblight4J connector service will start the boblight4j server on startup and close it on shutdown
 		</description>
 	</extension>
 </addon>

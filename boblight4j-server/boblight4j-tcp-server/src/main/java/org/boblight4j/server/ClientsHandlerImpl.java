@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightException;
@@ -59,12 +59,13 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	public final void addClient(final Client client) throws IOException {
 
 		// clean disconnected clients before adding new
-		for (Client cl : this.clients)
+		for (Iterator<Client> it = this.clients.iterator(); it.hasNext();)
 		{
+			Client cl = it.next();
 			if (!cl.getSocketChannel().isConnected()
 					&& !cl.getSocketChannel().isConnectionPending())
 			{
-				this.clients.remove(cl);
+				it.remove();
 			}
 		}
 
@@ -96,7 +97,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 
 	@Override
 	public final void fillChannels(final List<Channel> channels,
-			final long time, final Device device) {
+			final long time, final AbstractDevice device) {
 
 		final Set<Light> usedLights = new HashSet<Light>();
 		doFillChannels(channels, time, device, usedLights);
@@ -143,7 +144,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	}
 
 	private void doFillChannels(final List<Channel> channels, final long time,
-			final Device device, final Set<Light> usedLights) {
+			final AbstractDevice device, final Set<Light> usedLights) {
 		for (int i = 0; i < channels.size(); i++)
 		{
 			// get the oldest client with the highest priority
@@ -465,7 +466,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	}
 
 	private void parseSync(final Client client) {
-		final Set<Device> users = new HashSet<Device>();
+		final Set<AbstractDevice> users = new HashSet<AbstractDevice>();
 
 		synchronized (this.mutex)
 		{
@@ -484,7 +485,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		// users.sort();
 		// users.unique();
 
-		final Iterator<Device> iterator = users.iterator();
+		final Iterator<AbstractDevice> iterator = users.iterator();
 		while (iterator.hasNext())
 		{
 			iterator.next().sync();

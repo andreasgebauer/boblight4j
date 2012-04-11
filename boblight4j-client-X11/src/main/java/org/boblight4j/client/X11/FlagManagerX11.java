@@ -2,6 +2,7 @@ package org.boblight4j.client.X11;
 
 import org.boblight4j.client.AbstractFlagManager;
 import org.boblight4j.client.CommandLineArgs;
+import org.boblight4j.client.X11.BoblightX11.RenderMethod;
 import org.boblight4j.client.X11.FlagManagerX11.X11Flags;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.kohsuke.args4j.Option;
@@ -24,32 +25,29 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	 */
 	public class X11Flags extends CommandLineArgs {
 		@Option(name = "-i")
-		String interval;
+		float interval = 0.1f; // default interval is 100 milliseconds;
 
-		@Option(name = "-u")
-		int pixels;
+		// -1 says to the capture classes to use default
+		@Option(name = "-u", metaVar = "pixels", usage = "Pixels to use for grabbing in vertical and horizontal dimension")
+		int pixels = -1;
 
-		@Option(name = "-x")
+		@Option(name = "-x", metaVar = "xrender", usage = "Force use of Xrender for grabbing pixels from screen")
 		boolean useXRender;
 
 		@Option(name = "-d")
 		boolean debug;
 
-		@Option(name = "-d")
+		@Option(name = "-g")
 		String debugDisplay;
 	}
 
 	public boolean debug;
 	public String debugdpy;
-	public double interval;
-	int method;
-	int pixels;
+	RenderMethod method;
+	private X11Flags flagManager;
 
 	public FlagManagerX11() {
-
-		this.interval = 0.1; // default interval is 100 milliseconds
-		this.pixels = -1; // -1 says to the capture classes to use default
-		this.method = BoblightX11.XRENDER; // default method is fast xrender
+		this.method = RenderMethod.XRENDER; // default method is fast xrender
 		this.debug = false; // no debugging by default
 		this.debugdpy = null; // default debug dpy is system default
 		this.setSync(true); // sync mode enabled by default
@@ -59,29 +57,23 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	protected void parseFlagsExtended(final X11Flags argv)
 			throws BoblightConfigurationException {
 
+		this.flagManager = argv;
 		// starting interval with v means vblank interval
-		if (argv.interval.charAt(0) == 'v')
-		{
-			throw new BoblightConfigurationException(
-					"Compiled without opengl support");
-		}
 
-		this.interval = Float.parseFloat(argv.interval);
-		if (this.interval <= 0.0f)
+		if (argv.interval <= 0.0f)
 		{
 			throw new BoblightConfigurationException("Wrong value "
-					+ this.interval + " for interval");
+					+ argv.interval + " for interval");
 		}
 
-		this.pixels = argv.pixels;
-		if (this.pixels <= 0)
+		if (argv.pixels <= 0)
 		{
 			throw new BoblightConfigurationException("Wrong value "
-					+ this.pixels + " for pixels");
+					+ argv.pixels + " for pixels");
 		}
 
-		this.method = argv.useXRender ? this.method = BoblightX11.XGETIMAGE
-				: BoblightX11.XRENDER;
+		this.method = argv.useXRender ? RenderMethod.XGETIMAGE
+				: RenderMethod.XRENDER;
 
 		this.debug = argv.debug;
 
@@ -174,6 +166,14 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	@Override
 	protected X11Flags getArgBean() {
 		return new X11Flags();
+	}
+
+	public int getPixels() {
+		return this.flagManager.pixels;
+	}
+
+	public double getInterval() {
+		return this.flagManager.interval;
 	}
 
 }

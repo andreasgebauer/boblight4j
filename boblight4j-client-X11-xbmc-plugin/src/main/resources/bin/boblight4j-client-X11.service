@@ -1,7 +1,29 @@
 #!/bin/sh
 
-BOBLIGHT_DIR=/storage/programs/clients
-JAVA=/storage/programs/jre/bin/java
+. /etc/profile
 
-echo "Starting ${processName}"
-$JAVA -jar $BOBLIGHT_DIR/${project.build.finalName}.jar -u 20 -x -o speed=70 -o interpolation=true -o threshold=30 -o saturation=1.5 -o value=10
+ADDON_DIR="$HOME/.xbmc/addons/${addonName}"
+ADDON_HOME="$HOME/.xbmc/userdata/addon_data/${addonName}"
+ADDON_SETTINGS="$ADDON_HOME/settings.xml"
+
+JAVA_HOME=`grep id=\"java_home\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+
+BOBLIGHT_DIR=$ADDON_DIR/bin/client
+JAVA=$JAVA_HOME/bin/java
+JAR=$BOBLIGHT_DIR/boblight4j-X11-${project.version}.jar
+
+# program options
+SPEED=`grep id=\"speed\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+PIXELS=`grep id=\"pixels\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+PIXELS=${PIXELS/.*}
+SATURATION=`grep id=\"saturation\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+INTERPOLATION=`grep id=\"interpolation\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+THRESHOLD=`grep id=\"threshold\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+THRESHOLD=${THRESHOLD/.*}
+VALUE=`grep id=\"value\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+
+OPTS="-o speed="$SPEED" -o interpolation="$INTERPOLATION" -o threshold="$THRESHOLD" -o saturation="$SATURATION" -o value="$VALUE
+ARGS="-u "$PIXELS" -x "$OPTS
+
+echo "Starting ${processName} with options "$ARGS
+$JAVA -jar $JAR $ARGS

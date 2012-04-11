@@ -8,6 +8,12 @@ import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractActiveGrabber;
 import org.boblight4j.exception.BoblightConfigurationException;
 
+/**
+ * Base class for X11 grabber implementations.
+ * 
+ * @author agebauer
+ * 
+ */
 public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
 	private static final Logger LOG = Logger
@@ -17,13 +23,19 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
 	private double interval;
 
+	protected FlagManagerX11 flagManager;
+
 	public AbstractX11Grabber(final ClientImpl client, final boolean sync,
-			int size, double interval) {
-		super(client, sync, size, size);
+			int width, int height, double interval) {
+		super(client, sync, width, height);
 		this.interval = interval;
 	}
 
 	public Display getDisplay() {
+		if (this.display == null)
+		{
+			this.display = new Display();
+		}
 		return display;
 	}
 
@@ -41,7 +53,18 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 			throws BoblightConfigurationException {
 		LOG.debug("Setting up.");
 
-		this.display = new Display();
+		this.flagManager = (FlagManagerX11) flagManager;
+
+		try
+		{
+			this.getDisplay();
+		}
+		catch (Exception e)
+		{
+			throw new BoblightConfigurationException(
+					"Unable to get display. Ensure X11 listens on tcp.", e);
+		}
+
 		if (this.getDisplay() == null)
 		{
 			String error = "unable to open display";

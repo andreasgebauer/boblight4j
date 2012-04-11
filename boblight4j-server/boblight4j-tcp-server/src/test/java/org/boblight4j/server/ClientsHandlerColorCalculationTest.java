@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
@@ -24,7 +24,7 @@ public class ClientsHandlerColorCalculationTest {
 	private Channel bottom1red;
 	private List<Channel> channels;
 	private Client client;
-	private Device device;
+	private AbstractDevice device;
 	private ClientsHandlerImpl testable;
 
 	private void nextStep(final long time, final double expected) {
@@ -52,7 +52,7 @@ public class ClientsHandlerColorCalculationTest {
 		this.bottom1.addColor(ColorUtils.blue());
 		vector.add(this.bottom1);
 
-		this.device = Mockito.mock(Device.class);
+		this.device = Mockito.mock(AbstractDevice.class);
 
 		this.testable = new ClientsHandlerImpl(vector);
 

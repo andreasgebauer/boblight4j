@@ -5,11 +5,11 @@ import java.util.regex.Pattern;
 
 public class RGBValue {
 
-	private static final Pattern pattern = Pattern
+	private static final Pattern PATTERN = Pattern
 			.compile("(\\d+),(\\d+)\\:(\\d+),(\\d+),(\\d+)");
 
 	public static RGBValue parse(String string) {
-		final Matcher matcher = pattern.matcher(string);
+		final Matcher matcher = PATTERN.matcher(string);
 		if (matcher.matches())
 		{
 			final String xPos = matcher.group(1);

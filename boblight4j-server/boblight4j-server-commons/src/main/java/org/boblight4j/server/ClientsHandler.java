@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
 
@@ -22,7 +22,7 @@ public interface ClientsHandler {
 	 */
 	void blockConnect(boolean b);
 
-	void fillChannels(List<Channel> channels, long timestamp, Device device);
+	void fillChannels(List<Channel> channels, long timestamp, AbstractDevice device);
 
 	void handleMessages(SocketChannel socketChannel, byte[] array, int numRead)
 			throws BoblightException;

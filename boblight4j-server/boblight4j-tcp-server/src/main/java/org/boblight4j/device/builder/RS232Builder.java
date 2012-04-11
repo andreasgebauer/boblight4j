@@ -3,7 +3,7 @@ package org.boblight4j.device.builder;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -34,7 +34,7 @@ public class RS232Builder extends AbstractDeviceBuilder {
 	}
 
 	@Override
-	public Device build(final int devicenr, final ClientsHandler clients,
+	public AbstractDevice build(final int devicenr, final ClientsHandler clients,
 			final String type) throws BoblightConfigurationException {
 		final DeviceRS232 device = new DeviceRS232(clients);
 

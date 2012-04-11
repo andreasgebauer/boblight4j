@@ -48,7 +48,7 @@ public abstract class AbstractBoblightClient {
 			}
 		}));
 
-		while (!this.isStop())
+		while (!this.stop)
 		{
 			return this.run();
 		}

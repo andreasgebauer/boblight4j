@@ -2,7 +2,7 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.server.config.ConfigGroup;
@@ -72,7 +72,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		return -1;
 	}
 
-	void setDeviceAllowSync(final Device device, final int devicenr)
+	void setDeviceAllowSync(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("allowsync",
@@ -97,7 +97,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		device.setAllowSync(allowsync);
 	}
 
-	void setDeviceChannels(final Device device, final int devicenr)
+	void setDeviceChannels(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("channels",
@@ -133,7 +133,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 	 *            the device number
 	 * @throws BoblightConfigurationException
 	 */
-	void setDeviceDebug(final Device device, final int devicenr)
+	void setDeviceDebug(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("debug",
@@ -197,7 +197,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 	// }
 	// #endif
 
-	void setDeviceDelayAfterOpen(final Device device, final int devicenr)
+	void setDeviceDelayAfterOpen(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("delayafteropen",
@@ -222,7 +222,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		device.setDelayAfterOpen(delayafteropen);
 	}
 
-	void setDeviceInterval(final Device device, final int devicenr)
+	void setDeviceInterval(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("interval",
@@ -249,7 +249,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 
 	}
 
-	protected void setDeviceName(final Device device, final int devicenr)
+	protected void setDeviceName(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		int linenr;
@@ -274,7 +274,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		}
 	}
 
-	boolean setDeviceOutput(final Device device, final int devicenr)
+	boolean setDeviceOutput(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 
 		final Pointer<String> line = new Pointer<String>();
@@ -300,7 +300,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		return true;
 	}
 
-	void setDeviceRate(final Device device, final int devicenr)
+	void setDeviceRate(final AbstractDevice device, final int devicenr)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("rate",

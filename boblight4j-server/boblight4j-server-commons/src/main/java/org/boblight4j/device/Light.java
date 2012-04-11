@@ -4,7 +4,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -30,13 +29,13 @@ import org.boblight4j.utils.Pair;
  */
 public class Light {
 
+	private static final int FULL_SPEED = 100;
+
 	private static final Logger LOG = Logger.getLogger(Light.class);
 
 	private final List<ColorLightAdjust> colorLightAdjust = new ArrayList<ColorLightAdjust>();
-
 	private final List<Color> colors = new ArrayList<Color>();
-	// 2
-	private float hscan[] = new float[2];
+	private final float hscan[] = new float[2];
 
 	private boolean interpolation;
 	private float autoSpeed;
@@ -61,16 +60,19 @@ public class Light {
 	private boolean use;
 
 	// device using this light
-	private final List<Pair<Device, Float>> users = new ArrayList<Pair<Device, Float>>();
+	private final List<Pair<AbstractDevice, Float>> users = new ArrayList<Pair<AbstractDevice, Float>>();
 
 	// 2
 	private float vscan[] = new float[2];
 
+	/**
+	 * Constructs a light.
+	 */
 	public Light() {
 		this.time = -1;
 		this.prevtime = -1;
 
-		this.speed = 100;
+		this.speed = FULL_SPEED;
 		this.use = true;
 		this.interpolation = false;
 
@@ -80,6 +82,12 @@ public class Light {
 		this.vscan[1] = 100.0f;
 	}
 
+	/**
+	 * Adds a color to this light.
+	 * 
+	 * @param color
+	 *            the color to add
+	 */
 	public void addColor(final Color color) {
 		this.colors.add(color);
 		this.colorLightAdjust.add(new ColorLightAdjust());
@@ -91,7 +99,7 @@ public class Light {
 	 * @param device
 	 *            the device to add
 	 */
-	public void addUser(final Device device) {
+	public void addUser(final AbstractDevice device) {
 		// add CDevice pointer to users if it doesn't exist yet
 		for (int i = 0; i < this.users.size(); i++)
 		{
@@ -101,21 +109,17 @@ public class Light {
 			}
 		}
 		// FIXME set single change
-		this.users.add(new Pair<Device, Float>(device, (float) 0.0));
+		this.users.add(new Pair<AbstractDevice, Float>(device, (float) 0.0));
 	}
 
-	public void clearUser(final Device device) {
-		// clear CDevice* from users
-		final Iterator<Pair<Device, Float>> it = this.users.iterator();
-		while (it.hasNext())
-		{
-			final Pair<Device, Float> cur = it.next();
-			if (cur.getKey().equals(device))
-			{
-				this.users.remove(cur);
-				return;
-			}
-		}
+	/**
+	 * Removes a device.
+	 * 
+	 * @param device
+	 *            the device to remove
+	 */
+	public void clearUser(final AbstractDevice device) {
+		this.users.remove(device);
 	}
 
 	private float findMultiplier(final float[] fs, final float rgb2) {
@@ -144,6 +148,14 @@ public class Light {
 		return multiplier;
 	}
 
+	/**
+	 * Returns the adjustment value for the color given.
+	 * 
+	 * @param colornr
+	 *            the zero-based index of the color to get the adjustment value
+	 *            for
+	 * @return the adjustment value of the color given for this light
+	 */
 	public float getAdjust(final int colornr) {
 		if (this.colorLightAdjust.get(colornr).getAdjust() != 1.0)
 		{
@@ -152,14 +164,34 @@ public class Light {
 		return this.colors.get(colornr).getAdjust();
 	}
 
+	/**
+	 * Returns adjustment values for all colors defined for this light.
+	 * 
+	 * @param color
+	 *            the zero-based index of the color
+	 * @return the adjustment values for each color
+	 */
 	public Point2D.Float[] getAdjusts(final int color) {
 		return this.colorLightAdjust.get(color).getAdjusts();
 	}
 
+	/**
+	 * Returns the black level for the given zero-based index of the color.
+	 * 
+	 * @param colornr
+	 *            the zero-based index of the color you want to get the black
+	 *            level for
+	 * @return the black level
+	 */
 	public float getBlacklevel(final int colornr) {
 		return this.colors.get(colornr).getBlacklevel();
 	}
 
+	/**
+	 * Returns all the colors used in this light.
+	 * 
+	 * @return all defined colors
+	 */
 	public Collection<Color> getColors() {
 		return this.colors;
 	}
@@ -171,7 +203,7 @@ public class Light {
 	 *            the color by index
 	 * @param time
 	 *            the time
-	 * @return
+	 * @return the (interpolated) color value
 	 */
 	public float getColorValue(final int colornr, final long time) {
 		// need two writes for interpolation
@@ -287,10 +319,10 @@ public class Light {
 	 * @param device
 	 * @return
 	 */
-	public final float getSingleChange(final Device device) {
+	public final float getSingleChange(final AbstractDevice device) {
 		for (int i = 0; i < this.users.size(); i++)
 		{
-			Pair<Device, Float> dev = this.users.get(i);
+			Pair<AbstractDevice, Float> dev = this.users.get(i);
 			if (dev.getKey().equals(device))
 			{
 				return dev.getValue();
@@ -307,11 +339,11 @@ public class Light {
 		return this.time;
 	}
 
-	public final Pair<Device, Float> getUser(final int j) {
+	public final Pair<AbstractDevice, Float> getUser(final int j) {
 		return this.users.get(j);
 	}
 
-	public final List<Pair<Device, Float>> getUsers() {
+	public final List<Pair<AbstractDevice, Float>> getUsers() {
 		return this.users;
 	}
 
@@ -332,7 +364,7 @@ public class Light {
 	 * 
 	 * @param device
 	 */
-	public final void resetSingleChange(final Device device) {
+	public final void resetSingleChange(final AbstractDevice device) {
 		for (int i = 0; i < this.users.size(); i++)
 		{
 			if (this.users.get(i).getKey().equals(device))
@@ -356,7 +388,8 @@ public class Light {
 	}
 
 	public final void setHscan(final float[] hscan) {
-		this.hscan = hscan.clone();
+		this.hscan[0] = hscan[0];
+		this.hscan[1] = hscan[1];
 	}
 
 	public final void setInterpolation(final boolean interpolation) {
@@ -368,6 +401,14 @@ public class Light {
 		this.name = name;
 	}
 
+	/**
+	 * Sets the given rgb values as colors for this light.
+	 * 
+	 * @param rgb
+	 *            the color
+	 * @param time
+	 *            the time stamp the RGB values where grabbed.
+	 */
 	public final void setRgb(final float[] rgb, final long time) {
 		for (int i = 0; i < 3; i++)
 		{
@@ -407,7 +448,7 @@ public class Light {
 
 	@Override
 	public final String toString() {
-		return "CLight [name=" + this.name + ", time=" + this.time + ", rgb="
+		return "Light [name=" + this.name + ", time=" + this.time + ", rgb="
 				+ Arrays.toString(this.rgb) + ", speed=" + this.speed
 				+ ", interpolation=" + this.interpolation + ", use=" + this.use
 				+ ", colors=" + this.colors + ", hscan="

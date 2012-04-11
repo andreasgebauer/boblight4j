@@ -1,6 +1,19 @@
 package org.boblight4j.client.X11;
 
+import gnu.x11.Pixmap;
+import gnu.x11.extension.NotFoundException;
+import gnu.x11.extension.render.DrawablePicture;
+import gnu.x11.extension.render.DrawablePicture.Attributes;
+import gnu.x11.extension.render.PictFormat;
+import gnu.x11.extension.render.PictFormat.Type;
+import gnu.x11.extension.render.Picture;
+import gnu.x11.extension.render.Render;
+
 import org.boblight4j.client.ClientImpl;
+import org.boblight4j.exception.BoblightConfigurationException;
+
+import com.sun.jna.examples.unix.X11;
+import com.sun.jna.examples.unix.X11.Display;
 
 /**
  * clients/boblight-X11/grabber-xrender.cpp
@@ -12,9 +25,15 @@ import org.boblight4j.client.ClientImpl;
  */
 public class GrabberXRender extends AbstractX11Grabber {
 
+	private Picture srcPicture;
+	private Picture dstPicture;
+	private Pixmap pixmap;
+	private Render render;
+	private Picture mask;
+
 	public GrabberXRender(final ClientImpl boblight, final boolean sync,
-			final int size, double interval) {
-		super(boblight, sync, size, interval);
+			final int width, final int height, double interval) {
+		super(boblight, sync, width, height, interval);
 	}
 
 	// @Override
@@ -90,13 +109,70 @@ public class GrabberXRender extends AbstractX11Grabber {
 	// }
 
 	@Override
+	protected void extendedSetup() throws BoblightConfigurationException {
+
+		final X11 x11 = X11.INSTANCE;
+		Display display = x11.XOpenDisplay(null);
+
+		try
+		{
+			render = new Render(this.getDisplay());
+		}
+		catch (NotFoundException e)
+		{
+			throw new BoblightConfigurationException("", e);
+		}
+
+		final String[] extensions = this.getDisplay().extensions();
+
+		pixmap = new Pixmap(this.getDisplay(), width, height);
+
+		this.getDisplay().check_error();
+
+		final PictFormat.Template template = new PictFormat.Template();
+
+		// PictFormat[type=DIRECT, depth=32, direct=Direct[red_shift=0,
+		// red_mask=255, green_shift=8, green_mask=255, blue_shift=16,
+		// blue_mask=255, alpha_shift=0, alpha_mask=0]]
+		template.set_type(Type.DIRECT);
+		template.set_depth(32);
+		template.set_direct(0, 255, 8, 255, 16, 255, 0, 0);
+
+		final PictFormat format = render.picture_format(template, true);
+
+		final Attributes attrs = DrawablePicture.Attributes.EMPTY;
+		this.srcPicture = render.create_picture(this.getDisplay().default_root,
+				format, attrs);
+
+		this.getDisplay().check_error();
+
+		this.dstPicture = render.create_picture(this.pixmap, format, attrs);
+
+		this.getDisplay().check_error();
+
+		this.mask = render.create_picture(new Pixmap(this.getDisplay(), width,
+				height), format, attrs);
+
+		this.getDisplay().check_error();
+
+	}
+
+	@Override
 	public int[] grabPixelAt(int xpos, int ypos) {
-		// TODO Auto-generated method stub
+
+		this.updateDimensions();
+
+		render.composite(Render.SRC, this.srcPicture, this.mask,
+				this.dstPicture, 0, 0, 0, 0, 0, 0, this.width, this.height);
+
+		this.getDisplay().check_error();
+
 		return null;
 	}
 
 	@Override
 	public void cleanup() {
-
+		this.srcPicture.unintern();
+		this.dstPicture.unintern();
 	}
 }

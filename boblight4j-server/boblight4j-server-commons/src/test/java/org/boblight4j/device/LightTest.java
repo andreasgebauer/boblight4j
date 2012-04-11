@@ -19,14 +19,14 @@ public class LightTest {
 
 	@Test
 	public void testAddUser() {
-		final Device mock = Mockito.mock(Device.class);
+		final AbstractDevice mock = Mockito.mock(AbstractDevice.class);
 
 		this.testable.addUser(mock);
 	}
 
 	@Test
 	public void testClearUser() {
-		this.testable.clearUser(Mockito.mock(Device.class));
+		this.testable.clearUser(Mockito.mock(AbstractDevice.class));
 	}
 
 	@Test

@@ -14,11 +14,11 @@ public class DeviceTest {
 	public static void setUpBeforeClass() throws Exception {
 	}
 
-	private Device testable;
+	private AbstractDevice testable;
 
 	@Before
 	public void setUp() throws Exception {
-		testable = new Device(mock(ClientsHandler.class)) {
+		testable = new AbstractDevice(mock(ClientsHandler.class)) {
 
 			@Override
 			protected void writeOutput() throws BoblightDeviceException {
