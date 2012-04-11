@@ -41,9 +41,6 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	private final boolean blackBarDetection = true;
 
-	private boolean debug;
-
-	private BufferedImage debugImg;
 	private int debugWindowHeight;
 	private int debugWindowWidth;
 
@@ -169,16 +166,6 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			this.debugWindowWidth = Math.max(200, this.flagManager.width);
 			this.debugWindowHeight = Math.max(200, this.flagManager.height);
 
-			this.frame = new Frame();
-			this.frame.add(new Canvas());
-
-			this.debugImg = new BufferedImage(this.flagManager.width,
-					this.flagManager.height, BufferedImage.TYPE_INT_RGB);
-
-			this.frame.setSize(this.debugWindowWidth, this.debugWindowHeight);
-			this.frame.setVisible(true);
-
-			this.debug = true;
 		}
 
 		this.fg.setCaptureCallback(this);

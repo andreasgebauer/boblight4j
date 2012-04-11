@@ -56,14 +56,12 @@ public class BoblightV4l extends AbstractBoblightClient {
 			}
 		}));
 
-		while (!this.stop)
-		{
+		while (!this.stop) {
 			// init boblight
 			// void* boblight = boblight_init();
 			final ClientImpl boblight = new ClientImpl();
 
-			if (!this.trySetup(boblight))
-			{
+			if (!this.trySetup(boblight)) {
 				continue;
 			}
 
@@ -71,12 +69,9 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 			// if we can't parse the boblight option lines (given with -o)
 			// properly, just exit
-			try
-			{
+			try {
 				flagManager.parseBoblightOptions(boblight);
-			}
-			catch (final Exception error)
-			{
+			} catch (final Exception error) {
 				LOG.error("Error parsing boblight options", error);
 				return 1;
 			}
@@ -85,38 +80,33 @@ public class BoblightV4l extends AbstractBoblightClient {
 			final Grabber grabber = new ImageGrabberFactory().getImageGrabber(
 					boblight, true, this.flagManager.width,
 					this.flagManager.height);
-			try
-			{
+			try {
 				grabber.setup(flagManager);
-			}
-			catch (final BoblightException error)
-			{
+
+				if (flagManager.debug) {
+					grabber.setupDebug();
+				}
+
+			} catch (final BoblightException error) {
 				LOG.error(
 						"Error occurred while setting up device. Retrying in 5 seconds.",
 						error);
-				try
-				{
+				try {
 					Thread.sleep(SLEEP_AFTER_ERROR);
-				}
-				catch (final InterruptedException e)
-				{
+				} catch (final InterruptedException e) {
 					LOG.warn("Error during call of Thread.sleep().", e);
 				}
 				boblight.destroy();
 				continue;
 			}
 
-			if (grabber instanceof ActiveGrabber)
-			{
-				try
-				{
+			if (grabber instanceof ActiveGrabber) {
+				try {
 					// this will keep looping until we should stop or boblight
 					// gives
 					// an error
 					((ActiveGrabber) grabber).run();
-				}
-				catch (final Exception error)
-				{
+				} catch (final Exception error) {
 					LOG.error("Fatal error occurred", error);
 					grabber.cleanup();
 					boblight.destroy();
@@ -136,8 +126,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 	@Override
 	protected FlagManager getFlagManager() {
-		if (this.flagManager == null)
-		{
+		if (this.flagManager == null) {
 			this.flagManager = new FlagManagerV4l();
 		}
 		return this.flagManager;
