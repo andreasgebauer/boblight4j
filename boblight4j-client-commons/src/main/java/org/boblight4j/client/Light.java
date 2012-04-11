@@ -380,20 +380,29 @@ public class Light extends LightConfig {
 		{
 			if (optName.equals(opt.getName()))
 			{
-				Object value = null;
-				if (boolean.class.equals(opt.getType()))
+				try
 				{
-					value = Boolean.parseBoolean(stroption.get());
+					Object value = null;
+					if (boolean.class.equals(opt.getType()))
+					{
+						value = Boolean.parseBoolean(stroption.get());
+					}
+					else if (float.class.equals(opt.getType()))
+					{
+						value = Float.parseFloat(stroption.get());
+					}
+					else if (int.class.equals(opt.getType()))
+					{
+						value = Integer.parseInt(stroption.get());
+					}
+					return opt.postProcess(this, value);
 				}
-				else if (float.class.equals(opt.getType()))
+				catch (NumberFormatException ex)
 				{
-					value = Float.parseFloat(stroption.get());
+					throw new BoblightConfigurationException(
+							"Unable to parse string " + stroption.get()
+									+ " to type " + opt.getType(), ex);
 				}
-				else if (int.class.equals(opt.getType()))
-				{
-					value = Integer.parseInt(stroption.get());
-				}
-				return opt.postProcess(this, value);
 			}
 		}
 		// option not found
