@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.boblight4j.server.config.Color;
 import org.boblight4j.utils.MathUtils;
-import org.boblight4j.utils.Pair;
 
 /**
  * Class representing a light section in the configuration.
@@ -29,6 +28,59 @@ import org.boblight4j.utils.Pair;
  */
 public class Light {
 
+	public class ColorCalculator {
+
+		private boolean interpolation;
+		private long time = -1;
+		private long prevtime;
+		private float[] prevrgb;
+
+		public ColorCalculator(boolean interpolated) {
+			interpolation = interpolated;
+		}
+
+		public float[] getInitialColorValue(float[] rgbStart) {
+			float rgb[];
+			final float[] rgbCur = Arrays.copyOf(rgbStart, rgbStart.length);
+			if (this.interpolation) {
+				rgb = new float[3];
+
+				final long timeRecv = this.time;
+				final long timePrev = this.prevtime;
+
+				float multiply = 0f;
+				final long timeDiff = timeRecv - timePrev;
+				if (timeDiff > 0) // don't want to
+									// divide by 0
+				{
+					multiply = (time - timeRecv) / (float) timeDiff;
+				}
+				multiply = MathUtils.clamp(multiply, 0f, 1f);
+				for (int i = 0; i < 3; i++) {
+					final float[] rgbPrev = this.prevrgb;
+					final double diff = rgbCur[i] - rgbPrev[i];
+					rgb[i] = (float) (rgbPrev[i] + diff * multiply);
+				}
+			} else {
+				rgb = Arrays.copyOf(rgbCur, rgbCur.length);
+			}
+
+			return rgb;
+		}
+
+		public float[] getMaxRgb(List<Color> colors) {
+			final float maxrgb[] = { 0.0f, 0.0f, 0.0f };
+			for (int i = 0; i < colors.size(); i++) {
+				for (int j = 0; j < 3; j++) {
+					final Color color = colors.get(i);
+					maxrgb[j] += color.getRgb()[j];
+				}
+			}
+			return maxrgb;
+		}
+
+	}
+
 	private static final int FULL_SPEED = 100;
 
 	private static final Logger LOG = Logger.getLogger(Light.class);
@@ -44,8 +96,6 @@ public class Light {
 	private int threshold;
 	private String name;
 
-	// 3
-	private float prevrgb[] = new float[3];
 	private long prevtime; // previous write time
 
 	// 3
@@ -55,21 +105,20 @@ public class Light {
 	// float FindMultiplier(float *rgb, float ceiling);
 	// float FindMultiplier(float *rgb, float *ceiling);
 
-	private long time; // current write time
-
 	private boolean use;
 
 	// device using this light
-	private final List<Pair<AbstractDevice, Float>> users = new ArrayList<Pair<AbstractDevice, Float>>();
+	private final List<AbstractDevice> users = new ArrayList<AbstractDevice>();
 
 	// 2
 	private float vscan[] = new float[2];
+
+	private ColorCalculator colorCalculator;
 
 	/**
 	 * Constructs a light.
 	 */
 	public Light() {
-		this.time = -1;
 		this.prevtime = -1;
 
 		this.speed = FULL_SPEED;
@@ -101,15 +150,10 @@ public class Light {
 	 */
 	public void addUser(final AbstractDevice device) {
 		// add CDevice pointer to users if it doesn't exist yet
-		for (int i = 0; i < this.users.size(); i++)
-		{
-			if (this.users.get(i).getKey().equals(device))
-			{
-				return;
-			}
+		if (this.users.contains(device)) {
+			return;
 		}
-		// FIXME set single change
-		this.users.add(new Pair<AbstractDevice, Float>(device, (float) 0.0));
+		this.users.add(device);
 	}
 
 	/**
@@ -125,10 +169,8 @@ public class Light {
 	private float findMultiplier(final float[] fs, final float rgb2) {
 		float multiplier = Float.MAX_VALUE;
 
-		for (int i = 0; i < 3; i++)
-		{
-			if (fs[i] > 0.0 && rgb2 / fs[i] < multiplier)
-			{
+		for (int i = 0; i < 3; i++) {
+			if (fs[i] > 0.0 && rgb2 / fs[i] < multiplier) {
 				multiplier = (rgb2 / fs[i]);
 			}
 		}
@@ -138,10 +180,8 @@ public class Light {
 	private float findMultiplier(final float[] rgb, final float[] ceiling) {
 		float multiplier = Float.MAX_VALUE;
 
-		for (int i = 0; i < 3; i++)
-		{
-			if (rgb[i] > 0.0 && ceiling[i] / rgb[i] < multiplier)
-			{
+		for (int i = 0; i < 3; i++) {
+			if (rgb[i] > 0.0 && ceiling[i] / rgb[i] < multiplier) {
 				multiplier = ceiling[i] / rgb[i];
 			}
 		}
@@ -157,8 +197,7 @@ public class Light {
 	 * @return the adjustment value of the color given for this light
 	 */
 	public float getAdjust(final int colornr) {
-		if (this.colorLightAdjust.get(colornr).getAdjust() != 1.0)
-		{
+		if (this.colorLightAdjust.get(colornr).getAdjust() != 1.0) {
 			return this.colorLightAdjust.get(colornr).getAdjust();
 		}
 		return this.colors.get(colornr).getAdjust();
@@ -206,79 +245,39 @@ public class Light {
 	 * @return the (interpolated) color value
 	 */
 	public float getColorValue(final int colornr, final long time) {
+
 		// need two writes for interpolation
-		if (this.interpolation && this.prevtime == -1)
-		{
+		if (this.interpolation && this.prevtime == -1) {
 			return 0.0f;
 		}
 
-		float rgb[];
-		final float[] rgbCur = Arrays.copyOf(this.rgb, this.rgb.length);
-		if (this.interpolation)
-		{
-			rgb = new float[3];
+		float[] calcRgb = this.colorCalculator.getInitialColorValue(this.rgb);
 
-			final long timeRecv = this.time;
-			final long timePrev = this.prevtime;
-
-			float multiply = 0f;
-			final long timeDiff = timeRecv - timePrev;
-			if (timeDiff > 0) // don't want to
-								// divide by 0
-			{
-				multiply = (time - timeRecv) / (float) timeDiff;
-			}
-			multiply = MathUtils.clamp(multiply, 0f, 1f);
-			for (int i = 0; i < 3; i++)
-			{
-				final float[] rgbPrev = this.prevrgb;
-				final double diff = rgbCur[i] - rgbPrev[i];
-				rgb[i] = (float) (rgbPrev[i] + diff * multiply);
-			}
-		}
-		else
-		{
-			rgb = Arrays.copyOf(rgbCur, rgbCur.length);
-		}
-
-		if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0)
-		{
+		if (calcRgb[0] == 0 && calcRgb[1] == 0 && calcRgb[2] == 0) {
 			return 0f;
 		}
 
-		final float maxrgb[] = { 0.0f, 0.0f, 0.0f };
-		for (int i = 0; i < this.colors.size(); i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				final Color color = this.colors.get(i);
-				maxrgb[j] += color.getRgb()[j];
-			}
+		float[] maxRgb = this.colorCalculator.getMaxRgb(this.colors);
+
+		final float expandvalue = this.findMultiplier(calcRgb, 1);
+		for (int i = 0; i < 3; i++) {
+			calcRgb[i] *= expandvalue;
 		}
 
-		final float expandvalue = this.findMultiplier(rgb, 1);
-		for (int i = 0; i < 3; i++)
-		{
-			rgb[i] *= expandvalue;
-		}
-
-		final float range = this.findMultiplier(rgb, maxrgb);
-		for (int i = 0; i < 3; i++)
-		{
-			rgb[i] *= range;
+		final float range = this.findMultiplier(calcRgb, maxRgb);
+		for (int i = 0; i < 3; i++) {
+			calcRgb[i] *= range;
 		}
 
 		float colorvalue = 0;
-		for (int i = 0; i <= colornr; i++)
-		{
+		for (int i = 0; i <= colornr; i++) {
 			final Color cColor = this.colors.get(i);
-			colorvalue = this.findMultiplier(cColor.getRgb(), rgb);
+			colorvalue = this.findMultiplier(cColor.getRgb(), calcRgb);
 			colorvalue = MathUtils.clamp(colorvalue, 0, 1);
 
-			for (int j = 0; j < 3; j++)
-			{
+			for (int j = 0; j < 3; j++) {
 				final float d = cColor.getRgb()[j];
-				rgb[j] -= d * colorvalue;
+				calcRgb[j] -= d * colorvalue;
 			}
 		}
 
@@ -320,15 +319,7 @@ public class Light {
 	 * @return
 	 */
 	public final float getSingleChange(final AbstractDevice device) {
-		for (int i = 0; i < this.users.size(); i++)
-		{
-			Pair<AbstractDevice, Float> dev = this.users.get(i);
-			if (dev.getKey().equals(device))
-			{
-				return dev.getValue();
-			}
-		}
-		return 0;
+		return device.getSingleChange();
 	}
 
 	public final float getSpeed() {
@@ -336,14 +327,14 @@ public class Light {
 	}
 
 	public final long getTime() {
-		return this.time;
+		return this.colorCalculator.time;
 	}
 
-	public final Pair<AbstractDevice, Float> getUser(final int j) {
+	public final AbstractDevice getUser(final int j) {
 		return this.users.get(j);
 	}
 
-	public final List<Pair<AbstractDevice, Float>> getUsers() {
+	public final List<AbstractDevice> getUsers() {
 		return this.users;
 	}
 
@@ -365,14 +356,7 @@ public class Light {
 	 * @param device
 	 */
 	public final void resetSingleChange(final AbstractDevice device) {
-		for (int i = 0; i < this.users.size(); i++)
-		{
-			if (this.users.get(i).getKey().equals(device))
-			{
-				this.users.get(i).setValue(0.0f);
-				return;
-			}
-		}
+		device.setSingleChange(0.0f);
 	}
 
 	public final void setAdjust(final int colorNr, final float adjust) {
@@ -410,32 +394,27 @@ public class Light {
 	 *            the time stamp the RGB values where grabbed.
 	 */
 	public final void setRgb(final float[] rgb, final long time) {
-		for (int i = 0; i < 3; i++)
-		{
+		for (int i = 0; i < 3; i++) {
 			rgb[i] = MathUtils.clamp(rgb[i], 0.0f, 1.0f);
 		}
 
-		this.prevrgb = this.rgb;
+		this.colorCalculator.prevrgb = this.rgb;
 		this.rgb = rgb.clone();
 
-		this.prevtime = this.time;
-		this.time = time;
+		this.colorCalculator.prevtime = colorCalculator.time;
+		this.colorCalculator.time = time;
 	}
 
 	public final void setSingleChange(final float singlechange) {
-		for (int i = 0; i < this.users.size(); i++)
-		{
-			this.users.get(i).setValue(MathUtils.clamp(singlechange, 0f, 1f));
+		for (int i = 0; i < this.users.size(); i++) {
+			this.users.get(i).setSingleChange(
+					MathUtils.clamp(singlechange, 0f, 1f));
 		}
 	}
 
 	public final void setSpeed(final float speed) {
 		LOG.info("setting speed to " + speed);
 		this.speed = speed;
-	}
-
-	public final void setTime(final long time) {
-		this.time = time;
 	}
 
 	public final void setUse(final boolean use) {
@@ -448,7 +427,7 @@ public class Light {
 
 	@Override
 	public final String toString() {
-		return "Light [name=" + this.name + ", time=" + this.time + ", rgb="
+		return "Light [name=" + this.name + ", rgb="
 				+ Arrays.toString(this.rgb) + ", speed=" + this.speed
 				+ ", interpolation=" + this.interpolation + ", use=" + this.use
 				+ ", colors=" + this.colors + ", hscan="
