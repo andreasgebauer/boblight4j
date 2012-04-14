@@ -14,12 +14,6 @@
 
 	<name>Boblight4J Server Modules</name>
 
-	<modules>
-		<module>boblight4j-server-commons</module>
-		<module>boblight4j-server-xbmc-plugin</module>
-		<module>boblight4j-tcp-server</module>
-	</modules>
-
 	<profiles>
 		<profile>
 			<id>!1.7</id>
@@ -53,4 +47,11 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<modules>
+		<module>boblight4j-server-commons</module>
+		<module>boblight4j-server-xbmc-plugin</module>
+		<module>boblight4j-tcp-server</module>
+	</modules>
+
 </project>
