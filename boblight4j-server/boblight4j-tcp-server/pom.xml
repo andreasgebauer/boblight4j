@@ -115,7 +115,7 @@
 			</activation>
 			<dependencies>
 				<dependency>
-					<groupId>org.boblight</groupId>
+					<groupId>${project.groupId}</groupId>
 					<artifactId>boblight4j-server-config-jnotify</artifactId>
 					<version>${project.version}</version>
 				</dependency>
@@ -136,7 +136,7 @@
 			</activation>
 			<dependencies>
 				<dependency>
-					<groupId>org.boblight</groupId>
+					<groupId>${project.groupId}</groupId>
 					<artifactId>boblight4j-server-config-jdk7</artifactId>
 					<version>${project.version}</version>
 				</dependency>
