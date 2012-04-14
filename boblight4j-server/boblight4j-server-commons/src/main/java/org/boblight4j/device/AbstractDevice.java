@@ -16,7 +16,7 @@ import org.boblight4j.server.config.Channel;
  */
 public abstract class AbstractDevice implements Runnable {
 
-	public enum DeviceTypes {
+	public enum DeviceType {
 		NOTHING, MOMO, ATMO, POPEN, LTBL, SOUND, DIODER, KARATE,
 	}
 
@@ -35,13 +35,13 @@ public abstract class AbstractDevice implements Runnable {
 	private String output;
 	private int rate;
 	private boolean stop;
-	private DeviceTypes type;
+	private DeviceType type;
 
 	private float singleChange;
 
 	protected AbstractDevice(final ClientsHandler clients) {
 		this.clientsHandler = clients;
-		this.type = DeviceTypes.NOTHING;
+		this.type = DeviceType.NOTHING;
 		this.allowSync = true;
 		this.debug = false;
 		this.delayafteropen = 0;
@@ -113,7 +113,7 @@ public abstract class AbstractDevice implements Runnable {
 	}
 
 	// virtual
-	public void setType(final DeviceTypes momo) {
+	public void setType(final DeviceType momo) {
 		this.type = momo;
 	}
 

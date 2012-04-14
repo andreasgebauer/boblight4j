@@ -1,7 +1,6 @@
 package org.boblight4j.client;
 
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import junit.framework.Assert;
 
@@ -32,7 +31,7 @@ public class AbstractFlagManagerTest {
 
 		this.testable.parseFlags("-o saturation=2.0".split("\\s"));
 
-		final ClientImpl client = Mockito.mock(ClientImpl.class);
+		final Client client = Mockito.mock(Client.class);
 		this.testable.parseBoblightOptions(client);
 
 		Mockito.verify(client).setOption(-1, "saturation 2.0");
@@ -44,8 +43,7 @@ public class AbstractFlagManagerTest {
 
 		this.testable.parseFlags("-o light1:saturation=2.0".split("\\s"));
 
-		final ClientImpl client = Mockito.mock(ClientImpl.class);
-		client.getLights().add(mock(Light.class));
+		final Client client = Mockito.mock(Client.class);
 		when(client.getNrLights()).thenReturn(1);
 		when(client.getLightName(0)).thenReturn("light1");
 		this.testable.parseBoblightOptions(client);

@@ -82,9 +82,9 @@ public class DeviceRS232Test {
 		this.testable.close();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSetupDevice() {
-		@SuppressWarnings("unchecked")
 		Enumeration<CommPortIdentifier> enumeration = Mockito
 				.mock(Enumeration.class);
 		Mockito.when(CommPortIdentifier.getPortIdentifiers()).thenReturn(

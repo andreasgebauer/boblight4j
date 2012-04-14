@@ -130,7 +130,7 @@ public abstract class AbstractBoblightClient {
 	 *            the client
 	 * @return true if setup succeeds, false otherwise
 	 */
-	public final boolean trySetup(final ClientImpl client) {
+	public final boolean trySetup(final Client client) {
 		try
 		{
 			LOG.info("Connecting to boblightd");

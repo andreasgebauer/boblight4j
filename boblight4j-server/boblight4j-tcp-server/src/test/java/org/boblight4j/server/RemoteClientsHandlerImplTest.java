@@ -21,27 +21,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
-public class ClientsHandlerImplTest {
+public class RemoteClientsHandlerImplTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
-	private ClientsHandlerImpl testable;
+	private RemoteClientsHandlerImpl testable;
 
 	@Before
 	public void setUp() throws Exception {
-		testable = new ClientsHandlerImpl(new ArrayList<Light>());
+		testable = new RemoteClientsHandlerImpl(new ArrayList<Light>());
 	}
 
-	private List<Client> getClients() {
-		return (List<Client>) Whitebox.getInternalState(testable, "clients");
+	@SuppressWarnings("unchecked")
+	private List<ConnectedClientImpl> getClients() {
+		return (List<ConnectedClientImpl>) Whitebox.getInternalState(testable,
+				"clients");
 	}
 
 	@Test
 	public void testAddClient() throws IOException {
-		final List<Client> clients = getClients();
-		final Client client = mock(Client.class);
+		final List<ConnectedClientImpl> clients = getClients();
+		final ConnectedClientImpl client = mock(ConnectedClientImpl.class);
 		final SocketChannel socketChannel = mock(SocketChannel.class);
 
 		// socketChannel.isConnected() will return null, so the first client
@@ -77,7 +79,7 @@ public class ClientsHandlerImplTest {
 	@Test
 	public void testFillChannels() throws IOException {
 		// setup
-		final Client client = new Client(null);
+		final ConnectedClientImpl client = new ConnectedClientImpl(null);
 		final ArrayList<Light> lights = new ArrayList<Light>();
 		lights.add(new Light());
 		Whitebox.setInternalState(testable, "lights", lights);
@@ -92,11 +94,8 @@ public class ClientsHandlerImplTest {
 
 	@Test
 	public void testHandleMessages() throws BoblightException, IOException {
-		final Client client = mock(Client.class);
+		final ConnectedClientImpl client = mock(ConnectedClientImpl.class);
 		client.messagequeue = new MessageQueue();
-
-		// add a client
-		testable.addClient(client);
 
 		final SocketChannel sockChannel = mock(SocketChannel.class);
 		final Socket socket = mock(Socket.class);
@@ -104,6 +103,10 @@ public class ClientsHandlerImplTest {
 		when(sockChannel.socket()).thenReturn(socket);
 		when(socket.getInetAddress()).thenReturn(inetAdress);
 		when(client.getSocketChannel()).thenReturn(sockChannel);
+		when(client.isConnected()).thenReturn(true);
+
+		// add a client
+		testable.addClient(client);
 
 		testable.handleMessages(sockChannel, "".getBytes(), 0);
 	}
@@ -115,7 +118,7 @@ public class ClientsHandlerImplTest {
 
 	@Test
 	public void testRemoveClient() {
-		testable.removeClient(mock(SocketChannel.class));
+		testable.removeClient(mock(ConnectedClientImpl.class));
 	}
 
 	@Test

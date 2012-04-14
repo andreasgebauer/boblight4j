@@ -2,6 +2,7 @@ package de.gebauer.boblight4j.xbmc;
 
 import java.io.IOException;
 
+import org.boblight4j.client.Client;
 import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractPassiveGrabber;
@@ -28,7 +29,7 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 	private InputStreamRGBReader reader;
 	private FlagManagerInputStreamGrabber flagManager;
 
-	public InputStreamGrabber(ClientImpl client, boolean sync, int width, int height) {
+	public InputStreamGrabber(Client client, boolean sync, int width, int height) {
 		super(client, sync, width, height);
 	}
 
@@ -75,7 +76,7 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 	}
 
 	@Override
-	public ClientImpl getClient() {
+	public Client getClient() {
 		return this.client;
 	}
 

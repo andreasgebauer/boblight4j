@@ -28,7 +28,7 @@ import org.powermock.reflect.Whitebox;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ClientImpl.class, SocketChannel.class })
 @PowerMockIgnore("javax.management.*")
-public class ClientTest {
+public class ClientImplTest {
 
 	private Socket socket;
 	private SocketChannel socketChannel;

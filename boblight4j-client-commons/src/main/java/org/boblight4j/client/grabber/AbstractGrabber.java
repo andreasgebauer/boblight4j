@@ -4,18 +4,20 @@ import java.awt.Canvas;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 
 /**
  * This is base class for a grabber implementation which grabs pixels from a
- * device such as a screen or a video input device.
+ * device such as a screen or a video input device.<br>
+ * There are abstract active and passive grabber implementations. The active
+ * grabber acts actively by grabbing pixels periodically.
  * 
  * @author agebauer
  * 
  */
 public abstract class AbstractGrabber implements Grabber {
 
-	protected final ClientImpl client;
+	protected final Client client;
 	protected final boolean sync;
 	protected final int width;
 	protected final int height;
@@ -32,9 +34,9 @@ public abstract class AbstractGrabber implements Grabber {
 	private long measurements;
 	private int nrMeasurements;
 
-	public AbstractGrabber(ClientImpl client, boolean sync, int width,
+	public AbstractGrabber(Client client2, boolean sync, int width,
 			int height) {
-		this.client = client;
+		this.client = client2;
 		this.sync = sync;
 		this.width = width;
 		this.height = height;
@@ -78,8 +80,7 @@ public abstract class AbstractGrabber implements Grabber {
 	}
 
 	protected void updateDebugFps() {
-		if (this.debug)
-		{
+		if (this.debug) {
 			final long now = System.currentTimeMillis(); // current timestamp
 			final long timeDiffMsr = now - this.lastMeasurement;
 			this.measurements += timeDiffMsr;
@@ -94,8 +95,7 @@ public abstract class AbstractGrabber implements Grabber {
 				this.lastUpdate = now;
 
 				double fps = 0.0;
-				if (this.nrMeasurements > 0)
-				{
+				if (this.nrMeasurements > 0) {
 					// we need at least one measurement
 					fps = 1.0 / ((float) this.measurements / (float) this.nrMeasurements) * 1000;
 				}

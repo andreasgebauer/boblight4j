@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.config.ConfigImpl;
+import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.boblight4j.server.config.ConfigUpdater;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -94,10 +94,10 @@ public class BoblightDaemon {
 		}));
 
 		final List<Light> lights = new ArrayList<Light>(); // lights pool
-		final ClientsHandlerImpl clients = new ClientsHandlerImpl(lights);
+		final RemoteClientsHandlerImpl clients = new RemoteClientsHandlerImpl(lights);
 
 		// class for loading and parsing config load and parse config
-		final ConfigImpl config = new ConfigImpl();
+		final TcpServerConfigImpl config = new TcpServerConfigImpl();
 		config.loadConfigFromFile(this.args.configFile);
 
 		config.checkConfig();

@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
-import org.boblight4j.server.ClientsHandlerImpl;
+import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.boblight4j.server.NioServer;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +22,7 @@ public class ConfigUpdaterTest {
 
 	private static final Logger LOG = Logger.getLogger(ConfigUpdaterTest.class);
 
-	private ClientsHandlerImpl clients;
+	private RemoteClientsHandlerImpl clients;
 	private List<AbstractDevice> devices;
 	private File file;
 	private List<Light> lights;
@@ -33,13 +33,13 @@ public class ConfigUpdaterTest {
 		this.file = new File(ConfigUpdaterTest.class.getResource(
 				"/boblight.10pc.conf").toURI());
 		this.lights = new ArrayList<Light>();
-		this.clients = new ClientsHandlerImpl(this.lights);
+		this.clients = new RemoteClientsHandlerImpl(this.lights);
 
-		final Field field = WhiteboxImpl.getField(ClientsHandlerImpl.class,
+		final Field field = WhiteboxImpl.getField(RemoteClientsHandlerImpl.class,
 				"nioServer");
 		field.set(this.clients, Mockito.mock(NioServer.class));
 
-		ConfigImpl config = new ConfigImpl();
+		TcpServerConfigImpl config = new TcpServerConfigImpl();
 		this.devices = new ArrayList<AbstractDevice>();
 		final AbstractDevice device = Mockito.mock(AbstractDevice.class);
 		Mockito.when(device.getName()).thenReturn("arduino");

@@ -3,7 +3,7 @@ package org.boblight4j.client.X11;
 import gnu.x11.Display;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractActiveGrabber;
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -25,7 +25,7 @@ public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
 	protected FlagManagerX11 flagManager;
 
-	public AbstractX11Grabber(final ClientImpl client, final boolean sync,
+	public AbstractX11Grabber(final Client client, final boolean sync,
 			int width, int height, double interval) {
 		super(client, sync, width, height);
 		this.interval = interval;

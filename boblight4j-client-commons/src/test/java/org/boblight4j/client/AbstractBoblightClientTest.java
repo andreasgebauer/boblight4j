@@ -154,7 +154,7 @@ public class AbstractBoblightClientTest {
 
 	@Test
 	public void testTrySetup() throws BoblightException {
-		ClientImpl client = mock(ClientImpl.class);
+		Client client = mock(Client.class);
 		this.testable.trySetup(client);
 
 		verify(client).connect(null, 0, 5000);
@@ -162,7 +162,7 @@ public class AbstractBoblightClientTest {
 
 	@Test
 	public void testTrySetupCatchingException() throws BoblightException {
-		ClientImpl client = mock(ClientImpl.class);
+		Client client = mock(Client.class);
 
 		doThrow(new BoblightException("")).when(client).connect(anyString(),
 				anyInt(), anyInt());

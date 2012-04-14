@@ -5,9 +5,9 @@ import java.util.List;
 
 public class ConfigAccessor implements ConfigAccessorMBean {
 
-	private final ConfigImpl config;
+	private final TcpServerConfigImpl config;
 
-	public ConfigAccessor(final ConfigImpl config) {
+	public ConfigAccessor(final TcpServerConfigImpl config) {
 		this.config = config;
 	}
 

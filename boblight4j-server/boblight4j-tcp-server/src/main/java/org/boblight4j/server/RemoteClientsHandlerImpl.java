@@ -7,6 +7,7 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,44 +26,50 @@ import org.boblight4j.utils.Message;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
 
-public class ClientsHandlerImpl implements ClientsHandler {
+public class RemoteClientsHandlerImpl extends
+		AbstractClientsHandler<ConnectedClientImpl> implements ClientsHandler {
 
 	private static final int FD_SETSIZE = 1024;
 
 	private static final Logger LOG = Logger
-			.getLogger(ClientsHandlerImpl.class);
+			.getLogger(RemoteClientsHandlerImpl.class);
 	private static final int MAXDATA = 100000;
-
-	private static final String PROTOCOLVERSION = "5";
 
 	private InetAddress address;
 
-	private final List<Client> clients = new ArrayList<Client>();
+	private final List<ConnectedClientImpl> clients = new ArrayList<ConnectedClientImpl>();
 	private final List<Light> lights;
 
-	private final Object mutex = new Object();
+	final Object mutex = new Object();
 
 	private NioServer nioServer;
 
 	private int port;
 
-	public ClientsHandlerImpl(final List<Light> lights) throws IOException {
+	public RemoteClientsHandlerImpl(final List<Light> lights)
+			throws IOException {
+		if (lights == null) {
+			throw new IllegalArgumentException(
+					"Argument lights cannot be null.");
+		}
+
 		this.lights = lights;
 
+		// register jmx bean
 		MBeanUtils.registerBean("org.boblight.server.config:type=Lights",
 				new LightsAccessor(this.lights));
 
-		this.nioServer = null;
 	}
 
 	@Override
-	public final void addClient(final Client client) throws IOException {
+	public final void addClient(final ConnectedClient client)
+			throws IOException {
 
 		// clean disconnected clients before adding new
-		for (Iterator<Client> it = this.clients.iterator(); it.hasNext();) {
-			Client cl = it.next();
-			if (!cl.getSocketChannel().isConnected()
-					&& !cl.getSocketChannel().isConnectionPending()) {
+		for (Iterator<ConnectedClientImpl> it = this.clients.iterator(); it
+				.hasNext();) {
+			ConnectedClient cl = it.next();
+			if (!cl.isConnected() && !cl.isConnectionPending()) {
 				it.remove();
 			}
 		}
@@ -72,19 +79,22 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		{
 			LOG.error(String.format("number of clients reached maximum %d",
 					FD_SETSIZE));
-			NioUtils.write(client, "full\n");
+			NioUtils.write((ConnectedClientImpl) client, "full\n");
 			this.clients.remove(client);
 			return;
 		}
 
 		synchronized (this.mutex) {
-			client.lights = this.lights;
-			this.clients.add(client);
+			client.setLights(this.lights);
+			this.clients.add((ConnectedClientImpl) client);
 		}
 	}
 
 	@Override
 	public final void blockConnect(final boolean doBlock) {
+		if (this.nioServer == null) {
+			throw new IllegalStateException("NioServer not initialized.");
+		}
 		this.nioServer.blockAccept(doBlock);
 	}
 
@@ -96,8 +106,8 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	public final void fillChannels(final List<Channel> channels,
 			final long time, final AbstractDevice device) {
 
-		final Set<Light> usedLights = new HashSet<Light>();
-		doFillChannels(channels, time, device, usedLights);
+		final Collection<Light> usedLights = doFillChannels(channels, time,
+				device);
 
 		// reset singlechange
 		Iterator<Light> usedLgthsIt = usedLights.iterator();
@@ -108,11 +118,11 @@ public class ClientsHandlerImpl implements ClientsHandler {
 
 		// update which lights we're using
 		for (int i = 0; i < this.clients.size(); i++) {
-			final Client client = this.clients.get(i);
-			for (int j = 0; j < client.lights.size(); j++) {
+			final ConnectedClient client = this.clients.get(i);
+			for (int j = 0; j < client.getLights().size(); j++) {
 				boolean lightUsed = false;
 
-				final Light clientLight = client.lights.get(j);
+				final Light clientLight = client.getLights().get(j);
 
 				usedLgthsIt = usedLights.iterator();
 				while (usedLgthsIt.hasNext()) {
@@ -132,8 +142,9 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	private void doFillChannels(final List<Channel> channels, final long time,
-			final AbstractDevice device, final Set<Light> usedLights) {
+	private Collection<Light> doFillChannels(final List<Channel> channels,
+			final long time, final AbstractDevice device) {
+		List<Light> usedLights = new ArrayList<Light>();
 		for (int i = 0; i < channels.size(); i++) {
 			// get the oldest client with the highest priority
 			final Channel channel = channels.get(i);
@@ -160,8 +171,8 @@ public class ClientsHandlerImpl implements ClientsHandler {
 			// fill channel with values from the client
 			channel.setUsed(true);
 
-			final Client cClient = this.clients.get(clientnr);
-			final Light cLight = cClient.lights.get(light);
+			final ConnectedClient cClient = this.clients.get(clientnr);
+			final Light cLight = cClient.getLights().get(light);
 
 			final float colorValue = cLight.getColorValue(color, time);
 
@@ -178,6 +189,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 			// loop
 			usedLights.add(cLight);
 		}
+		return usedLights;
 	}
 
 	private int chooseClient(final int light) {
@@ -187,22 +199,23 @@ public class ClientsHandlerImpl implements ClientsHandler {
 			int priority = 255;
 
 			for (int j = 0; j < this.clients.size(); j++) {
-				final Client cClient = this.clients.get(j);
-				final Light cLight = cClient.lights.get(light);
+				final ConnectedClient cClient = this.clients.get(j);
+				final Light cLight = cClient.getLights().get(light);
 
-				if (cClient.priority == 255 || cClient.connectTime == -1
-						|| !cLight.isUse()) {
+				if (cClient.getPriority() == 255
+						|| cClient.getConnectTime() == -1 || !cLight.isUse()) {
 					// this client we don't use
 					continue;
 				}
 
 				// this client has a high priority (lower number) than the
 				// current one, or has the same and is older
-				if (cClient.priority < priority || priority == cClient.priority
-						&& cClient.connectTime < clienttime) {
+				if (cClient.getPriority() < priority
+						|| priority == cClient.getPriority()
+						&& cClient.getConnectTime() < clienttime) {
 					clientnr = j;
-					clienttime = cClient.connectTime;
-					priority = cClient.priority;
+					clienttime = cClient.getConnectTime();
+					priority = cClient.getPriority();
 				}
 			}
 		}
@@ -212,20 +225,19 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	@Override
 	public void handleMessages(final SocketChannel socketChannel,
 			final byte[] bs, final int numRead) throws BoblightException {
-		Client client = null;
-		final Iterator<Client> iterator = this.clients.iterator();
+		ConnectedClientImpl client = null;
+		final Iterator<ConnectedClientImpl> iterator = this.clients.iterator();
 		while (iterator.hasNext()) {
-			final Client selected = iterator.next();
+			final ConnectedClientImpl selected = iterator.next();
 			final InetAddress inetAddress2 = socketChannel.socket()
 					.getInetAddress();
-			final InetAddress inetAddress1 = selected.getSocketChannel()
-					.socket().getInetAddress();
-			if (inetAddress1 == null) {
-				LOG.info("Removing client " + selected.getSocketChannel());
+			if (!selected.isConnected() && !selected.isConnectionPending()) {
+				LOG.info("Removing client " + selected);
 				iterator.remove();
 				continue;
 			}
-			if (inetAddress1.equals(inetAddress2)) {
+			if (selected.getSocketChannel().socket().getInetAddress()
+					.equals(inetAddress2)) {
 				client = selected;
 			}
 		}
@@ -251,8 +263,9 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	private void parseGet(final Client client, final Message message)
-			throws BoblightCommunicationException, BoblightParseException {
+	private void parseGet(final ConnectedClientImpl client,
+			final Message message) throws BoblightCommunicationException,
+			BoblightParseException {
 
 		final String messagekey = Misc.getWord(message.message);
 		if (messagekey.equals("version")) {
@@ -265,8 +278,9 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	private void parseMessage(final Client client, final Message message)
-			throws BoblightParseException, BoblightCommunicationException {
+	private void parseMessage(final ConnectedClientImpl client,
+			final Message message) throws BoblightParseException,
+			BoblightCommunicationException {
 		final Pointer<String> messagekeyPtr = new Pointer<String>();
 		// an empty message is invalid
 		String messagekey = messagekeyPtr.get();
@@ -306,8 +320,8 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	private void parseSet(final Client client, final Message message)
-			throws BoblightParseException {
+	private void parseSet(final ConnectedClientImpl client,
+			final Message message) throws BoblightParseException {
 		final String messagekey = Misc.getWord(message.message);
 
 		if (messagekey.equals("priority")) {
@@ -334,8 +348,8 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	private void parseSetLight(final Client client, final Message message)
-			throws BoblightParseException {
+	private void parseSetLight(final ConnectedClient client,
+			final Message message) throws BoblightParseException {
 		String lightname;
 		String lightkey;
 		int lightnr = -1;
@@ -350,7 +364,7 @@ public class ClientsHandlerImpl implements ClientsHandler {
 
 		String value = null;
 		try {
-			final Light cLight = client.lights.get(lightnr);
+			final Light cLight = client.getLights().get(lightnr);
 			if (lightkey.equals("rgb")) {
 				final float rgb[] = new float[3];
 				for (int i = 0; i < 3; i++) {
@@ -383,23 +397,21 @@ public class ClientsHandlerImpl implements ClientsHandler {
 				cLight.setSingleChange(singlechange);
 			} else {
 				throw new BoblightParseException(String.format(
-						"%s sent gibberish", client.getSocketChannel().socket()
-								.getInetAddress()));
+						"%s sent gibberish", client));
 			}
 		} catch (final NumberFormatException e) {
 			throw new BoblightParseException(String.format(
-					"%s sent gibberish: %s", client.getSocketChannel().socket()
-							.getInetAddress(), value), e);
+					"%s sent gibberish: %s", client, value), e);
 		}
 	}
 
-	private void parseSync(final Client client) {
+	private void parseSync(final ConnectedClient client) {
 		final Set<AbstractDevice> users = new HashSet<AbstractDevice>();
 
 		synchronized (this.mutex) {
 			// build up a list of devices using this client's input
-			for (int i = 0; i < client.lights.size(); i++) {
-				final Light cLight = client.lights.get(i);
+			for (int i = 0; i < client.getLights().size(); i++) {
+				final Light cLight = client.getLights().get(i);
 				for (int j = 0; j < cLight.getNrUsers(); j++) {
 					users.add(cLight.getUser(j));
 				}
@@ -440,18 +452,21 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	 * SocketChannel)
 	 */
 	@Override
-	public void removeClient(final SocketChannel socketChannel) {
+	public void removeClient(final ConnectedClient socketChannel) {
+		ConnectedClientImpl remoteClient = (ConnectedClientImpl) socketChannel;
 		synchronized (this.mutex) {
-			final Iterator<Client> iterator = this.clients.iterator();
+			final Iterator<ConnectedClientImpl> iterator = this.clients
+					.iterator();
 			while (iterator.hasNext()) {
-				final Client client = iterator.next();
+				final ConnectedClientImpl client = iterator.next();
 				if (client.getSocketChannel().equals(socketChannel)) {
-					final Socket socket = socketChannel.socket();
+					final Socket socket = remoteClient.getSocketChannel()
+							.socket();
 					final SocketAddress remoteAddress = socket
 							.getRemoteSocketAddress();
 					LOG.info(String.format("removing %s", remoteAddress));
 					try {
-						socketChannel.close();
+						remoteClient.getSocketChannel().close();
 						socket.close();
 					} catch (final IOException e) {
 						LOG.error("Error during Socket.close()", e);
@@ -469,19 +484,19 @@ public class ClientsHandlerImpl implements ClientsHandler {
 	 * @param client
 	 * @return
 	 */
-	private boolean sendLights(final Client client) {
+	private boolean sendLights(final ConnectedClientImpl client) {
 		// build up messages by appending to CTcpData
 		final StringBuilder msg = new StringBuilder("lights "
-				+ client.lights.size() + "\n");
+				+ client.getLights().size() + "\n");
 
-		for (int i = 0; i < client.lights.size(); i++) {
-			msg.append("light " + client.lights.get(i).getName() + " ");
+		for (int i = 0; i < client.getLights().size(); i++) {
+			msg.append("light " + client.getLights().get(i).getName() + " ");
 
 			msg.append("scan ");
-			msg.append(client.lights.get(i).getVscan()[0] + " ");
-			msg.append(client.lights.get(i).getVscan()[1] + " ");
-			msg.append(client.lights.get(i).getHscan()[0] + " ");
-			msg.append(client.lights.get(i).getHscan()[1]);
+			msg.append(client.getLights().get(i).getVscan()[0] + " ");
+			msg.append(client.getLights().get(i).getVscan()[1] + " ");
+			msg.append(client.getLights().get(i).getHscan()[0] + " ");
+			msg.append(client.getLights().get(i).getHscan()[1]);
 			msg.append("\n");
 		}
 
@@ -495,22 +510,9 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		return true;
 	}
 
-	private void sendPing(final Client client)
+	@Override
+	public void doSendPing(final ConnectedClientImpl client, int lightsused)
 			throws BoblightCommunicationException {
-
-		int lightsused = 0;
-
-		// CLock lock(m_mutex);
-		synchronized (this.mutex) {
-			// check if any light is used
-			for (int i = 0; i < client.lights.size(); i++) {
-				if (client.lights.get(i).getNrUsers() > 0) {
-					lightsused = 1;
-					break; // if one light is used we have enough info
-				}
-			}
-		}
-		// lock.Leave();
 		try {
 			NioUtils.write(client, "ping " + lightsused + "\n");
 		} catch (final IOException e) {
@@ -518,20 +520,16 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 	}
 
-	// this is used to check that boblightd and libboblight have the same
-	// protocol version
-	// the check happens in libboblight
-	private void sendVersion(final Client client)
+	@Override
+	public void doSendVersion(final ConnectedClientImpl client, String version)
 			throws BoblightCommunicationException {
-
 		try {
-			NioUtils.write(client, "version " + PROTOCOLVERSION + "\n");
+			NioUtils.write(client, "version " + version + "\n");
 		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
 	}
 
-	@Override
 	public void setInterface(final InetAddress address, final int port)
 			throws UnknownHostException {
 		this.address = address;
@@ -540,5 +538,25 @@ public class ClientsHandlerImpl implements ClientsHandler {
 		}
 
 		this.port = port;
+	}
+
+	public void removeClient(SocketChannel socketChannel) {
+		ConnectedClientImpl client = getClient(socketChannel);
+		if (client == null) {
+			throw new IllegalArgumentException("No client with socketChannel "
+					+ socketChannel + " available.");
+		} else {
+			removeClient(client);
+		}
+	}
+
+	private ConnectedClientImpl getClient(SocketChannel socketChannel) {
+		for (ConnectedClientImpl client : this.clients) {
+			if (client.getSocketChannel().socket().getInetAddress()
+					.equals(socketChannel.socket().getInetAddress())) {
+				return client;
+			}
+		}
+		return null;
 	}
 }

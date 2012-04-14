@@ -2,7 +2,7 @@ package de.gebauer.boblight4j.xbmc;
 
 import static org.mockito.Mockito.verify;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class InputStreamGrabberTest {
 
 	private InputStreamGrabber testable;
 	@Mock
-	private ClientImpl mock;
+	private Client mock;
 
 	@Before
 	public void setUp() throws Exception {

@@ -33,10 +33,10 @@ public class NioServer implements Runnable {
 	// The selector we'll be monitoring
 	private final Selector selector;
 	private boolean stop;
-	private final ClientsHandler worker;
+	private final RemoteClientsHandlerImpl worker;
 
 	public NioServer(final InetAddress hostAddress, final int port,
-			final ClientsHandler worker) throws IOException {
+			final RemoteClientsHandlerImpl worker) throws IOException {
 		this.hostAddress = hostAddress;
 		this.port = port;
 		this.worker = worker;
@@ -55,7 +55,7 @@ public class NioServer implements Runnable {
 		LOG.info(String.format("%s connected", socketChannel.socket()
 				.getRemoteSocketAddress()));
 
-		this.worker.addClient(new Client(socketChannel));
+		this.worker.addClient(new ConnectedClientImpl(socketChannel));
 
 		socketChannel.configureBlocking(false);
 
@@ -97,12 +97,9 @@ public class NioServer implements Runnable {
 
 		// Attempt to read off the channel
 		int numRead;
-		try
-		{
+		try {
 			numRead = socketChannel.read(this.readBuffer);
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			// The remote forcibly closed the connection, cancel
 			// the selection key and close the channel.
 			key.cancel();
@@ -110,8 +107,7 @@ public class NioServer implements Runnable {
 			return;
 		}
 
-		if (numRead == -1)
-		{
+		if (numRead == -1) {
 			// Remote entity shut the socket down cleanly. Do the
 			// same from our end and cancel the channel.
 			key.channel().close();
@@ -119,14 +115,11 @@ public class NioServer implements Runnable {
 			return;
 		}
 
-		try
-		{
+		try {
 			// Hand the data off to our worker thread
 			this.worker.handleMessages(socketChannel, this.readBuffer.array(),
 					numRead);
-		}
-		catch (final BoblightException e)
-		{
+		} catch (final BoblightException e) {
 			LOG.error("Exception while handling messages. Removing client.", e);
 			this.worker.removeClient(socketChannel);
 		}
@@ -134,44 +127,32 @@ public class NioServer implements Runnable {
 
 	@Override
 	public final void run() {
-		while (!this.stop)
-		{
-			try
-			{
+		while (!this.stop) {
+			try {
 				// Wait for an event one of the registered channels
 				this.selector.select();
 
 				// Iterate over the set of keys for which events are available
 				final Iterator<SelectionKey> selectedKeys = this.selector
 						.selectedKeys().iterator();
-				while (selectedKeys.hasNext())
-				{
+				while (selectedKeys.hasNext()) {
 					final SelectionKey key = selectedKeys.next();
 					selectedKeys.remove();
 
-					if (!key.isValid())
-					{
+					if (!key.isValid()) {
 						continue;
 					}
 
 					// Check what event is available and deal with it
-					if (key.isAcceptable() && this.accept)
-					{
+					if (key.isAcceptable() && this.accept) {
 						this.accept(key);
-					}
-					else if (key.isReadable())
-					{
+					} else if (key.isReadable()) {
 						this.read(key);
-					}
-					else if (key.isWritable())
-					{
+					} else if (key.isWritable()) {
 						this.write(key);
 					}
 				}
-				Thread.sleep(2);
-			}
-			catch (final Exception e)
-			{
+			} catch (final IOException e) {
 				LOG.error("NioServer exception.", e);
 			}
 		}
@@ -184,27 +165,23 @@ public class NioServer implements Runnable {
 	private void write(final SelectionKey key) throws IOException {
 		final SocketChannel socketChannel = (SocketChannel) key.channel();
 
-		synchronized (this.pendingData)
-		{
+		synchronized (this.pendingData) {
 			final List<ByteBuffer> queue = this.pendingData.get(socketChannel);
 
 			// Write until there's not more data ...
-			while (!queue.isEmpty())
-			{
+			while (!queue.isEmpty()) {
 				final ByteBuffer buf = queue.get(0);
 
 				LOG.info("Writing " + new String(buf.array()));
 				socketChannel.write(buf);
-				if (buf.remaining() > 0)
-				{
+				if (buf.remaining() > 0) {
 					// ... or the socket's buffer fills up
 					break;
 				}
 				queue.remove(0);
 			}
 
-			if (queue.isEmpty())
-			{
+			if (queue.isEmpty()) {
 				// We wrote away all data, so we're no longer interested
 				// in writing on this socket. Switch back to waiting for
 				// data.

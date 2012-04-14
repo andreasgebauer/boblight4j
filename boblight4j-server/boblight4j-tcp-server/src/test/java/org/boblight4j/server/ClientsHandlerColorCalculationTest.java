@@ -11,6 +11,7 @@ import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
+import org.boblight4j.utils.MessageQueue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +24,9 @@ public class ClientsHandlerColorCalculationTest {
 	private Channel bottom1green;
 	private Channel bottom1red;
 	private List<Channel> channels;
-	private Client client;
+	private ConnectedClientImpl client;
 	private AbstractDevice device;
-	private ClientsHandlerImpl testable;
+	private RemoteClientsHandlerImpl testable;
 
 	private void nextStep(final long time, final double expected) {
 		double value;
@@ -42,7 +43,8 @@ public class ClientsHandlerColorCalculationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		final List<Light> vector = new ArrayList<Light>();
+		ArrayList<Light> value = new ArrayList<Light>();
+		final List<Light> vector = value;
 
 		this.bottom1 = new Light();
 		this.bottom1.setInterpolation(true);
@@ -54,7 +56,7 @@ public class ClientsHandlerColorCalculationTest {
 
 		this.device = Mockito.mock(AbstractDevice.class);
 
-		this.testable = new ClientsHandlerImpl(vector);
+		this.testable = new RemoteClientsHandlerImpl(vector);
 
 		this.channels = new ArrayList<Channel>();
 		this.bottom1red = new Channel(0, 0);
@@ -75,9 +77,13 @@ public class ClientsHandlerColorCalculationTest {
 		final InetAddress inetAddress = Mockito.mock(InetAddress.class);
 		Mockito.when(socket.getInetAddress()).thenReturn(inetAddress);
 
-		this.client = new Client(socketChannel);
+		this.client = Mockito.mock(ConnectedClientImpl.class);
+		Mockito.when(client.isConnected()).thenReturn(true);
+		Mockito.when(client.getSocketChannel()).thenReturn(socketChannel);
+		Mockito.when(client.getLights()).thenReturn(value);
 		this.testable.addClient(this.client);
 
+		this.client.messagequeue = new MessageQueue();
 	}
 
 	@Test
@@ -155,26 +161,26 @@ public class ClientsHandlerColorCalculationTest {
 		// set the color of bottom1 to black
 		this.setLight(0.0f, 0.0f, 0.0f, 5);
 
-		this.nextStep(this.bottom1.getTime() + 1, 0.0138);
+		this.nextStep(this.bottom1.getTime() + 1, 0.0172);
 
 		// set the color of bottom1 to black
 		this.setLight(0.0f, 0.0f, 0.0f, 6);
 
-		this.nextStep(this.bottom1.getTime() + 1, 0.0138);
+		this.nextStep(this.bottom1.getTime() + 1, 0.0172);
 
 		// set the color of bottom1 to black
 		this.setLight(0.0f, 0.0f, 0.0f, 7);
 
-		this.nextStep(this.bottom1.getTime() + 1, 0.0137);
+		this.nextStep(this.bottom1.getTime() + 1, 0.0171);
 
 		// set the color of bottom1 to black
 		this.setLight(0.0f, 0.0f, 0.0f, 8);
 
-		this.nextStep(this.bottom1.getTime() + 1, 0.0136);
+		this.nextStep(this.bottom1.getTime() + 1, 0.0170);
 
-		this.nextStep(70, 0.011);
+		this.nextStep(70, 0.0138);
 
-		this.nextStep(700, 0.0012);
+		this.nextStep(700, 0.0015);
 
 	}
 

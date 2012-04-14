@@ -12,7 +12,7 @@ import org.boblight4j.server.config.Channel;
 
 public interface ClientsHandler {
 
-	void addClient(Client client) throws IOException;
+	void addClient(ConnectedClient client) throws IOException;
 
 	/**
 	 * Set accept of new clients.
@@ -22,7 +22,8 @@ public interface ClientsHandler {
 	 */
 	void blockConnect(boolean b);
 
-	void fillChannels(List<Channel> channels, long timestamp, AbstractDevice device);
+	void fillChannels(List<Channel> channels, long timestamp,
+			AbstractDevice device);
 
 	void handleMessages(SocketChannel socketChannel, byte[] array, int numRead)
 			throws BoblightException;
@@ -33,19 +34,6 @@ public interface ClientsHandler {
 	 * @param socketChannel
 	 *            the socket channel the client uses
 	 */
-	void removeClient(SocketChannel socketChannel);
-
-	/**
-	 * Set the address and port to use.
-	 * 
-	 * @param address
-	 *            the address (host)
-	 * @param port
-	 *            the port
-	 * @throws UnknownHostException
-	 *             in case of address cannot be resolved
-	 */
-	void setInterface(InetAddress address, int port)
-			throws UnknownHostException;
+	void removeClient(ConnectedClient socketChannel);
 
 }

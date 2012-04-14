@@ -8,6 +8,7 @@ import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
+import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,18 +21,18 @@ public class ConfigTest {
 	@Rule
 	public ExpectedException ex = ExpectedException.none();
 
-	private ConfigImpl testable;
+	private TcpServerConfigImpl testable;
 
 	@Before
 	public void setUp() {
-		this.testable = new ConfigImpl();
+		this.testable = new TcpServerConfigImpl();
 	}
 
 	@Test
 	public void testBuildConfig() throws BoblightException {
 		final Vector<Light> lights = new Vector<Light>();
 		final Vector<AbstractDevice> devices = new Vector<AbstractDevice>();
-		this.testable.buildConfig(Mockito.mock(ClientsHandler.class), devices,
+		this.testable.buildConfig(Mockito.mock(RemoteClientsHandlerImpl.class), devices,
 				lights);
 	}
 
@@ -45,7 +46,7 @@ public class ConfigTest {
 		m_globalconfiglines.add(new ConfigLine("interface 127.0.0.1", 2));
 		m_globalconfiglines.add(new ConfigLine("port 127.0.0.1", 3));
 
-		final Field field = WhiteboxImpl.getField(ConfigImpl.class,
+		final Field field = WhiteboxImpl.getField(TcpServerConfigImpl.class,
 				"globalConfigLines");
 
 		field.set(this.testable, m_globalconfiglines);

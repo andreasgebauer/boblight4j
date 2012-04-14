@@ -24,7 +24,7 @@ public class DeviceRS232 extends AbstractDevice {
 
 	public DeviceRS232(final ClientsHandler clients) {
 		super(clients);
-		this.setType(DeviceTypes.NOTHING);
+		this.setType(DeviceType.NOTHING);
 		// m_buff = null;
 		this.bits = 8;
 		// m_buffsize = 0;

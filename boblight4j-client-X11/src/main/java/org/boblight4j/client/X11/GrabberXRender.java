@@ -9,7 +9,7 @@ import gnu.x11.extension.render.PictFormat.Type;
 import gnu.x11.extension.render.Picture;
 import gnu.x11.extension.render.Render;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightConfigurationException;
 
 import com.sun.jna.examples.unix.X11;
@@ -31,9 +31,9 @@ public class GrabberXRender extends AbstractX11Grabber {
 	private Render render;
 	private Picture mask;
 
-	public GrabberXRender(final ClientImpl boblight, final boolean sync,
+	public GrabberXRender(final Client client, final boolean sync,
 			final int width, final int height, double interval) {
-		super(boblight, sync, width, height, interval);
+		super(client, sync, width, height, interval);
 	}
 
 	// @Override

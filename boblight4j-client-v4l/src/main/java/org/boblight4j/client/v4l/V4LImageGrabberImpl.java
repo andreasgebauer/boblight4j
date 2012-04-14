@@ -1,6 +1,5 @@
 package org.boblight4j.client.v4l;
 
-import java.awt.Canvas;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -16,7 +15,7 @@ import magick.MagickException;
 import magick.MagickImage;
 
 import org.apache.log4j.Logger;
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
@@ -41,16 +40,11 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	private final boolean blackBarDetection = true;
 
-	private int debugWindowHeight;
-	private int debugWindowWidth;
-
 	private BoblightException error;
 
 	private FrameGrabber fg;
 
 	private FlagManagerV4l flagManager;
-
-	private Frame frame;
 
 	private boolean needsScale;
 
@@ -58,7 +52,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	private VideoDevice vd;
 
-	public V4LImageGrabberImpl(final ClientImpl client, final boolean sync,
+	public V4LImageGrabberImpl(final Client client, final boolean sync,
 			final int width, final int height) {
 		super(client, sync, width, height);
 	}
@@ -97,14 +91,11 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	final BufferedImage createResizedCopyJM(final BufferedImage originalImage,
 			final int scaledWidth, final int scaledHeight) {
-		try
-		{
+		try {
 			final ImageInfo imageInfo = new ImageInfo();
 			final MagickImage magickImage = new MagickImage(imageInfo);
 			magickImage.scaleImage(scaledWidth, scaledHeight);
-		}
-		catch (final MagickException e)
-		{
+		} catch (final MagickException e) {
 			LOG.error("", e);
 		}
 
@@ -133,22 +124,16 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 		this.flagManager = (FlagManagerV4l) flagManager;
 
-		try
-		{
+		try {
 			this.vd = new VideoDevice(this.flagManager.device);
-		}
-		catch (final V4L4JException e)
-		{
+		} catch (final V4L4JException e) {
 			throw new BoblightException(e);
 		}
 
-		try
-		{
+		try {
 			this.fg = this.vd.getRawFrameGrabber(64, 64,
 					this.flagManager.getChannel(), 1);
-		}
-		catch (final V4L4JException e)
-		{
+		} catch (final V4L4JException e) {
 			throw new BoblightException(e);
 		}
 
@@ -159,23 +144,11 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 		this.client.setScanRange(this.flagManager.width,
 				this.flagManager.height);
 
-		if (this.flagManager.debug)
-		{
-			LOG.info("started in debug mode");
-
-			this.debugWindowWidth = Math.max(200, this.flagManager.width);
-			this.debugWindowHeight = Math.max(200, this.flagManager.height);
-
-		}
-
 		this.fg.setCaptureCallback(this);
 
-		try
-		{
+		try {
 			this.fg.startCapture();
-		}
-		catch (final V4L4JException e1)
-		{
+		} catch (final V4L4JException e1) {
 			throw new BoblightException(e1);
 		}
 
@@ -186,8 +159,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 		final long diffCaptCurr = frame.getCaptureTime() / 1000
 				- System.currentTimeMillis();
-		if (Math.abs(diffCaptCurr) > 25)
-		{
+		if (Math.abs(diffCaptCurr) > 25) {
 			LOG.info("dropping frame " + frame.getSequenceNumber());
 			frame.recycle();
 			return;
@@ -205,19 +177,15 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 		BufferedImage bufferedImage;
 
-		if (cs != null)
-		{
+		if (cs != null) {
 			bufferedImage = new BufferedImage(new ComponentColorModel(cs,
 					false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE),
 					raster, false, null);
-		}
-		else
-		{
+		} else {
 			bufferedImage = null;
 		}
 
-		if (this.blackBarDetection)
-		{
+		if (this.blackBarDetection) {
 			// TODO implement black bar detection
 		}
 
@@ -227,15 +195,12 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 		// flagManager.m_width, flagManager.m_height);
 		// }
 
-		try
-		{
+		try {
 
 			this.frameToBoblight(bufferedImage);
 
 			this.client.sendRgb(false, null);
-		}
-		catch (final Exception e)
-		{
+		} catch (final Exception e) {
 			LOG.error("", e);
 			this.error = new BoblightException(e);
 			// stop = true;

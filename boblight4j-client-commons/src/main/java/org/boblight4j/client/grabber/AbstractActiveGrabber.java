@@ -2,7 +2,7 @@ package org.boblight4j.client.grabber;
 
 import java.io.IOException;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
 
 /**
@@ -17,12 +17,10 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 
 	private boolean stop;
 
-	public AbstractActiveGrabber(final ClientImpl client, final boolean sync,
+	public AbstractActiveGrabber(final Client client, final boolean sync,
 			final int width, int height) {
 		super(client, sync, width, height);
 	}
-
-	// TODO: getDimensions();
 
 	protected abstract int getScreenHeight();
 

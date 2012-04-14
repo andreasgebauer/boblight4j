@@ -34,7 +34,7 @@ import org.boblight4j.utils.StdIO;
  * @author agebauer
  * 
  */
-public class ClientImpl {
+public class ClientImpl implements Client {
 
 	private static final String CMD_SET_LIGHT = "set light ";
 
@@ -77,20 +77,17 @@ public class ClientImpl {
 	 *            the color to add
 	 */
 	public void addPixel(final int xPos, final int yPos, final int[] rgb) {
-		for (int i = 0; i < this.lights.size(); i++)
-		{
+		for (int i = 0; i < this.lights.size(); i++) {
 			final Light light = this.lights.get(i);
 			if (yPos >= light.getHScanScaled()[0]
 					&& yPos <= light.getHScanScaled()[1]
 					&& xPos >= light.getVScanScaled()[0]
-					&& xPos <= light.getVScanScaled()[1])
-			{
+					&& xPos <= light.getVScanScaled()[1]) {
 				// any of the three color values must be greater than the
 				// threshold
 				if (rgb[0] >= light.getThreshold()
 						|| rgb[1] >= light.getThreshold()
-						|| rgb[2] >= light.getThreshold())
-				{
+						|| rgb[2] >= light.getThreshold()) {
 					light.rgb[0] += MathUtils.clamp(rgb[0], 0, MAX_VALUE_BYTE);
 					light.rgb[1] += MathUtils.clamp(rgb[1], 0, MAX_VALUE_BYTE);
 					light.rgb[2] += MathUtils.clamp(rgb[2], 0, MAX_VALUE_BYTE);
@@ -114,29 +111,23 @@ public class ClientImpl {
 			throws BoblightException {
 		this.checkLightExists(lightnr);
 
-		if (lightnr < 0)
-		{
-			for (int i = 0; i < this.lights.size(); i++)
-			{
+		if (lightnr < 0) {
+			for (int i = 0; i < this.lights.size(); i++) {
 				final Light light = this.lights.get(i);
 				if (rgb[0] >= light.getThreshold()
 						|| rgb[1] >= light.getThreshold()
-						|| rgb[2] >= light.getThreshold())
-				{
+						|| rgb[2] >= light.getThreshold()) {
 					light.rgb[0] += MathUtils.clamp(rgb[0], 0, 255);
 					light.rgb[1] += MathUtils.clamp(rgb[1], 0, 255);
 					light.rgb[2] += MathUtils.clamp(rgb[2], 0, 255);
 				}
 				light.rgb[3]++;
 			}
-		}
-		else
-		{
+		} else {
 			final Light light = this.lights.get(lightnr);
 			if (rgb[0] >= light.getThreshold()
 					|| rgb[1] >= light.getThreshold()
-					|| rgb[2] >= light.getThreshold())
-			{
+					|| rgb[2] >= light.getThreshold()) {
 				light.rgb[0] += MathUtils.clamp(rgb[0], 0, 255);
 				light.rgb[1] += MathUtils.clamp(rgb[1], 0, 255);
 				light.rgb[2] += MathUtils.clamp(rgb[2], 0, 255);
@@ -154,15 +145,16 @@ public class ClientImpl {
 	 * @throws BoblightException
 	 */
 	private void checkLightExists(final int lightNr) throws BoblightException {
-		if (lightNr >= this.lights.size())
-		{
+		if (lightNr >= this.lights.size()) {
 			throw new BoblightException("light " + lightNr
 					+ " doesn't exist (have " + this.lights.size() + " lights)");
 		}
 	}
 
 	/**
-	 * Connects the client to the server.
+	 * Connects the client to the server.<br>
+	 * Additionally we hand shake with the server, check for same client and
+	 * server version and retrieve the lights configuration from the server.
 	 * 
 	 * @param address
 	 *            the server address
@@ -183,28 +175,21 @@ public class ClientImpl {
 
 		// set address
 		this.mSecTimeout = mSecTimeout;
-		if (address == null)
-		{
+		if (address == null) {
 			this.address = "127.0.0.1";
-		}
-		else
-		{
+		} else {
 			this.address = address;
 		}
 
 		// set port
-		if (port >= 0)
-		{
+		if (port >= 0) {
 			this.port = port;
-		}
-		else
-		{
+		} else {
 			// set to default port
 			this.port = DEFAULT_PORT;
 		}
 
-		try
-		{
+		try {
 			this.socketChannel = SocketChannel.open();
 			// socketChannel.configureBlocking(false);
 
@@ -218,8 +203,7 @@ public class ClientImpl {
 			this.readDataToQueue();
 
 			message = this.messageQueue.getMessage();
-			if (!this.parseWord(message, "hello"))
-			{
+			if (!this.parseWord(message, "hello")) {
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " sent gibberish: "
 						+ message.message.toString());
@@ -233,16 +217,14 @@ public class ClientImpl {
 			message = this.messageQueue.getMessage();
 
 			if (!this.parseWord(message, "version")
-					|| (word = Misc.getWord(message.message)) == null)
-			{
+					|| (word = Misc.getWord(message.message)) == null) {
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " sent gibberish");
 			}
 
 			// if we don't get the same protocol version back as we have, we
 			// can't work together
-			if (!word.equals(PROTOCOLVERSION))
-			{
+			if (!word.equals(PROTOCOLVERSION)) {
 				throw new BoblightCommunicationException("version mismatch, "
 						+ this.address + ":" + this.port + " has version \""
 						+ word + "\", libboblight has version \""
@@ -257,9 +239,7 @@ public class ClientImpl {
 			message = this.messageQueue.getMessage();
 
 			this.parseLights(message);
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
 
@@ -269,12 +249,9 @@ public class ClientImpl {
 	 * Destroy the client. Does nothing right now.
 	 */
 	public void destroy() {
-		try
-		{
+		try {
 			this.socketChannel.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			LOG.error("Error during close socket.", e);
 		}
 	}
@@ -290,8 +267,7 @@ public class ClientImpl {
 	public String getLightName(int lightnr) throws BoblightException {
 		// negative lights don't exist, so we set it to an
 		// invalid number to get the error message
-		if (lightnr < 0)
-		{
+		if (lightnr < 0) {
 			lightnr = this.lights.size();
 		}
 
@@ -327,23 +303,18 @@ public class ClientImpl {
 		// first word in the message is "lights", second word is the number of
 		// lights
 		if (!this.parseWord(message, "lights")
-				|| (word = Misc.getWord(message.message)) == null)
-		{
+				|| (word = Misc.getWord(message.message)) == null) {
 			throw new BoblightCommunicationException(
 					"Unable to parse number of lights.");
 		}
 
-		try
-		{
+		try {
 			nrlights = Integer.parseInt(word);
-			if (nrlights < 1)
-			{
+			if (nrlights < 1) {
 				throw new BoblightConfigurationException(
 						"Number of lights is negative.");
 			}
-		}
-		catch (final NumberFormatException e)
-		{
+		} catch (final NumberFormatException e) {
 			throw new BoblightParseException(
 					"Number of lights is unparseable.", e);
 		}
@@ -353,13 +324,11 @@ public class ClientImpl {
 		MBeanUtils.registerBean("org.boblight4j.client:type=GlobalLightConfig",
 				gblCfg);
 
-		for (int i = 0; i < nrlights; i++)
-		{
+		for (int i = 0; i < nrlights; i++) {
 			final Light light = new Light(gblCfg);
 
 			// read some data to the message queue if we have no messages
-			if (this.messageQueue.getNrMessages() == 0)
-			{
+			if (this.messageQueue.getNrMessages() == 0) {
 				this.readDataToQueue();
 			}
 
@@ -368,8 +337,7 @@ public class ClientImpl {
 			// first word sent is "light, second one is the name
 			String lightName;
 			if (!this.parseWord(message, "light")
-					|| (lightName = Misc.getWord(message.message)) == null)
-			{
+					|| (lightName = Misc.getWord(message.message)) == null) {
 				throw new BoblightParseException(
 						"Cannot parse light name. Received following message: "
 								+ message.message.toString());
@@ -380,18 +348,15 @@ public class ClientImpl {
 					+ light.getName(), light);
 
 			// third one is "scan"
-			if (!this.parseWord(message, "scan"))
-			{
+			if (!this.parseWord(message, "scan")) {
 				throw new BoblightParseException(
 						"Cannot parse light scan range. Identifier 'scan' wasn't found.");
 			}
 
 			// now we read the scanrange
 			final StringBuilder scanarea = new StringBuilder("");
-			for (int j = 0; j < 4; j++)
-			{
-				if ((word = Misc.getWord(message.message)) == null)
-				{
+			for (int j = 0; j < 4; j++) {
+				if ((word = Misc.getWord(message.message)) == null) {
 					throw new BoblightParseException("Cannot parse scan range.");
 				}
 				scanarea.append(word).append(' ');
@@ -402,8 +367,7 @@ public class ClientImpl {
 			// and .)
 
 			Object[] rs = null;
-			if ((rs = StdIO.sscanf(scanarea.toString(), "%f %f %f %f")).length != 4)
-			{
+			if ((rs = StdIO.sscanf(scanarea.toString(), "%f %f %f %f")).length != 4) {
 				throw new BoblightParseException("Cannot parse scan range.");
 			}
 
@@ -417,8 +381,7 @@ public class ClientImpl {
 	private boolean parseWord(final Message message, final String wordtocmp)
 			throws BoblightParseException {
 		final String readword = Misc.getWord(message.message);
-		if (!readword.equals(wordtocmp))
-		{
+		if (!readword.equals(wordtocmp)) {
 			return false;
 		}
 
@@ -429,8 +392,7 @@ public class ClientImpl {
 			throws BoblightException {
 		String word;
 
-		if (send)
-		{
+		if (send) {
 			this.writeDataToSocket("ping\n");
 		}
 
@@ -439,27 +401,21 @@ public class ClientImpl {
 		final Message message = this.messageQueue.getMessage();
 
 		if ((word = Misc.getWord(message.message)) == null
-				|| !word.equals("ping"))
-		{
+				|| !word.equals("ping")) {
 			throw new BoblightException(this.address + ":" + this.port
 					+ " sent gibberish");
 		}
 
 		// client can set outputused to NULL
 		// should return the value?
-		if (outputused != null)
-		{
-			try
-			{
+		if (outputused != null) {
+			try {
 				Integer.valueOf(word);
-				if ((word = Misc.getWord(message.message)) == null)
-				{
+				if ((word = Misc.getWord(message.message)) == null) {
 					throw new BoblightException(this.address + ":" + this.port
 							+ " sent gibberish");
 				}
-			}
-			catch (final NumberFormatException e)
-			{
+			} catch (final NumberFormatException e) {
 				throw new BoblightException(this.address + ":" + this.port
 						+ " sent gibberish", e);
 			}
@@ -475,23 +431,20 @@ public class ClientImpl {
 	 * @throws BoblightCommunicationException
 	 */
 	private void readDataToQueue() throws BoblightCommunicationException {
-		try
-		{
+		try {
 			long now = System.currentTimeMillis();
 			final long target = now + this.mSecTimeout;
 			final int nrmessages = this.messageQueue.getNrMessages();
 
 			while (now < target
-					&& this.messageQueue.getNrMessages() == nrmessages)
-			{
+					&& this.messageQueue.getNrMessages() == nrmessages) {
 				InputStream is;
 				String line = null;
 				final char[] data = new char[MAXDATA];
 				is = this.socketChannel.socket().getInputStream();
 				final InputStreamReader br = new InputStreamReader(is);
 				final int read = br.read(data);
-				if (read == -1)
-				{
+				if (read == -1) {
 					throw new BoblightCommunicationException(
 							"No data available. EOS.");
 				}
@@ -499,8 +452,7 @@ public class ClientImpl {
 
 				this.messageQueue.addData(line);
 
-				if (this.messageQueue.getRemainingDataSize() > MAXDATA)
-				{
+				if (this.messageQueue.getRemainingDataSize() > MAXDATA) {
 					throw new BoblightCommunicationException(this.address + ":"
 							+ this.port + " sent too much data");
 				}
@@ -508,20 +460,17 @@ public class ClientImpl {
 				now = System.currentTimeMillis();
 			}
 
-			if (nrmessages == this.messageQueue.getNrMessages())
-			{
+			if (nrmessages == this.messageQueue.getNrMessages()) {
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " read timed out");
 			}
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
 	}
 
 	/**
-	 * Sends the rgb values of each light to the server.
+	 * Sends the rgb values of each light to the tcp server.
 	 * 
 	 * @param sync
 	 * @param outputused
@@ -532,14 +481,12 @@ public class ClientImpl {
 			throws IOException, BoblightException {
 		final StringBuilder data = new StringBuilder();
 
-		for (int i = 0; i < this.lights.size(); i++)
-		{
+		for (int i = 0; i < this.lights.size(); i++) {
 			final float[] rgb = this.lights.get(i).getRgb();
 			data.append(CMD_SET_LIGHT + this.lights.get(i).getName() + " rgb "
 					+ rgb[0] + " " + rgb[1] + " " + rgb[2] + "\n");
 			if (this.lights.get(i).getAutospeed() > 0.0
-					&& this.lights.get(i).getSinglechange() > 0.0)
-			{
+					&& this.lights.get(i).getSinglechange() > 0.0) {
 				data.append(CMD_SET_LIGHT + this.lights.get(i).getName()
 						+ " singlechange "
 						+ this.lights.get(i).getSinglechange() + "\n");
@@ -547,21 +494,18 @@ public class ClientImpl {
 		}
 
 		// send a message that we want devices to sync to our input
-		if (sync)
-		{
+		if (sync) {
 			data.append("sync\n");
 		}
 
 		// if we want to check if our output is used, send a ping message
-		if (outputused != null)
-		{
+		if (outputused != null) {
 			data.append("ping\n");
 		}
 
 		this.writeDataToSocket(data.toString());
 
-		if (outputused != null)
-		{
+		if (outputused != null) {
 			this.ping(outputused, false);
 		}
 	}
@@ -577,23 +521,17 @@ public class ClientImpl {
 			throws BoblightException {
 		this.checkLightExists(lightnr);
 
-		if (lightnr < 0)
-		{
-			for (int i = 0; i < this.lights.size(); i++)
-			{
+		if (lightnr < 0) {
+			for (int i = 0; i < this.lights.size(); i++) {
 				final Light light = this.lights.get(i);
-				if (light.setOption(option))
-				{
+				if (light.setOption(option)) {
 					this.writeDataToSocket(CMD_SET_LIGHT + light.getName()
 							+ " " + option + "\n");
 				}
 			}
-		}
-		else
-		{
+		} else {
 			final Light light = this.lights.get(lightnr);
-			if (light.setOption(option))
-			{
+			if (light.setOption(option)) {
 				this.writeDataToSocket(CMD_SET_LIGHT + light.getName() + " "
 						+ option + "\n");
 			}
@@ -622,10 +560,8 @@ public class ClientImpl {
 	 *            the height of the scan area
 	 */
 	public void setScanRange(final int width, final int height) {
-		for (int i = 0; i < this.lights.size(); i++)
-		{
-			final Light light = this.lights.get(i);
-			light.calculateScaledScanRange(width, height);
+		for (int i = 0; i < this.lights.size(); i++) {
+			this.lights.get(i).calculateScaledScanRange(width, height);
 		}
 	}
 
@@ -637,23 +573,18 @@ public class ClientImpl {
 	 */
 	private void writeDataToSocket(final String string)
 			throws BoblightException {
-		if (this.socketChannel == null)
-		{
+		if (this.socketChannel == null) {
 			throw new IllegalStateException(
 					"Ensure to connect to server before writing data.");
 		}
 		if (!this.socketChannel.isConnected() || !this.socketChannel.isOpen()
-				|| this.socketChannel.socket().isOutputShutdown())
-		{
+				|| this.socketChannel.socket().isOutputShutdown()) {
 			throw new BoblightCommunicationException(
 					"Server closed connection unexpectedly.");
 		}
-		try
-		{
+		try {
 			this.socketChannel.write(ByteBuffer.wrap(string.getBytes()));
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
 

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +40,7 @@ public class InputStreamRGBReaderTest {
 		}
 
 		@Override
-		public ClientImpl getClient() {
+		public Client getClient() {
 			return null;
 		}
 	}

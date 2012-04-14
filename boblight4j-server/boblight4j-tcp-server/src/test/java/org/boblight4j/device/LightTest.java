@@ -38,7 +38,6 @@ public class LightTest {
 		this.testable.setRgb(new float[] { 1, 1, 1 }, 2);
 		this.testable.setRgb(new float[] { 1, 1, 1 }, 3);
 
-		final Vector<Color> colors = new Vector<Color>();
 		final Color red = new Color();
 		red.setName("red");
 		red.setRgb(new float[] { 1, 0, 0 });

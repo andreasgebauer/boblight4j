@@ -3,7 +3,7 @@ package org.boblight4j.client.grabber;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 
 /**
  * This is a base class for a grabber implementation which passively grabs
@@ -19,7 +19,7 @@ import org.boblight4j.client.ClientImpl;
 public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 		PassiveGrabber {
 
-	public AbstractPassiveGrabber(final ClientImpl client, final boolean sync,
+	public AbstractPassiveGrabber(final Client client, final boolean sync,
 			final int width, final int height) {
 		super(client, sync, width, height);
 	}

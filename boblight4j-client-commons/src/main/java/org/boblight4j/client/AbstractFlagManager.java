@@ -74,12 +74,10 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	 *            the client
 	 * @throws BoblightException
 	 */
-	public final void parseBoblightOptions(final ClientImpl client)
+	public final void parseBoblightOptions(final Client client)
 			throws BoblightException {
 
-		final int nrlights = client.getNrLights();
-		for (int i = 0; i < this.options.size(); i++)
-		{
+		for (int i = 0; i < this.options.size(); i++) {
 			String option = this.options.get(i);
 			String lightname;
 			String optionname;
@@ -88,12 +86,10 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 			// check if we have a light name, otherwise we use all lights
 			final int indexOfColon = option.indexOf(':');
-			if (indexOfColon != -1)
-			{
+			if (indexOfColon != -1) {
 				lightname = option.substring(0, indexOfColon);
 				// check if : isn't the last char in the string
-				if (indexOfColon == option.length() - 1)
-				{
+				if (indexOfColon == option.length() - 1) {
 					throw new BoblightException("wrong option \"" + option
 							+ "\", syntax is [light:]option=value");
 				}
@@ -102,17 +98,14 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 				// check which light this is
 				boolean lightfound = false;
-				for (int j = 0; j < nrlights; j++)
-				{
-					if (lightname.equals(client.getLightName(j)))
-					{
+				for (int j = 0; j < client.getNrLights(); j++) {
+					if (lightname.equals(client.getLightName(j))) {
 						lightfound = true;
 						lightnr = j;
 						break;
 					}
 				}
-				if (!lightfound)
-				{
+				if (!lightfound) {
 					throw new BoblightException("light \"" + lightname
 							+ "\" used in option \"" + this.options.get(i)
 							+ "\" doesn't exist");
@@ -121,8 +114,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 			// check if '=' exists and it's not at the end of the string
 			if (option.indexOf('=') == -1
-					|| indexOfColon == option.length() - 1)
-			{
+					|| indexOfColon == option.length() - 1) {
 				throw new BoblightException("wrong option \"" + option
 						+ "\", syntax is [light:]option=value");
 			}
@@ -156,27 +148,22 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 		final T commandLineArgs = getArgBean();
 		parser = new CmdLineParser(commandLineArgs);
-		try
-		{
+		try {
 			parser.parseArgument(args);
-		}
-		catch (CmdLineException e1)
-		{
+		} catch (CmdLineException e1) {
 			throw new BoblightRuntimeException(
 					"Error parsing program arguments.", e1);
 		}
 
 		this.printBoblightOptions = commandLineArgs.printBoblightOptions;
 
-		if (this.printBoblightOptions)
-		{
+		if (this.printBoblightOptions) {
 			return null;
 		}
 
 		this.priority = commandLineArgs.priority;
 
-		if (priority == -1 || priority < 0 || priority > 255)
-		{
+		if (priority == -1 || priority < 0 || priority > 255) {
 			throw new BoblightRuntimeException("Wrong option " + priority
 					+ " for argument -p");
 		}
@@ -186,22 +173,17 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		// TODO parse address with handler
 		// check if we have a port
 		if (commandLineArgs.server != null
-				&& commandLineArgs.server.indexOf(':') != -1)
-		{
+				&& commandLineArgs.server.indexOf(':') != -1) {
 			this.address = commandLineArgs.server.substring(0,
 					commandLineArgs.server.indexOf(':'));
 			commandLineArgs.server = commandLineArgs.server
 					.substring(commandLineArgs.server.indexOf(':') + 1);
-			try
-			{
+			try {
 				this.port = Integer.valueOf(commandLineArgs.server);
-			}
-			catch (final NumberFormatException nfe)
-			{
+			} catch (final NumberFormatException nfe) {
 			}
 
-			if (this.port != -1 && this.port < 0 || this.port > 65535)
-			{
+			if (this.port != -1 && this.port < 0 || this.port > 65535) {
 				throw new BoblightRuntimeException("Wrong option "
 						+ commandLineArgs.server + " for argument -s");
 			}
@@ -211,8 +193,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 		this.sync = commandLineArgs.sync;
 
-		if (commandLineArgs.options != null)
-		{
+		if (commandLineArgs.options != null) {
 			this.options.addAll(commandLineArgs.options);
 		}
 
@@ -261,8 +242,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	public void printOptions() {
 		final int nroptions = BoblightOptions.getNrOptions();
 
-		for (int i = 0; i < nroptions; i++)
-		{
+		for (int i = 0; i < nroptions; i++) {
 			System.out.println(BoblightOptions.getOptionDescription(i));
 		}
 	}

@@ -1,9 +1,25 @@
 package org.boblight4j.client;
 
+/**
+ * Interface for accessing the light configuration via JMX.
+ * 
+ * @author agebauer
+ * 
+ */
 public interface LightConfigMBean {
 
+	/**
+	 * Returns the auto speed value.
+	 * 
+	 * @return the auto speed value
+	 */
 	float getAutospeed();
 
+	/**
+	 * Returns the scaled (the grab width) horizontal scan range.
+	 * 
+	 * @return the horizontal grab range in pixels
+	 */
 	int[] getHScanScaled();
 
 	float getSatRangeEnd();

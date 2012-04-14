@@ -3,6 +3,7 @@ package org.boblight4j.server.config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -58,7 +59,7 @@ public abstract class AbstractConfigUpdater {
 
 			final List<AbstractDevice> newDevices = this.config
 					.buildDeviceConfig(this.clients);
-			final Vector<AbstractDevice> unhandledNewDevices = new Vector<AbstractDevice>();
+			final List<AbstractDevice> unhandledNewDevices = new ArrayList<AbstractDevice>();
 
 			for (final AbstractDevice newDevice : newDevices)
 			{

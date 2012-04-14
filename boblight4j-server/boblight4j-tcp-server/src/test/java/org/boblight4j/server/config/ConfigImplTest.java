@@ -13,7 +13,7 @@ import java.util.List;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.device.Light;
-import org.boblight4j.server.ClientsHandler;
+import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,14 +30,14 @@ public class ConfigImplTest {
 	}
 
 	@Mock
-	private ClientsHandler clientsHandler;
+	private RemoteClientsHandlerImpl clientsHandler;
 
-	private ConfigImpl testable;
+	private TcpServerConfigImpl testable;
 
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.testable = new ConfigImpl();
+		this.testable = new TcpServerConfigImpl();
 	}
 
 	@Test

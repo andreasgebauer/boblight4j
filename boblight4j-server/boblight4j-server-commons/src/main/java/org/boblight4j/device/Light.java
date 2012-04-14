@@ -29,7 +29,6 @@ import org.boblight4j.utils.MathUtils;
 public class Light {
 
 	public class ColorCalculator {
-
 		private boolean interpolation;
 		private long time = -1;
 		private long prevtime;
@@ -89,14 +88,11 @@ public class Light {
 	private final List<Color> colors = new ArrayList<Color>();
 	private final float hscan[] = new float[2];
 
-	private boolean interpolation;
 	private float autoSpeed;
 	private float singleChange;
 
 	private int threshold;
 	private String name;
-
-	private long prevtime; // previous write time
 
 	// 3
 	private float rgb[] = new float[3];
@@ -113,17 +109,15 @@ public class Light {
 	// 2
 	private float vscan[] = new float[2];
 
-	private ColorCalculator colorCalculator;
+	private ColorCalculator colorCalculator = new ColorCalculator(false);
 
 	/**
 	 * Constructs a light.
 	 */
 	public Light() {
-		this.prevtime = -1;
 
 		this.speed = FULL_SPEED;
 		this.use = true;
-		this.interpolation = false;
 
 		this.hscan[0] = 0.0f;
 		this.hscan[1] = 100.0f;
@@ -247,7 +241,7 @@ public class Light {
 	public float getColorValue(final int colornr, final long time) {
 
 		// need two writes for interpolation
-		if (this.interpolation && this.prevtime == -1) {
+		if (this.colorCalculator.interpolation && this.colorCalculator.prevtime == -1) {
 			return 0.0f;
 		}
 
@@ -342,10 +336,6 @@ public class Light {
 		return this.vscan;
 	}
 
-	public final boolean isInterpolation() {
-		return this.interpolation;
-	}
-
 	public final boolean isUse() {
 		return this.use;
 	}
@@ -378,7 +368,7 @@ public class Light {
 
 	public final void setInterpolation(final boolean interpolation) {
 		LOG.info("setting interpolation to " + interpolation);
-		this.interpolation = interpolation;
+		this.colorCalculator.interpolation = interpolation;
 	}
 
 	public final void setName(final String name) {
@@ -429,8 +419,8 @@ public class Light {
 	public final String toString() {
 		return "Light [name=" + this.name + ", rgb="
 				+ Arrays.toString(this.rgb) + ", speed=" + this.speed
-				+ ", interpolation=" + this.interpolation + ", use=" + this.use
-				+ ", colors=" + this.colors + ", hscan="
+				+ ", interpolation=" + this.colorCalculator.interpolation
+				+ ", use=" + this.use + ", colors=" + this.colors + ", hscan="
 				+ Arrays.toString(this.hscan) + ", vscan="
 				+ Arrays.toString(this.vscan) + ", users=" + this.users
 				+ ", m_threshold=" + this.threshold + ", m_autospeed="

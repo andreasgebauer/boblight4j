@@ -20,14 +20,16 @@ import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.server.ClientsHandler;
+import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.boblight4j.utils.MBeanUtils;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
 import org.boblight4j.utils.StdIO;
 
-public class ConfigImpl implements Config {
+public class TcpServerConfigImpl implements Config {
 
-	private static final Logger LOG = Logger.getLogger(ConfigImpl.class);
+	private static final Logger LOG = Logger
+			.getLogger(TcpServerConfigImpl.class);
 
 	private static final int SECTCOLOR = 3;
 	private static final int SECTDEVICE = 2;
@@ -54,22 +56,19 @@ public class ConfigImpl implements Config {
 	 * @throws UnknownHostException
 	 *             in case of host is not resolvable
 	 */
-	private void buildClientsHandlerConfig(final ClientsHandler clientsHandler)
+	private void buildClientsHandlerConfig(
+			final RemoteClientsHandlerImpl clientsHandler)
 			throws BoblightParseException, UnknownHostException {
 		// empty string means bind to *
 		InetAddress ifc = null;
 		int port = 19333; // default port
-		for (int i = 0; i < this.globalConfigLines.size(); i++)
-		{
+		for (int i = 0; i < this.globalConfigLines.size(); i++) {
 			final Pointer<String> line = new Pointer<String>(
 					this.globalConfigLines.get(i).line);
 			String word = Misc.getWord(line);
-			if (word.equals("interface"))
-			{
+			if (word.equals("interface")) {
 				ifc = InetAddress.getByName(Misc.getWord(line));
-			}
-			else if (word.equals("port"))
-			{
+			} else if (word.equals("port")) {
 				word = Misc.getWord(line);
 				port = Integer.valueOf(word);
 			}
@@ -80,50 +79,37 @@ public class ConfigImpl implements Config {
 	@Override
 	public List<Color> buildColorConfig() throws BoblightException {
 		final List<Color> colors = new ArrayList<Color>();
-		for (int i = 0; i < this.colorLines.size(); i++)
-		{
+		for (int i = 0; i < this.colorLines.size(); i++) {
 			final Color color = new Color();
 
-			for (int j = 0; j < this.colorLines.get(i).lines.size(); j++)
-			{
+			for (int j = 0; j < this.colorLines.get(i).lines.size(); j++) {
 				final Pointer<String> linePtr = new Pointer<String>(
 						this.colorLines.get(i).lines.get(j).line);
 
 				final String key = Misc.getWord(linePtr);
 				final String value = Misc.getWord(linePtr);
 
-				if (key.equals("name"))
-				{
+				if (key.equals("name")) {
 					color.setName(value);
-				}
-				else if (key.equals("rgb"))
-				{
+				} else if (key.equals("rgb")) {
 					final int irgb = Integer.valueOf(value, 16);
 					final float frgb[] = new float[3];
 
-					for (int k = 0; k < 3; k++)
-					{
+					for (int k = 0; k < 3; k++) {
 						frgb[k] = (float) ((irgb >> (2 - k) * 8 & 0xFF) / 255.0);
 					}
 					color.setRgb(frgb);
-				}
-				else if (key.equals("gamma"))
-				{
+				} else if (key.equals("gamma")) {
 					color.setGamma(Float.valueOf(value));
-				}
-				else if (key.equals("adjust"))
-				{
+				} else if (key.equals("adjust")) {
 					color.setAdjust(Float.valueOf(value));
-				}
-				else if (key.equals("blacklevel"))
-				{
+				} else if (key.equals("blacklevel")) {
 					color.setBlacklevel(Float.valueOf(value));
 				}
 			}
 
 			// we need at least a name for a color
-			if (color.getName() == null || color.getName().isEmpty())
-			{
+			if (color.getName() == null || color.getName().isEmpty()) {
 				throw new BoblightException(String.format(
 						"%s: color %d has no name", this.fileName, i + 1));
 			}
@@ -138,12 +124,9 @@ public class ConfigImpl implements Config {
 			throws BoblightException {
 		LOG.info("building config");
 
-		try
-		{
-			this.buildClientsHandlerConfig(clients);
-		}
-		catch (final UnknownHostException e)
-		{
+		try {
+			this.buildClientsHandlerConfig((RemoteClientsHandlerImpl) clients);
+		} catch (final UnknownHostException e) {
 			// wrap exception
 			throw new BoblightException(e);
 		}
@@ -152,15 +135,13 @@ public class ConfigImpl implements Config {
 
 		final List<AbstractDevice> tmpDevices = this.buildDeviceConfig(clients);
 		final Iterator<AbstractDevice> iterator = tmpDevices.iterator();
-		while (iterator.hasNext())
-		{
+		while (iterator.hasNext()) {
 			final AbstractDevice next = iterator.next();
 			devices.add(next);
 		}
 
 		final List<Light> tmpLights = this.buildLightConfig(tmpDevices, colors);
-		for (final Light light : tmpLights)
-		{
+		for (final Light light : tmpLights) {
 			lights.add(light);
 
 			MBeanUtils.registerBean("org.boblight.server.config:type=Light ["
@@ -176,8 +157,7 @@ public class ConfigImpl implements Config {
 			throws BoblightConfigurationException, BoblightParseException {
 		final List<AbstractDevice> devices = new ArrayList<AbstractDevice>();
 
-		for (int i = 0; i < this.deviceLines.size(); i++)
-		{
+		for (int i = 0; i < this.deviceLines.size(); i++) {
 			final Pointer<String> line = new Pointer<String>();
 			final int linenr = this.getLineWithKey("type",
 					this.deviceLines.get(i).lines, line);
@@ -198,8 +178,7 @@ public class ConfigImpl implements Config {
 		final List<Light> lights = new ArrayList<Light>();
 		// CLight globallight = new CLight(); // default values
 
-		for (int i = 0; i < this.lightLines.size(); i++)
-		{
+		for (int i = 0; i < this.lightLines.size(); i++) {
 			final Light light = new Light();
 
 			this.setLightName(light, this.lightLines.get(i).lines, i);
@@ -207,14 +186,12 @@ public class ConfigImpl implements Config {
 			this.setLightScanRange(light, this.lightLines.get(i).lines);
 
 			// check the colors on a light
-			for (int j = 0; j < this.lightLines.get(i).lines.size(); j++)
-			{
+			for (int j = 0; j < this.lightLines.get(i).lines.size(); j++) {
 				final Pointer<String> linePtr = Pointer.of(this.lightLines
 						.get(i).lines.get(j).line);
 
 				final String key = Misc.getWord(linePtr);
-				if (!key.equals("color"))
-				{
+				if (!key.equals("color")) {
 					continue;
 				}
 
@@ -224,10 +201,8 @@ public class ConfigImpl implements Config {
 				final String devicechannel = Misc.getWord(linePtr);
 
 				boolean colorfound = false;
-				for (int k = 0; k < colors.size(); k++)
-				{
-					if (colors.get(k).getName().equals(colorname))
-					{
+				for (int k = 0; k < colors.size(); k++) {
+					if (colors.get(k).getName().equals(colorname)) {
 						colorfound = true;
 						light.addColor(colors.get(k));
 						break;
@@ -246,13 +221,10 @@ public class ConfigImpl implements Config {
 				// loop through the devices, check if one with this name exists
 				// and if the channel on it exists
 				boolean devicefound = false;
-				for (int k = 0; k < devices.size(); k++)
-				{
+				for (int k = 0; k < devices.size(); k++) {
 					final AbstractDevice cDevice = devices.get(k);
-					if (cDevice.getName().equals(devicename))
-					{
-						if (ichannel > cDevice.getNrChannels())
-						{
+					if (cDevice.getName().equals(devicename)) {
+						if (ichannel > cDevice.getNrChannels()) {
 							final String msg = String
 									.format("%s line %d: channel %d wanted but device %s has %d channels",
 											this.fileName,
@@ -268,8 +240,7 @@ public class ConfigImpl implements Config {
 						break;
 					}
 				}
-				if (!devicefound)
-				{
+				if (!devicefound) {
 					throw new BoblightException(String.format(
 							"%s line %d: no device with name %s",
 							this.fileName,
@@ -294,23 +265,19 @@ public class ConfigImpl implements Config {
 
 		this.checkGlobalConfig();
 
-		if (!this.checkDeviceConfig())
-		{
+		if (!this.checkDeviceConfig()) {
 			valid = false;
 		}
 
-		if (!this.checkColorConfig())
-		{
+		if (!this.checkColorConfig()) {
 			valid = false;
 		}
 
-		if (!this.checkLightConfig())
-		{
+		if (!this.checkLightConfig()) {
 			valid = false;
 		}
 
-		if (valid)
-		{
+		if (valid) {
 			LOG.info("config lines valid");
 		}
 
@@ -324,8 +291,7 @@ public class ConfigImpl implements Config {
 	private void checkGlobalConfig() throws BoblightException {
 		boolean valid = true;
 
-		for (int i = 0; i < this.globalConfigLines.size(); i++)
-		{
+		for (int i = 0; i < this.globalConfigLines.size(); i++) {
 			final Pointer<String> line = new Pointer<String>(
 					this.globalConfigLines.get(i).line);
 			String key = null;
@@ -334,13 +300,10 @@ public class ConfigImpl implements Config {
 			// we already checked each line starts with one word
 			key = Misc.getWord(line);
 
-			try
-			{
+			try {
 				// every line here needs to have another word
 				value = Misc.getWord(line);
-			}
-			catch (final BoblightParseException e)
-			{
+			} catch (final BoblightParseException e) {
 				LOG.fatal(String.format("%s line %d: no value for key %s",
 						this.fileName, this.globalConfigLines.get(i).linenr,
 						key));
@@ -349,31 +312,24 @@ public class ConfigImpl implements Config {
 
 			}
 
-			if (key.equals("interface"))
-			{
+			if (key.equals("interface")) {
 				// not much to check here
 				continue;
-			}
-			else if (key.equals("port"))// check tcp/ip port
+			} else if (key.equals("port"))// check tcp/ip port
 			{
 				int port = -1;
 				final String msg = String.format(
 						"%s line %d: wrong value %s for key %s", this.fileName,
 						this.globalConfigLines.get(i).linenr, value, key);
-				try
-				{
+				try {
 					port = Integer.valueOf(value);
-				}
-				catch (final NumberFormatException e)
-				{
+				} catch (final NumberFormatException e) {
 					throw new BoblightException(msg, e);
 				}
-				if (port < 0 || port > 65535)
-				{
+				if (port < 0 || port > 65535) {
 					throw new BoblightException(msg);
 				}
-			}
-			else
+			} else
 			// we don't know this one
 			{
 				throw new BoblightException(String.format(
@@ -382,8 +338,7 @@ public class ConfigImpl implements Config {
 			}
 		}
 
-		if (!valid)
-		{
+		if (!valid) {
 			throw new BoblightException(
 					"Config not valid because of previous errors");
 		}
@@ -404,12 +359,10 @@ public class ConfigImpl implements Config {
 
 	private int getLineWithKey(final String key, final List<ConfigLine> lines,
 			final Pointer<String> line) throws BoblightParseException {
-		for (int i = 0; i < lines.size(); i++)
-		{
+		for (int i = 0; i < lines.size(); i++) {
 			line.assign(lines.get(i).line);
 			final String word = Misc.getWord(line);
-			if (word.equals(key))
-			{
+			if (word.equals(key)) {
 				return lines.get(i).linenr;
 			}
 		}
@@ -427,8 +380,7 @@ public class ConfigImpl implements Config {
 		LOG.info(String.format("opening %s", file));
 
 		// try to open the config file
-		if (!file.canRead())
-		{
+		if (!file.canRead()) {
 			throw new BoblightException(String.format("%s: %s", file, ""));
 		}
 
@@ -437,86 +389,63 @@ public class ConfigImpl implements Config {
 		final FileReader fr = new FileReader(file);
 		final LineNumberReader lnr = new LineNumberReader(fr);
 		String line = null;
-		try
-		{
-			while ((line = lnr.readLine()) != null)
-			{
+		try {
+			while ((line = lnr.readLine()) != null) {
 				linenr++;
 				final Pointer<String> buffer = new Pointer<String>(line);
 				// if the line doesn't have a word it's not important
 				String key = null;
-				try
-				{
+				try {
 					key = Misc.getWord(buffer);
-				}
-				catch (final BoblightParseException e)
-				{
+				} catch (final BoblightParseException e) {
 					continue;
 				}
 
 				// ignore comments
-				if (key.charAt(0) == '#')
-				{
+				if (key.charAt(0) == '#') {
 					continue;
 				}
 
 				// check if we entered a section
-				if (key.equals("[global]"))
-				{
+				if (key.equals("[global]")) {
 					currentsection = SECTGLOBAL;
 					continue;
-				}
-				else if (key.equals("[device]"))
-				{
+				} else if (key.equals("[device]")) {
 					currentsection = SECTDEVICE;
 					this.deviceLines.add(new ConfigGroup());
 					continue;
-				}
-				else if (key.equals("[color]"))
-				{
+				} else if (key.equals("[color]")) {
 					currentsection = SECTCOLOR;
 					this.colorLines.add(new ConfigGroup());
 					continue;
-				}
-				else if (key.equals("[light]"))
-				{
+				} else if (key.equals("[light]")) {
 					currentsection = SECTLIGHT;
 					this.lightLines.add(new ConfigGroup());
 					continue;
 				}
 
 				// we're not in a section
-				if (currentsection == SECTNOTHING)
-				{
+				if (currentsection == SECTNOTHING) {
 					continue;
 				}
 
 				final ConfigLine configline = new ConfigLine(line, linenr);
 
 				// store the config line in the appropriate section
-				if (currentsection == SECTGLOBAL)
-				{
+				if (currentsection == SECTGLOBAL) {
 					this.globalConfigLines.add(configline);
-				}
-				else if (currentsection == SECTDEVICE)
-				{
+				} else if (currentsection == SECTDEVICE) {
 					this.deviceLines.get(this.deviceLines.size() - 1).lines
 							.add(configline);
-				}
-				else if (currentsection == SECTCOLOR)
-				{
+				} else if (currentsection == SECTCOLOR) {
 					this.colorLines.get(this.colorLines.size() - 1).lines
 							.add(configline);
-				}
-				else if (currentsection == SECTLIGHT)
-				{
+				} else if (currentsection == SECTLIGHT) {
 					this.lightLines.get(this.lightLines.size() - 1).lines
 							.add(configline);
 				}
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			throw new BoblightConfigurationException("Unable to read file.", e);
 		}
 		// PrintConfig();
@@ -527,8 +456,7 @@ public class ConfigImpl implements Config {
 			BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("name", lines, line);
-		if (linenr == -1)
-		{
+		if (linenr == -1) {
 			throw new BoblightConfigurationException(String.format(
 					"%s: light %d has no name", this.fileName, lightnr + 1));
 		}
@@ -541,8 +469,7 @@ public class ConfigImpl implements Config {
 		// hscan and vdscan are optional
 		final Pointer<String> line = new Pointer<String>();
 		int linenr = this.getLineWithKey("hscan", lines, line);
-		if (linenr != -1)
-		{
+		if (linenr != -1) {
 
 			final Object[] sscanf = StdIO.sscanf(line.get(), "%f %f");
 			light.setHscan(new float[] { (Float) sscanf[0], (Float) sscanf[1] });
@@ -550,8 +477,7 @@ public class ConfigImpl implements Config {
 		}
 
 		linenr = this.getLineWithKey("vscan", lines, line);
-		if (linenr != -1)
-		{
+		if (linenr != -1) {
 			final Object[] sscanf = StdIO.sscanf(line.get(), "%f %f");
 			light.setVscan(new float[] { (Float) sscanf[0], (Float) sscanf[1] });
 		}

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
-import org.boblight4j.device.AbstractDevice.DeviceTypes;
+import org.boblight4j.device.AbstractDevice.DeviceType;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -53,15 +53,15 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		this.setDeviceDelayAfterOpen(device, devicenr);
 
 		if (type.equals("momo")) {
-			device.setType(DeviceTypes.MOMO);
+			device.setType(DeviceType.MOMO);
 			this.setDevicePrefix(device, devicenr);
 			this.setDevicePostfix(device, devicenr);
 			this.setDeviceEscapeFlag(device, devicenr);
 			device.getProtocol().checkValid();
 		} else if (type.equals("atmo")) {
-			device.setType(DeviceTypes.ATMO);
+			device.setType(DeviceType.ATMO);
 		} else if (type.equals("karate")) {
-			device.setType(DeviceTypes.KARATE);
+			device.setType(DeviceType.KARATE);
 		}
 		return device;
 	}

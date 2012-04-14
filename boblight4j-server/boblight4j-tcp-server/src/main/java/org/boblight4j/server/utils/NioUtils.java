@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-import org.boblight4j.server.Client;
+import org.boblight4j.server.ConnectedClient;
+import org.boblight4j.server.ConnectedClientImpl;
 
 public class NioUtils {
 
 	private NioUtils() {
 	}
 
-	public static void write(final Client client, final String message)
+	public static void write(final ConnectedClientImpl client, final String message)
 			throws IOException {
 		final SocketChannel chnl = client.getSocketChannel();
 		chnl.write(ByteBuffer.wrap(message.getBytes()));

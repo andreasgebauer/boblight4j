@@ -11,14 +11,14 @@ final class DCTRunnable implements Runnable {
 
 	private static final Logger LOG = Logger.getLogger(DCTRunnable.class);
 
-	private final ClientImpl boblight;
+	private final Client boblight;
 	private final DoubleDCT_1D doubleDCT_1D;
 	/**
 	 * 
 	 */
 	private final double[] samples;
 
-	DCTRunnable(final double[] samples, final ClientImpl boblight) {
+	DCTRunnable(final double[] samples, final Client boblight) {
 		this.boblight = boblight;
 		this.doubleDCT_1D = new DoubleDCT_1D(samples.length);
 		this.samples = samples.clone();
