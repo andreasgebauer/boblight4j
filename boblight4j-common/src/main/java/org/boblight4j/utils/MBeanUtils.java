@@ -13,30 +13,25 @@ public final class MBeanUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MBeanUtils.class);
 
+	private MBeanUtils() {
+	}
+
 	public static void registerBean(final String name, final Object bean) {
 		final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		ObjectName objName;
-		try
-		{
+		try {
 			objName = new ObjectName(name);
 
-			try
-			{
+			try {
 				mbs.getObjectInstance(objName);
 				mbs.unregisterMBean(objName);
-			}
-			catch (final InstanceNotFoundException e)
-			{
+			} catch (final InstanceNotFoundException e) {
 			}
 
 			mbs.registerMBean(bean, objName);
-		}
-		catch (final Exception e)
-		{
+		} catch (final Exception e) {
 			LOG.error("", e);
 		}
 	}
 
-	private MBeanUtils() {
-	}
 }

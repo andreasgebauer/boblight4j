@@ -150,8 +150,8 @@ enum BoblightOptions {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Number> T clamp(final T value2) {
-		return (T) MathUtils.clamp(value2, (Number) this.minValue,
-				(Number) this.maxValue);
+		return (T) MathUtils
+				.clamp(value2, (T) this.minValue, (T) this.maxValue);
 	}
 
 	abstract boolean doPostProcess(Light light, Object value);
@@ -192,16 +192,13 @@ enum BoblightOptions {
 
 	private static final List<String> OPTIONS = new ArrayList<String>();
 
-	static
-	{
+	static {
 		StringBuilder option = new StringBuilder();
 		int padsize = 1;
 
-		for (final BoblightOptions opt : BoblightOptions.values())
-		{
+		for (final BoblightOptions opt : BoblightOptions.values()) {
 			final int optNameLen = opt.getName().length();
-			if (optNameLen + 1 > padsize)
-			{
+			if (optNameLen + 1 > padsize) {
 				padsize = optNameLen + 1;
 			}
 		}
@@ -209,47 +206,40 @@ enum BoblightOptions {
 		option.append("name");
 		final int length = option.length();
 
-		for (int i = 0; i < Math.max(padsize - length, 1); i++)
-		{
+		for (int i = 0; i < Math.max(padsize - length, 1); i++) {
 			option.append(' ');
 		}
 
 		option.append("type    min     max     default");
 		OPTIONS.add(option.toString());
 
-		for (final BoblightOptions opt : BoblightOptions.values())
-		{
+		for (final BoblightOptions opt : BoblightOptions.values()) {
 			option = new StringBuilder(opt.getName());
-			for (int i = 0; i < padsize - opt.getName().length(); i++)
-			{
+			for (int i = 0; i < padsize - opt.getName().length(); i++) {
 				option.append(' ');
 			}
 
 			String val = opt.getType().getName();
 			option.append(val);
-			for (int i = 0; i < Math.max(8 - val.length(), 1); i++)
-			{
+			for (int i = 0; i < Math.max(8 - val.length(), 1); i++) {
 				option.append(' ');
 			}
 
 			val = opt.getMin() + "";
 			option.append(val);
-			for (int i = 0; i < Math.max(8 - val.length(), 1); i++)
-			{
+			for (int i = 0; i < Math.max(8 - val.length(), 1); i++) {
 				option.append(' ');
 			}
 
 			val = opt.getMax() + "";
 			option.append(val);
-			for (int i = 0; i < Math.max(8 - val.length(), 1); i++)
-			{
+			for (int i = 0; i < Math.max(8 - val.length(), 1); i++) {
 				option.append(' ');
 			}
 
 			val = opt.getDefault() + "";
 			option.append(val);
-			for (int i = 0; i < Math.max(8 - val.length(), 1); i++)
-			{
+			for (int i = 0; i < Math.max(8 - val.length(), 1); i++) {
 				option.append(' ');
 			}
 			OPTIONS.add(option.toString());
@@ -271,8 +261,7 @@ enum BoblightOptions {
 	 * @return
 	 */
 	public static String getOptionDescription(final int option) {
-		if (option < 0 || option >= OPTIONS.size())
-		{
+		if (option < 0 || option >= OPTIONS.size()) {
 			return null;
 		}
 

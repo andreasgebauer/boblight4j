@@ -151,7 +151,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e1) {
-			throw new BoblightRuntimeException(
+			throw new BoblightConfigurationException(
 					"Error parsing program arguments.", e1);
 		}
 

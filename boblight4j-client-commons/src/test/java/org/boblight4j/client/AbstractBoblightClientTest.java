@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -76,16 +77,7 @@ public class AbstractBoblightClientTest {
 	}
 
 	@Test
-	public void testParseArgs() throws BoblightConfigurationException {
-		final String[] args = "".split("\\s");
-
-		// constructor called parseFlags in method setUp()
-
-		verify(this.flagManager).parseFlags(args);
-	}
-
-	@Test
-	public void testParseArgsThrowingException()
+	public void testFlagmanagerParseArgsThrowingExceptionPrintsHelpMessageAndExits()
 			throws BoblightConfigurationException {
 		final String[] args = "".split("\\s");
 
@@ -96,28 +88,12 @@ public class AbstractBoblightClientTest {
 
 		this.testable.parseArgs(flagManager, args);
 
+		verify(this.flagManager, atLeastOnce()).parseFlags(args);
+
 		verify(this.flagManager).printHelpMessage();
 		PowerMockito.verifyStatic();
 		System.exit(1);
 
-	}
-
-	@Test
-	public void testParseArgsThrowingRuntimeException()
-			throws BoblightConfigurationException {
-		final String[] args = "".split("\\s");
-
-		PowerMockito.mockStatic(System.class);
-
-		doThrow(new BoblightRuntimeException("")).when(flagManager).parseFlags(
-				any(String[].class));
-
-		this.testable.parseArgs(flagManager, args);
-
-		PowerMockito.verifyStatic();
-		System.exit(1);
-
-		verify(this.flagManager).printHelpMessage();
 	}
 
 	@Test

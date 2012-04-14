@@ -6,4 +6,6 @@ public interface IPoint {
 
 	float getY();
 
+	void setLocation(IPoint floatPoint);
+
 }

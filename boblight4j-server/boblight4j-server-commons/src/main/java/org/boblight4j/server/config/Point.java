@@ -51,9 +51,9 @@ public class Point implements IPoint, Serializable {
 		return this.y;
 	}
 
-	public void setLocation(final org.boblight4j.server.config.Point floatPoint) {
-		this.x = floatPoint.x;
-		this.y = floatPoint.y;
+	public void setLocation(final IPoint floatPoint) {
+		this.x = floatPoint.getX();
+		this.y = floatPoint.getY();
 	}
 
 }
