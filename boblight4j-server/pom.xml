@@ -14,14 +14,20 @@
 
 	<name>Boblight4J Server Modules</name>
 
+	<modules>
+		<module>boblight4j-server-commons</module>
+		<module>boblight4j-server-xbmc-plugin</module>
+	</modules>
+
 	<profiles>
 		<profile>
-			<id>!1.7</id>
+			<id>less1.7</id>
 			<activation>
 				<jdk>!1.7</jdk>
 			</activation>
 			<modules>
 				<module>boblight4j-server-config-jnotify</module>
+				<module>boblight4j-tcp-server</module>
 			</modules>
 		</profile>
 		<profile>
@@ -31,6 +37,7 @@
 			</activation>
 			<modules>
 				<module>boblight4j-server-config-jdk7</module>
+				<module>boblight4j-tcp-server</module>
 			</modules>
 			<build>
 				<plugins>
@@ -47,11 +54,5 @@
 			</build>
 		</profile>
 	</profiles>
-
-	<modules>
-		<module>boblight4j-server-commons</module>
-		<module>boblight4j-server-xbmc-plugin</module>
-		<module>boblight4j-tcp-server</module>
-	</modules>
 
 </project>
