@@ -20,7 +20,7 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 	private boolean stop;
 
 	public ConfigUpdater(final File file, final ClientsHandler clients,
-			final Config config, final Vector<AbstractDevice> devices,
+			final Config config, final Vector<Device> devices,
 			final Vector<Light> lights) {
 		super(file, clients, config, devices, lights);
 	}
@@ -30,80 +30,60 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 		final Path myDir = Paths.get(this.watchFile.getParentFile()
 				.getAbsolutePath());
 		WatchService watcher;
-		try
-		{
+		try {
 			watcher = myDir.getFileSystem().newWatchService();
 			myDir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
-		}
-		catch (final IOException e1)
-		{
+		} catch (final IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return;
 		}
 
-		while (!this.stop)
-		{
-			try
-			{
+		while (!this.stop) {
+			try {
 
 				final WatchKey watckKey = watcher.take();
 
 				boolean updateConfig = false;
 				final List<WatchEvent<?>> events = watckKey.pollEvents();
-				for (final WatchEvent<?> event : events)
-				{
-					if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE)
-					{
+				for (final WatchEvent<?> event : events) {
+					if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
 						final Path context = (Path) event.context();
 						final File file = context.toFile();
-						if (this.watchFile.getName().equals(file.getName()))
-						{
+						if (this.watchFile.getName().equals(file.getName())) {
 							this.updateConfig();
 							System.out.println("Config modified");
 						}
-					}
-					else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE)
-					{
-					}
-					else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY)
-					{
+					} else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+					} else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
 						final Path context = (Path) event.context();
 						final File file = context.toFile();
-						if (this.watchFile.getName().equals(file.getName()))
-						{
+						if (this.watchFile.getName().equals(file.getName())) {
 							updateConfig = true;
 						}
 
 					}
 				}
 
-				if (updateConfig)
-				{
+				if (updateConfig) {
 					this.updateConfig();
 					System.out.println("Config modified");
 				}
 
 				watckKey.reset();
 
-			}
-			catch (final Exception e)
-			{
+			} catch (final Exception e) {
 				e.printStackTrace();
 				System.out.println("Error: " + e.toString());
 			}
 
-			synchronized (this)
-			{
+			synchronized (this) {
 
-				try
-				{
+				try {
 					watcher.close();
-				}
-				catch (final IOException e)
-				{
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 				this.notifyAll();

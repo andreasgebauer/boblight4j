@@ -23,6 +23,7 @@ public class ConnectedClientImpl implements ConnectedClient {
 		return this.socketChannel;
 	}
 
+	@Override
 	public int lightNameToInt(final String lightname) {
 		for (int i = 0; i < this.lights.size(); i++) {
 			if (this.lights.get(i).getName().equals(lightname)) {

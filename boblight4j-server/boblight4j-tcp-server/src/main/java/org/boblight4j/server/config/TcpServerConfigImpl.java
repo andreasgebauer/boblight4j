@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.device.builder.DeviceBuilder;
 import org.boblight4j.device.builder.DeviceBuilderFactory;
@@ -121,7 +122,7 @@ public class TcpServerConfigImpl implements Config {
 
 	@Override
 	public void buildConfig(final ClientsHandler clients,
-			final List<AbstractDevice> devices, final List<Light> lights)
+			final List<Device> devices, final List<Light> lights)
 			throws BoblightException {
 		LOG.info("building config");
 
@@ -134,11 +135,10 @@ public class TcpServerConfigImpl implements Config {
 
 		final List<Color> colors = this.buildColorConfig();
 
-		final List<AbstractDevice> tmpDevices = this.buildDeviceConfig(clients);
-		final Iterator<AbstractDevice> iterator = tmpDevices.iterator();
+		final List<Device> tmpDevices = this.buildDeviceConfig(clients);
+		final Iterator<Device> iterator = tmpDevices.iterator();
 		while (iterator.hasNext()) {
-			final AbstractDevice next = iterator.next();
-			devices.add(next);
+			devices.add(iterator.next());
 		}
 
 		final List<Light> tmpLights = this.buildLightConfig(tmpDevices, colors);
@@ -154,9 +154,9 @@ public class TcpServerConfigImpl implements Config {
 	}
 
 	@Override
-	public List<AbstractDevice> buildDeviceConfig(final ClientsHandler clients)
+	public List<Device> buildDeviceConfig(final ClientsHandler clients)
 			throws BoblightConfigurationException, BoblightParseException {
-		final List<AbstractDevice> devices = new ArrayList<AbstractDevice>();
+		final List<Device> devices = new ArrayList<Device>();
 
 		for (int i = 0; i < this.deviceLines.size(); i++) {
 			final Pointer<String> line = new Pointer<String>();
@@ -174,7 +174,7 @@ public class TcpServerConfigImpl implements Config {
 	}
 
 	@Override
-	public List<Light> buildLightConfig(final List<AbstractDevice> devices,
+	public List<Light> buildLightConfig(final List<Device> devices,
 			final List<Color> colors) throws BoblightException {
 		final List<Light> lights = new ArrayList<Light>();
 		// CLight globallight = new CLight(); // default values
@@ -223,7 +223,7 @@ public class TcpServerConfigImpl implements Config {
 				// and if the channel on it exists
 				boolean devicefound = false;
 				for (int k = 0; k < devices.size(); k++) {
-					final AbstractDevice cDevice = devices.get(k);
+					final Device cDevice = devices.get(k);
 					if (cDevice.getName().equals(devicename)) {
 						if (ichannel > cDevice.getNrChannels()) {
 							final String msg = String

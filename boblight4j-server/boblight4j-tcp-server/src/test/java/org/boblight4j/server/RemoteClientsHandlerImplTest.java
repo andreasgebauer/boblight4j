@@ -11,7 +11,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
@@ -88,8 +88,7 @@ public class RemoteClientsHandlerImplTest {
 		testable.addClient(client);
 
 		// fill channels (used/unused)
-		testable.fillChannels(new ArrayList<Channel>(), 0,
-				mock(AbstractDevice.class));
+		testable.fillChannels(new ArrayList<Channel>(), 0, mock(Device.class));
 	}
 
 	@Test

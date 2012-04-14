@@ -15,13 +15,14 @@ import org.slf4j.LoggerFactory;
  * @author agebauer
  * 
  */
-public abstract class AbstractDevice implements Runnable {
+public abstract class AbstractDevice implements Device, Runnable {
 
 	public enum DeviceType {
 		NOTHING, MOMO, ATMO, POPEN, LTBL, SOUND, DIODER, KARATE,
 	}
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractDevice.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbstractDevice.class);
 
 	private boolean allowSync;
 	protected List<Channel> channels = new ArrayList<Channel>();

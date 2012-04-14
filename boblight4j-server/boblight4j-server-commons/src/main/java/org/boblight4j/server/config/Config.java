@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
@@ -20,13 +20,13 @@ public interface Config {
 	 */
 	List<Color> buildColorConfig() throws BoblightException;
 
-	void buildConfig(ClientsHandler clients, List<AbstractDevice> devices,
+	void buildConfig(ClientsHandler clients, List<Device> devices,
 			List<Light> lights) throws BoblightException;
 
-	List<AbstractDevice> buildDeviceConfig(ClientsHandler clients)
+	List<Device> buildDeviceConfig(ClientsHandler clients)
 			throws BoblightException;
 
-	List<Light> buildLightConfig(List<AbstractDevice> devices, List<Color> colors)
+	List<Light> buildLightConfig(List<Device> devices, List<Color> colors)
 			throws BoblightException;
 
 	boolean checkConfig() throws BoblightException;

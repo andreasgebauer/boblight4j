@@ -29,16 +29,34 @@ import org.slf4j.LoggerFactory;
  */
 public class Light {
 
-	public class ColorCalculator {
+	/**
+	 * Calculates the actual color.
+	 * 
+	 * @author agebauer
+	 * 
+	 */
+	public static class ColorCalculator {
 		private boolean interpolation;
 		private long time = -1;
 		private long prevtime;
 		private float[] prevrgb;
 
+		/**
+		 * Constructs a colour calculator.
+		 * 
+		 * @param interpolated
+		 *            whether interpolation should be used
+		 */
 		public ColorCalculator(boolean interpolated) {
 			interpolation = interpolated;
 		}
 
+		/**
+		 * Calculates the initial colour value.
+		 * 
+		 * @param rgbStart
+		 * @return
+		 */
 		public float[] getInitialColorValue(float[] rgbStart) {
 			float rgb[];
 			final float[] rgbCur = Arrays.copyOf(rgbStart, rgbStart.length);
@@ -68,6 +86,12 @@ public class Light {
 			return rgb;
 		}
 
+		/**
+		 * Returns the maximum RGB colour value to apply.
+		 * 
+		 * @param colors
+		 * @return
+		 */
 		public float[] getMaxRgb(List<Color> colors) {
 			final float maxrgb[] = { 0.0f, 0.0f, 0.0f };
 			for (int i = 0; i < colors.size(); i++) {
@@ -105,7 +129,7 @@ public class Light {
 	private boolean use;
 
 	// device using this light
-	private final List<AbstractDevice> users = new ArrayList<AbstractDevice>();
+	private final List<Device> users = new ArrayList<Device>();
 
 	// 2
 	private float vscan[] = new float[2];
@@ -143,7 +167,7 @@ public class Light {
 	 * @param device
 	 *            the device to add
 	 */
-	public void addUser(final AbstractDevice device) {
+	public void addUser(final Device device) {
 		// add CDevice pointer to users if it doesn't exist yet
 		if (this.users.contains(device)) {
 			return;
@@ -157,7 +181,7 @@ public class Light {
 	 * @param device
 	 *            the device to remove
 	 */
-	public void clearUser(final AbstractDevice device) {
+	public void clearUser(final Device device) {
 		this.users.remove(device);
 	}
 
@@ -242,7 +266,8 @@ public class Light {
 	public float getColorValue(final int colornr, final long time) {
 
 		// need two writes for interpolation
-		if (this.colorCalculator.interpolation && this.colorCalculator.prevtime == -1) {
+		if (this.colorCalculator.interpolation
+				&& this.colorCalculator.prevtime == -1) {
 			return 0.0f;
 		}
 
@@ -313,7 +338,7 @@ public class Light {
 	 * @param device
 	 * @return
 	 */
-	public final float getSingleChange(final AbstractDevice device) {
+	public final float getSingleChange(final Device device) {
 		return device.getSingleChange();
 	}
 
@@ -325,11 +350,11 @@ public class Light {
 		return this.colorCalculator.time;
 	}
 
-	public final AbstractDevice getUser(final int j) {
+	public final Device getUser(final int j) {
 		return this.users.get(j);
 	}
 
-	public final List<AbstractDevice> getUsers() {
+	public final List<Device> getUsers() {
 		return this.users;
 	}
 
@@ -346,7 +371,7 @@ public class Light {
 	 * 
 	 * @param device
 	 */
-	public final void resetSingleChange(final AbstractDevice device) {
+	public final void resetSingleChange(final Device device) {
 		device.setSingleChange(0.0f);
 	}
 
@@ -377,10 +402,10 @@ public class Light {
 	}
 
 	/**
-	 * Sets the given rgb values as colors for this light.
+	 * Sets the given RGB values as colours for this light.
 	 * 
 	 * @param rgb
-	 *            the color
+	 *            the colour
 	 * @param time
 	 *            the time stamp the RGB values where grabbed.
 	 */

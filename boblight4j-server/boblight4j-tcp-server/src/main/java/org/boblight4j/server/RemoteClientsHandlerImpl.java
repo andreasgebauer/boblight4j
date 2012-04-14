@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightException;
@@ -105,7 +106,7 @@ public class RemoteClientsHandlerImpl extends
 
 	@Override
 	public final void fillChannels(final List<Channel> channels,
-			final long time, final AbstractDevice device) {
+			final long time, final Device device) {
 
 		final Collection<Light> usedLights = doFillChannels(channels, time,
 				device);
@@ -144,7 +145,7 @@ public class RemoteClientsHandlerImpl extends
 	}
 
 	private Collection<Light> doFillChannels(final List<Channel> channels,
-			final long time, final AbstractDevice device) {
+			final long time, final Device device) {
 		List<Light> usedLights = new ArrayList<Light>();
 		for (int i = 0; i < channels.size(); i++) {
 			// get the oldest client with the highest priority
@@ -407,7 +408,7 @@ public class RemoteClientsHandlerImpl extends
 	}
 
 	private void parseSync(final ConnectedClient client) {
-		final Set<AbstractDevice> users = new HashSet<AbstractDevice>();
+		final Set<Device> users = new HashSet<Device>();
 
 		synchronized (this.mutex) {
 			// build up a list of devices using this client's input
@@ -423,7 +424,7 @@ public class RemoteClientsHandlerImpl extends
 		// users.sort();
 		// users.unique();
 
-		final Iterator<AbstractDevice> iterator = users.iterator();
+		final Iterator<Device> iterator = users.iterator();
 		while (iterator.hasNext()) {
 			iterator.next().sync();
 		}

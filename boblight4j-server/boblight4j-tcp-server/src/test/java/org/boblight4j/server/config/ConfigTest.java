@@ -4,10 +4,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Vector;
 
-import org.boblight4j.device.AbstractDevice;
+import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,7 +30,7 @@ public class ConfigTest {
 	@Test
 	public void testBuildConfig() throws BoblightException {
 		final Vector<Light> lights = new Vector<Light>();
-		final Vector<AbstractDevice> devices = new Vector<AbstractDevice>();
+		final Vector<Device> devices = new Vector<Device>();
 		this.testable.buildConfig(Mockito.mock(RemoteClientsHandlerImpl.class), devices,
 				lights);
 	}
