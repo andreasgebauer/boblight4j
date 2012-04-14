@@ -6,9 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.server.config.Color;
 import org.boblight4j.utils.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class representing a light section in the configuration.
@@ -82,7 +83,7 @@ public class Light {
 
 	private static final int FULL_SPEED = 100;
 
-	private static final Logger LOG = Logger.getLogger(Light.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Light.class);
 
 	private final List<ColorLightAdjust> colorLightAdjust = new ArrayList<ColorLightAdjust>();
 	private final List<Color> colors = new ArrayList<Color>();

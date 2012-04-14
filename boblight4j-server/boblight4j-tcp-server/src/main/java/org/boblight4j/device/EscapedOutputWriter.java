@@ -3,11 +3,12 @@ package org.boblight4j.device;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EscapedOutputWriter extends AbstractOutputWriter {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(EscapedOutputWriter.class);
 	private boolean debug;
 

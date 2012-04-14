@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.device.builder.DeviceBuilder;
@@ -25,10 +24,12 @@ import org.boblight4j.utils.MBeanUtils;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
 import org.boblight4j.utils.StdIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TcpServerConfigImpl implements Config {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(TcpServerConfigImpl.class);
 
 	private static final int SECTCOLOR = 3;
@@ -304,7 +305,7 @@ public class TcpServerConfigImpl implements Config {
 				// every line here needs to have another word
 				value = Misc.getWord(line);
 			} catch (final BoblightParseException e) {
-				LOG.fatal(String.format("%s line %d: no value for key %s",
+				LOG.error(String.format("%s line %d: no value for key %s",
 						this.fileName, this.globalConfigLines.get(i).linenr,
 						key));
 				valid = false;

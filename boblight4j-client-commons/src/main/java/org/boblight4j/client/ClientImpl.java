@@ -9,7 +9,6 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.client.mbean.ClientAccessor;
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -22,6 +21,8 @@ import org.boblight4j.utils.MessageQueue;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
 import org.boblight4j.utils.StdIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <code>Client</code> class is the client part of the client server
@@ -38,7 +39,7 @@ public class ClientImpl implements Client {
 
 	private static final String CMD_SET_LIGHT = "set light ";
 
-	private static final Logger LOG = Logger.getLogger(ClientImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClientImpl.class);
 
 	private static final String PROTOCOLVERSION = "5";
 	private static final int DEFAULT_PORT = 19333;

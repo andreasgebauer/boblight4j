@@ -6,11 +6,12 @@ import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MBeanUtils {
 
-	private static final Logger LOG = Logger.getLogger(MBeanUtils.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MBeanUtils.class);
 
 	public static void registerBean(final String name, final Object bean) {
 		final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();

@@ -5,15 +5,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.boblight4j.server.config.ConfigUpdater;
+import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the main entry point for the boblight4j server
@@ -34,7 +35,7 @@ public class BoblightDaemon {
 
 	}
 
-	private static final Logger LOG = Logger.getLogger(BoblightDaemon.class
+	private static final Logger LOG = LoggerFactory.getLogger(BoblightDaemon.class
 			.getName());
 
 	private static final String DEFAULTCONF = "/etc/boblight.conf";
@@ -50,7 +51,7 @@ public class BoblightDaemon {
 		}
 		catch (final Exception e)
 		{
-			LOG.fatal("Fatal error occurred", e);
+			LOG.error("Fatal error occurred", e);
 			System.exit(1);
 		}
 		System.exit(0);

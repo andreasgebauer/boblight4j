@@ -6,11 +6,12 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpectrumAnalyzer extends AbstractBoblightClient {
 
-	static final Logger LOG = Logger.getLogger(SpectrumAnalyzer.class);
+	static final Logger LOG = LoggerFactory.getLogger(SpectrumAnalyzer.class);
 
 	private FlagManagerSpectrumAnalyzer flagManager;
 

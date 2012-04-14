@@ -6,11 +6,12 @@ import java.util.List;
 import javax.media.CaptureDeviceInfo;
 import javax.media.CaptureDeviceManager;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JMFVideoGrabber extends AbstractPassiveGrabber {
 
@@ -18,7 +19,7 @@ public class JMFVideoGrabber extends AbstractPassiveGrabber {
 		super(client, sync, width, height);
 	}
 
-	private static final Logger LOG = Logger.getLogger(JMFVideoGrabber.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JMFVideoGrabber.class);
 
 	@Override
 	public void setup(final FlagManager flagManager) throws BoblightException {

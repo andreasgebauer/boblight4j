@@ -7,20 +7,21 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
-import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.boblight4j.server.NioServer;
+import org.boblight4j.server.RemoteClientsHandlerImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.powermock.reflect.internal.WhiteboxImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigUpdaterTest {
 
-	private static final Logger LOG = Logger.getLogger(ConfigUpdaterTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigUpdaterTest.class);
 
 	private RemoteClientsHandlerImpl clients;
 	private List<AbstractDevice> devices;

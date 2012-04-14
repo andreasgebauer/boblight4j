@@ -2,11 +2,12 @@ package org.boblight4j.client.X11;
 
 import gnu.x11.Display;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractActiveGrabber;
 import org.boblight4j.exception.BoblightConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for X11 grabber implementations.
@@ -16,7 +17,7 @@ import org.boblight4j.exception.BoblightConfigurationException;
  */
 public abstract class AbstractX11Grabber extends AbstractActiveGrabber {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractX11Grabber.class);
 
 	private Display display;

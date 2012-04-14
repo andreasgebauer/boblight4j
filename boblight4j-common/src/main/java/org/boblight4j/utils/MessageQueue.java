@@ -2,11 +2,12 @@ package org.boblight4j.utils;
 
 import java.util.ArrayDeque;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MessageQueue {
 
-	private static final Logger LOG = Logger.getLogger(MessageQueue.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MessageQueue.class);
 
 	private final ArrayDeque<Message> messages = new ArrayDeque<Message>();
 	private final Message remainingData = new Message();

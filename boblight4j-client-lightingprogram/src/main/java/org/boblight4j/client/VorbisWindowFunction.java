@@ -18,11 +18,12 @@ package org.boblight4j.client;
 
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VorbisWindowFunction implements WindowFunction {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(VorbisWindowFunction.class);
 
 	private static final double PI = Math.PI;

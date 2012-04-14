@@ -1,13 +1,15 @@
 package org.boblight4j.client;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class BoblightConstant extends AbstractBoblightClient {
 
 	private static final int BYTE_SHIFT = 0xFF;
 
-	private static final Logger LOG = Logger.getLogger(BoblightConstant.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BoblightConstant.class);
 
 	private FlagManagerConstant flagmanager;
 

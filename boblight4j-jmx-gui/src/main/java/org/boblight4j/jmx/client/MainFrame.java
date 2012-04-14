@@ -30,11 +30,12 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.jmx.client.CurveEditorPanel.Model;
 import org.boblight4j.server.config.IPoint;
 import org.boblight4j.server.config.LightAccessorMBean;
 import org.boblight4j.server.config.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainFrame extends JFrame {
 
@@ -105,7 +106,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(MainFrame.ComboBoxListener.class);
 
 	private static MBeanServerConnection mbsc;

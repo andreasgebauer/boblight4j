@@ -7,10 +7,11 @@ import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 
@@ -52,7 +53,7 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 		}
 	}
 
-	private static final Logger LOG = Logger.getLogger(ConfigUpdater.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigUpdater.class);
 
 	private final Object monitor = new Object();
 	private boolean stop;

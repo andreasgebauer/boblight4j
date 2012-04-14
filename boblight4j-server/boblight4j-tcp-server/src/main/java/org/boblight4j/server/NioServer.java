@@ -14,11 +14,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NioServer implements Runnable {
-	private static final Logger LOG = Logger.getLogger(NioServer.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NioServer.class);
 
 	private boolean accept = true;
 	// The host:port combination to listen on

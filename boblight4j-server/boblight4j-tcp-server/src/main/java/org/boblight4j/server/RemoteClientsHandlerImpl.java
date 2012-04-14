@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightCommunicationException;
@@ -25,13 +24,15 @@ import org.boblight4j.utils.MBeanUtils;
 import org.boblight4j.utils.Message;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RemoteClientsHandlerImpl extends
 		AbstractClientsHandler<ConnectedClientImpl> implements ClientsHandler {
 
 	private static final int FD_SETSIZE = 1024;
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(RemoteClientsHandlerImpl.class);
 	private static final int MAXDATA = 100000;
 
@@ -438,7 +439,7 @@ public class RemoteClientsHandlerImpl extends
 				this.nioServer = new NioServer(this.address, this.port, this);
 				new Thread(this.nioServer, "NioServer").start();
 			} catch (final Exception e) {
-				LOG.fatal("Error during NioServer setup", e);
+				LOG.error("Error during NioServer setup", e);
 				this.nioServer.stop();
 			}
 		}

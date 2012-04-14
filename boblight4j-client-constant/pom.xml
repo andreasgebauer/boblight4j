@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>boblight4j</artifactId>
 		<groupId>org.boblight</groupId>
+		<artifactId>boblight4j</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -12,13 +12,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.boblight</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>boblight4j-client-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -44,15 +44,6 @@
 									<mainClass>org.boblight4j.client.BoblightConstant</mainClass>
 								</transformer>
 							</transformers>
-							<filters>
-								<filter>
-									<artifact>gnu.getopt:java-getopt</artifact>
-									<excludes>
-										<exclude>META-INF/TESTKEY.SF</exclude>
-										<exclude>META-INF/TESTKEY.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
 						</configuration>
 					</execution>
 				</executions>

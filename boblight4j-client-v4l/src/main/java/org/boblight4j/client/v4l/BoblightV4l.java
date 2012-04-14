@@ -1,6 +1,6 @@
 package org.boblight4j.client.v4l;
 
-import org.apache.log4j.Logger;
+
 import org.boblight4j.client.AbstractBoblightClient;
 import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.FlagManager;
@@ -8,6 +8,8 @@ import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Boblight4J V4L client.
@@ -19,7 +21,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 	private static final int SLEEP_AFTER_ERROR = 5000;
 
-	private static final Logger LOG = Logger.getLogger(BoblightV4l.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BoblightV4l.class);
 
 	private FlagManagerV4l flagManager;
 

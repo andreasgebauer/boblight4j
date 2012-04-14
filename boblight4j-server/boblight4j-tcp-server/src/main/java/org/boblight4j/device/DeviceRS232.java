@@ -6,15 +6,16 @@ import gnu.io.SerialPort;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightDeviceException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.Channel;
 import org.boblight4j.utils.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeviceRS232 extends AbstractDevice {
 
-	private static final Logger LOG = Logger.getLogger(DeviceRS232.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DeviceRS232.class);
 
 	private long bits;
 	private AbstractOutputWriter deviceOutput;

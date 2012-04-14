@@ -1,6 +1,5 @@
 package org.boblight4j.client.v4l;
 
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Transparency;
@@ -14,11 +13,12 @@ import magick.ImageInfo;
 import magick.MagickException;
 import magick.MagickImage;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.grabber.AbstractPassiveGrabber;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.edu.jcu.v4l4j.CaptureCallback;
 import au.edu.jcu.v4l4j.FrameGrabber;
@@ -35,7 +35,7 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 		CaptureCallback {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(V4LImageGrabberImpl.class);
 
 	private final boolean blackBarDetection = true;

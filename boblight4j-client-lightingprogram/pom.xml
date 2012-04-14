@@ -18,8 +18,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>boblight4j-client-commons</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.emory.mathcs</groupId>
@@ -27,9 +28,8 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.boblight</groupId>
-			<artifactId>boblight4j-client-commons</artifactId>
-			<version>${project.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -54,15 +54,6 @@
 									<mainClass>org.boblight4j.client.SpectrumAnalyzer</mainClass>
 								</transformer>
 							</transformers>
-							<filters>
-								<filter>
-									<artifact>gnu.getopt:java-getopt</artifact>
-									<excludes>
-										<exclude>META-INF/TESTKEY.SF</exclude>
-										<exclude>META-INF/TESTKEY.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
 						</configuration>
 					</execution>
 				</executions>

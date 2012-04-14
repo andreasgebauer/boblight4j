@@ -1,10 +1,11 @@
 package org.boblight4j.client;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.Constants;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for runnable clients.
@@ -14,7 +15,7 @@ import org.boblight4j.exception.BoblightRuntimeException;
  */
 public abstract class AbstractBoblightClient {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractBoblightClient.class);
 
 	private final FlagManager flagManager;
@@ -87,7 +88,7 @@ public abstract class AbstractBoblightClient {
 		}
 		catch (final BoblightConfigurationException error)
 		{
-			LOG.fatal(
+			LOG.error(
 					"Error occured configuring client with passed program arguments.",
 					error);
 			flagmanager.printHelpMessage();

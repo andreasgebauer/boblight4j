@@ -7,11 +7,12 @@ import javax.media.CaptureDeviceInfo;
 import javax.media.CaptureDeviceManager;
 import javax.media.Format;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BoblightJMF {
 
-	private static final Logger LOG = Logger.getLogger(BoblightJMF.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BoblightJMF.class);
 
 	public static void main(final String[] args) {
 		try

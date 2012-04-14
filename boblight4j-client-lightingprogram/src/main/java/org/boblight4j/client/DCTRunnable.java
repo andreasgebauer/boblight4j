@@ -2,14 +2,15 @@ package org.boblight4j.client;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.emory.mathcs.jtransforms.dct.DoubleDCT_1D;
 
 final class DCTRunnable implements Runnable {
 
-	private static final Logger LOG = Logger.getLogger(DCTRunnable.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DCTRunnable.class);
 
 	private final Client boblight;
 	private final DoubleDCT_1D doubleDCT_1D;

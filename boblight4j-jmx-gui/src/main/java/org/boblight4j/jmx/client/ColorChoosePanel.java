@@ -10,12 +10,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.jmx.client.CurveEditorPanel.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ColorChoosePanel extends JPanel {
 
-	private static final Logger LOG = Logger.getLogger(ColorChoosePanel.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ColorChoosePanel.class);
 
 	/**
 	 * 
@@ -40,7 +42,8 @@ public class ColorChoosePanel extends JPanel {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				LOG.info(ColorChoosePanel.this.comboBoxColors.getSelectedItem());
+				LOG.info("selected item: {}",
+						ColorChoosePanel.this.comboBoxColors.getSelectedItem());
 				final Model data = ColorChoosePanel.this.curveEditor.getData();
 				ColorChoosePanel.this.color = (String) ColorChoosePanel.this.comboBoxColors
 						.getSelectedItem();

@@ -3,10 +3,11 @@ package org.boblight4j.device;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.exception.BoblightDeviceException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all devices.
@@ -20,7 +21,7 @@ public abstract class AbstractDevice implements Runnable {
 		NOTHING, MOMO, ATMO, POPEN, LTBL, SOUND, DIODER, KARATE,
 	}
 
-	private static final Logger LOG = Logger.getLogger(AbstractDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractDevice.class);
 
 	private boolean allowSync;
 	protected List<Channel> channels = new ArrayList<Channel>();

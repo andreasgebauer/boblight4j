@@ -2,7 +2,6 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.AbstractDevice.DeviceType;
 import org.boblight4j.device.DeviceRS232;
@@ -12,6 +11,8 @@ import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class RS232Builder provides an implementation to build accessors for
@@ -27,7 +28,7 @@ import org.boblight4j.utils.Pointer;
  */
 public class RS232Builder extends AbstractDeviceBuilder {
 
-	private static final Logger LOG = Logger.getLogger(RS232Builder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RS232Builder.class);
 
 	public RS232Builder(final List<ConfigGroup> devicelines,
 			final String filename) {

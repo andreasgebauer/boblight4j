@@ -3,9 +3,10 @@ package org.boblight4j.client.video;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
 import org.boblight4j.client.ClientImpl;
 import org.boblight4j.client.grabber.Grabber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for Service Provider Implementations (SPI) for classes implementing
@@ -16,7 +17,7 @@ import org.boblight4j.client.grabber.Grabber;
  */
 public class ImageGrabberFactory {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LoggerFactory
 			.getLogger(ImageGrabberFactory.class);
 
 	/**

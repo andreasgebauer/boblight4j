@@ -8,13 +8,14 @@ import java.util.concurrent.ThreadFactory;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.TargetDataLine;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class CaptureRunner implements Runnable {
 
 	private static final int DEFAULT_FRAME_SIZE = 1024;
 
-	private static final Logger LOG = Logger.getLogger(CaptureRunner.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CaptureRunner.class);
 
 	private final Client boblight;
 	private byte buffer[];

@@ -1,23 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<artifactId>boblight4j-server</artifactId>
 		<groupId>org.boblight</groupId>
 		<version>0.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	
 	<artifactId>boblight4j-server-commons</artifactId>
+	
+	<name>Boblight4J Server Commons</name>
+	
 	<dependencies>
 		<dependency>
-			<groupId>org.boblight</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>boblight4j-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
 	</dependencies>
-	<name>Boblight4J Server Commons</name>
+	
 </project>

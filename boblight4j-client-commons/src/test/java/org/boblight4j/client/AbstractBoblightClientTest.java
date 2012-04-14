@@ -96,10 +96,10 @@ public class AbstractBoblightClientTest {
 
 		this.testable.parseArgs(flagManager, args);
 
+		verify(this.flagManager).printHelpMessage();
 		PowerMockito.verifyStatic();
 		System.exit(1);
 
-		verify(this.flagManager).printHelpMessage();
 	}
 
 	@Test
