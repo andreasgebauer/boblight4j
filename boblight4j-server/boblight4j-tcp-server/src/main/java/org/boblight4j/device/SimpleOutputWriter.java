@@ -3,10 +3,20 @@ package org.boblight4j.device;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SimpleOutputWriter extends AbstractOutputWriter {
 
-	public SimpleOutputWriter(final OutputStream os, final Protocol proto) {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SimpleOutputWriter.class);
+
+	private final boolean debug;
+
+	public SimpleOutputWriter(final OutputStream os, final Protocol proto,
+			final boolean debug) {
 		super(os, proto);
+		this.debug = debug;
 	}
 
 	@Override
@@ -19,7 +29,8 @@ public class SimpleOutputWriter extends AbstractOutputWriter {
 	public void end() throws IOException {
 		this.write(this.getEndFlag());
 		this.flush();
-		System.out.println(this.getByteCount() + " Bytes written.");
+		if (this.debug) {
+			LOG.debug(this.getByteCount() + " Bytes written.");
+		}
 	}
-
 }

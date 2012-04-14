@@ -14,7 +14,7 @@ import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Device;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.device.Light;
-import org.boblight4j.server.RemoteClientsHandlerImpl;
+import org.boblight4j.server.SocketClientsHandlerImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,7 +31,7 @@ public class ConfigImplTest {
 	}
 
 	@Mock
-	private RemoteClientsHandlerImpl clientsHandler;
+	private SocketClientsHandlerImpl clientsHandler;
 
 	private TcpServerConfigImpl testable;
 

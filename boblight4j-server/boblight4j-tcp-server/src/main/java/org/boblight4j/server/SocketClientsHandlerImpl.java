@@ -28,27 +28,27 @@ import org.boblight4j.utils.Pointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteClientsHandlerImpl extends
-		AbstractClientsHandler<ConnectedClientImpl> implements ClientsHandler {
+public class SocketClientsHandlerImpl extends
+		AbstractClientsHandler<SocketConnectedClientImpl> implements ClientsHandler {
 
 	private static final int FD_SETSIZE = 1024;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(RemoteClientsHandlerImpl.class);
+			.getLogger(SocketClientsHandlerImpl.class);
 	private static final int MAXDATA = 100000;
 
 	private InetAddress address;
 
-	private final List<ConnectedClientImpl> clients = new ArrayList<ConnectedClientImpl>();
+	private final List<SocketConnectedClientImpl> clients = new ArrayList<SocketConnectedClientImpl>();
 	private final List<Light> lights;
 
-	final Object mutex = new Object();
+	private final Object mutex = new Object();
 
 	private NioServer nioServer;
 
 	private int port;
 
-	public RemoteClientsHandlerImpl(final List<Light> lights)
+	public SocketClientsHandlerImpl(final List<Light> lights)
 			throws IOException {
 		if (lights == null) {
 			throw new IllegalArgumentException(
@@ -68,7 +68,7 @@ public class RemoteClientsHandlerImpl extends
 			throws IOException {
 
 		// clean disconnected clients before adding new
-		for (Iterator<ConnectedClientImpl> it = this.clients.iterator(); it
+		for (Iterator<SocketConnectedClientImpl> it = this.clients.iterator(); it
 				.hasNext();) {
 			ConnectedClient cl = it.next();
 			if (!cl.isConnected() && !cl.isConnectionPending()) {
@@ -81,14 +81,14 @@ public class RemoteClientsHandlerImpl extends
 		{
 			LOG.error(String.format("number of clients reached maximum %d",
 					FD_SETSIZE));
-			NioUtils.write((ConnectedClientImpl) client, "full\n");
+			NioUtils.write((SocketConnectedClientImpl) client, "full\n");
 			this.clients.remove(client);
 			return;
 		}
 
 		synchronized (this.mutex) {
 			client.setLights(this.lights);
-			this.clients.add((ConnectedClientImpl) client);
+			this.clients.add((SocketConnectedClientImpl) client);
 		}
 	}
 
@@ -227,10 +227,10 @@ public class RemoteClientsHandlerImpl extends
 	@Override
 	public void handleMessages(final SocketChannel socketChannel,
 			final byte[] bs, final int numRead) throws BoblightException {
-		ConnectedClientImpl client = null;
-		final Iterator<ConnectedClientImpl> iterator = this.clients.iterator();
+		SocketConnectedClientImpl client = null;
+		final Iterator<SocketConnectedClientImpl> iterator = this.clients.iterator();
 		while (iterator.hasNext()) {
-			final ConnectedClientImpl selected = iterator.next();
+			final SocketConnectedClientImpl selected = iterator.next();
 			final InetAddress inetAddress2 = socketChannel.socket()
 					.getInetAddress();
 			if (!selected.isConnected() && !selected.isConnectionPending()) {
@@ -265,7 +265,7 @@ public class RemoteClientsHandlerImpl extends
 		}
 	}
 
-	private void parseGet(final ConnectedClientImpl client,
+	private void parseGet(final SocketConnectedClientImpl client,
 			final Message message) throws BoblightCommunicationException,
 			BoblightParseException {
 
@@ -280,7 +280,7 @@ public class RemoteClientsHandlerImpl extends
 		}
 	}
 
-	private void parseMessage(final ConnectedClientImpl client,
+	private void parseMessage(final SocketConnectedClientImpl client,
 			final Message message) throws BoblightParseException,
 			BoblightCommunicationException {
 		final Pointer<String> messagekeyPtr = new Pointer<String>();
@@ -322,7 +322,7 @@ public class RemoteClientsHandlerImpl extends
 		}
 	}
 
-	private void parseSet(final ConnectedClientImpl client,
+	private void parseSet(final SocketConnectedClientImpl client,
 			final Message message) throws BoblightParseException {
 		final String messagekey = Misc.getWord(message.message);
 
@@ -455,12 +455,12 @@ public class RemoteClientsHandlerImpl extends
 	 */
 	@Override
 	public void removeClient(final ConnectedClient socketChannel) {
-		ConnectedClientImpl remoteClient = (ConnectedClientImpl) socketChannel;
+		SocketConnectedClientImpl remoteClient = (SocketConnectedClientImpl) socketChannel;
 		synchronized (this.mutex) {
-			final Iterator<ConnectedClientImpl> iterator = this.clients
+			final Iterator<SocketConnectedClientImpl> iterator = this.clients
 					.iterator();
 			while (iterator.hasNext()) {
-				final ConnectedClientImpl client = iterator.next();
+				final SocketConnectedClientImpl client = iterator.next();
 				if (client.getSocketChannel().equals(socketChannel)) {
 					final Socket socket = remoteClient.getSocketChannel()
 							.socket();
@@ -486,7 +486,7 @@ public class RemoteClientsHandlerImpl extends
 	 * @param client
 	 * @return
 	 */
-	private boolean sendLights(final ConnectedClientImpl client) {
+	private boolean sendLights(final SocketConnectedClientImpl client) {
 		// build up messages by appending to CTcpData
 		final StringBuilder msg = new StringBuilder("lights "
 				+ client.getLights().size() + "\n");
@@ -513,7 +513,7 @@ public class RemoteClientsHandlerImpl extends
 	}
 
 	@Override
-	public void doSendPing(final ConnectedClientImpl client, int lightsused)
+	public void doSendPing(final SocketConnectedClientImpl client, int lightsused)
 			throws BoblightCommunicationException {
 		try {
 			NioUtils.write(client, "ping " + lightsused + "\n");
@@ -523,7 +523,7 @@ public class RemoteClientsHandlerImpl extends
 	}
 
 	@Override
-	public void doSendVersion(final ConnectedClientImpl client, String version)
+	public void doSendVersion(final SocketConnectedClientImpl client, String version)
 			throws BoblightCommunicationException {
 		try {
 			NioUtils.write(client, "version " + version + "\n");
@@ -543,7 +543,7 @@ public class RemoteClientsHandlerImpl extends
 	}
 
 	public void removeClient(SocketChannel socketChannel) {
-		ConnectedClientImpl client = getClient(socketChannel);
+		SocketConnectedClientImpl client = getClient(socketChannel);
 		if (client == null) {
 			throw new IllegalArgumentException("No client with socketChannel "
 					+ socketChannel + " available.");
@@ -552,8 +552,8 @@ public class RemoteClientsHandlerImpl extends
 		}
 	}
 
-	private ConnectedClientImpl getClient(SocketChannel socketChannel) {
-		for (ConnectedClientImpl client : this.clients) {
+	private SocketConnectedClientImpl getClient(SocketChannel socketChannel) {
+		for (SocketConnectedClientImpl client : this.clients) {
 			if (client.getSocketChannel().socket().getInetAddress()
 					.equals(socketChannel.socket().getInetAddress())) {
 				return client;

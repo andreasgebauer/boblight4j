@@ -8,6 +8,7 @@ import java.util.List;
 import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
+import org.boblight4j.server.BoblightDaemon.ServerArgs;
 import org.boblight4j.server.config.ConfigUpdater;
 import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.kohsuke.args4j.CmdLineException;
@@ -25,18 +26,24 @@ import org.slf4j.LoggerFactory;
  */
 public class BoblightDaemon {
 
-	public class ServerArgs {
+	/**
+	 * The arguments bean for the boblight4j server daemon arguments.
+	 * 
+	 * @author agebauer
+	 * 
+	 */
+	public static class ServerArgs {
 
 		@Option(name = "-c")
-		public File configFile = new File(DEFAULTCONF);
+		private File configFile = new File(DEFAULTCONF);
 
 		@Option(name = "-h")
-		public boolean help;
+		private boolean help;
 
 	}
 
-	private static final Logger LOG = LoggerFactory.getLogger(BoblightDaemon.class
-			.getName());
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BoblightDaemon.class.getName());
 
 	private static final String DEFAULTCONF = "/etc/boblight.conf";
 
@@ -44,13 +51,16 @@ public class BoblightDaemon {
 
 	private ServerArgs args;
 
+	/**
+	 * Main method. Starts the boblight4j server daemon.
+	 * 
+	 * @param args
+	 *            the program arguments
+	 */
 	public static void main(final String[] args) {
-		try
-		{
+		try {
 			new BoblightDaemon().init(args);
-		}
-		catch (final Exception e)
-		{
+		} catch (final Exception e) {
 			LOG.error("Fatal error occurred", e);
 			System.exit(1);
 		}
@@ -67,16 +77,12 @@ public class BoblightDaemon {
 	 */
 	private void init(final String[] args) throws IOException,
 			BoblightException {
-		try
-		{
+		try {
 			this.parseFlags(args);
-			if (this.args.help)
-			{
+			if (this.args.help) {
 				throw new BoblightException("help");
 			}
-		}
-		catch (final BoblightException e1)
-		{
+		} catch (final BoblightException e1) {
 			this.printHelpMessage();
 			System.exit(1);
 		}
@@ -95,7 +101,8 @@ public class BoblightDaemon {
 		}));
 
 		final List<Light> lights = new ArrayList<Light>(); // lights pool
-		final RemoteClientsHandlerImpl clients = new RemoteClientsHandlerImpl(lights);
+		final SocketClientsHandlerImpl clients = new SocketClientsHandlerImpl(
+				lights);
 
 		// class for loading and parsing config load and parse config
 		final TcpServerConfigImpl config = new TcpServerConfigImpl();
@@ -113,30 +120,24 @@ public class BoblightDaemon {
 
 		// start the devices
 		LOG.info("starting devices");
-		for (int i = 0; i < devices.size(); i++)
-		{
+		for (int i = 0; i < devices.size(); i++) {
 			devices.get(i).startThread();
 		}
 
 		// run the clients handler
 		clients.process();
 
-		while (!stop)
-		{
-			try
-			{
+		while (!stop) {
+			try {
 				Thread.sleep(100);
-			}
-			catch (final InterruptedException e)
-			{
+			} catch (final InterruptedException e) {
 				LOG.warn("Error during Thread.sleep call.", e);
 			}
 		}
 
 		// signal that the devices should stop
 		LOG.info("signaling devices to stop");
-		for (int i = 0; i < devices.size(); i++)
-		{
+		for (int i = 0; i < devices.size(); i++) {
 			devices.get(i).asyncStopThread();
 		}
 
@@ -145,24 +146,18 @@ public class BoblightDaemon {
 
 		// stop the devices
 		LOG.info("waiting for devices to stop");
-		for (int i = 0; i < devices.size(); i++)
-		{
+		for (int i = 0; i < devices.size(); i++) {
 			devices.get(i).stopThread();
 		}
 		LOG.info("exiting");
 	}
 
-	private void parseFlags(final String[] args) throws BoblightException {
-
-		this.args = new ServerArgs();
-
-		try
-		{
-			new CmdLineParser(this.args).parseArgument(args);
-		}
-		catch (CmdLineException e)
-		{
-			e.printStackTrace();
+	private ServerArgs parseFlags(final String[] args) throws BoblightException {
+		try {
+			ServerArgs argsBean = new ServerArgs();
+			new CmdLineParser(argsBean).parseArgument(args.clone());
+			return argsBean;
+		} catch (CmdLineException e) {
 			throw new BoblightException(e);
 		}
 	}
@@ -170,8 +165,7 @@ public class BoblightDaemon {
 	private void printFlags(final int length, final String[] args) {
 		StringBuilder flags = new StringBuilder("starting");
 
-		for (int i = 0; i < length; i++)
-		{
+		for (int i = 0; i < length; i++) {
 			flags.append(' ');
 			flags.append(args[i]);
 		}

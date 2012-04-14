@@ -24,9 +24,9 @@ public class ClientsHandlerColorCalculationTest {
 	private Channel bottom1green;
 	private Channel bottom1red;
 	private List<Channel> channels;
-	private ConnectedClientImpl client;
+	private SocketConnectedClientImpl client;
 	private Device device;
-	private RemoteClientsHandlerImpl testable;
+	private SocketClientsHandlerImpl testable;
 
 	private void nextStep(final long time, final double expected) {
 		double value;
@@ -56,7 +56,7 @@ public class ClientsHandlerColorCalculationTest {
 
 		this.device = Mockito.mock(Device.class);
 
-		this.testable = new RemoteClientsHandlerImpl(vector);
+		this.testable = new SocketClientsHandlerImpl(vector);
 
 		this.channels = new ArrayList<Channel>();
 		this.bottom1red = new Channel(0, 0);
@@ -77,7 +77,7 @@ public class ClientsHandlerColorCalculationTest {
 		final InetAddress inetAddress = Mockito.mock(InetAddress.class);
 		Mockito.when(socket.getInetAddress()).thenReturn(inetAddress);
 
-		this.client = Mockito.mock(ConnectedClientImpl.class);
+		this.client = Mockito.mock(SocketConnectedClientImpl.class);
 		Mockito.when(client.isConnected()).thenReturn(true);
 		Mockito.when(client.getSocketChannel()).thenReturn(socketChannel);
 		Mockito.when(client.getLights()).thenReturn(value);

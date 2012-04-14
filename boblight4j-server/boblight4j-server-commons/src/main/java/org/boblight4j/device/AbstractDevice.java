@@ -18,7 +18,37 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDevice implements Device, Runnable {
 
 	public enum DeviceType {
-		NOTHING, MOMO, ATMO, POPEN, LTBL, SOUND, DIODER, KARATE,
+		/**
+		 * No device type
+		 */
+		NOTHING(null),
+		/**
+		 * A momo device type such as an Arduino.
+		 */
+		MOMO("momo"),
+		/**
+		 * Atmo stripes devices
+		 */
+		ATMO("atmo"), POPEN("popen"), LTBL("ltbl"), SOUND("sound"), DIODER(
+				"dioder"), KARATE("karate");
+
+		private final String name;
+
+		DeviceType(String name) {
+			this.name = name;
+		}
+
+		public static DeviceType forName(String type) {
+			DeviceType[] types = values();
+			for (DeviceType deviceType : types) {
+				if (deviceType.name != null ? deviceType.name.equals(type)
+						: type == null) {
+					return deviceType;
+				}
+			}
+			return null;
+		}
+
 	}
 
 	private static final Logger LOG = LoggerFactory

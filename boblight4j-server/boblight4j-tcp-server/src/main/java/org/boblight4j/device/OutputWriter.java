@@ -4,6 +4,10 @@ import java.io.IOException;
 
 public interface OutputWriter {
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	void begin() throws IOException;
 
 	void end() throws IOException;

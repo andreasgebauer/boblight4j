@@ -2,12 +2,14 @@ package org.boblight4j.server.config;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.RemoteClientsHandlerImpl;
+import org.boblight4j.server.SocketClientsHandlerImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +33,7 @@ public class ConfigTest {
 	public void testBuildConfig() throws BoblightException {
 		final Vector<Light> lights = new Vector<Light>();
 		final Vector<Device> devices = new Vector<Device>();
-		this.testable.buildConfig(Mockito.mock(RemoteClientsHandlerImpl.class), devices,
+		this.testable.buildConfig(Mockito.mock(SocketClientsHandlerImpl.class), devices,
 				lights);
 	}
 
@@ -41,7 +43,7 @@ public class ConfigTest {
 
 		this.ex.expect(BoblightException.class);
 
-		final Vector<ConfigLine> m_globalconfiglines = new Vector<ConfigLine>();
+		final List<ConfigLine> m_globalconfiglines = new ArrayList<ConfigLine>();
 		m_globalconfiglines.add(new ConfigLine("interface 127.0.0.1", 2));
 		m_globalconfiglines.add(new ConfigLine("port 127.0.0.1", 3));
 

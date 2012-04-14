@@ -2,10 +2,11 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Device;
+import org.boblight4j.device.AbstractDevice.DeviceType;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
+import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 import org.boblight4j.server.config.ConfigLine;
 import org.boblight4j.utils.BooleanParser;
@@ -21,20 +22,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 
-	// device types
-//	public static final int NOTHING = 0;
-//	public static final int MOMO = 1;
-//	public static final int ATMO = 2;
-//	public static final int POPEN = 3;
-//	public static final int LTBL = 4;
-//	public static final int SOUND = 5;
-//	public static final int DIODER = 6;
-//	public static final int KARATE = 7;
-
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractDeviceBuilder.class);
 
-	protected final List<ConfigGroup> deviceLines;
+	private final List<ConfigGroup> deviceLines;
 	private final String fileName;
 
 	public AbstractDeviceBuilder(final List<ConfigGroup> devicelines,
@@ -66,6 +57,27 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		}
 		line.assign(null);
 		return -1;
+	}
+
+	@Override
+	public final Device build(final int devicenr, final ClientsHandler clients,
+			final String type) throws BoblightConfigurationException {
+
+		final Device device = createDevice(clients, devicenr, type,
+				this.deviceLines);
+
+		this.setDeviceName(device, devicenr);
+		this.setDeviceOutput(device, devicenr);
+		this.setDeviceChannels(device, devicenr);
+		this.setDeviceRate(device, devicenr);
+		this.setDeviceInterval(device, devicenr);
+
+		// optional
+		this.setDeviceAllowSync(device, devicenr);
+		this.setDeviceDebug(device, devicenr);
+		this.setDeviceDelayAfterOpen(device, devicenr);
+
+		return device;
 	}
 
 	void setDeviceAllowSync(final Device device, final int devicenr)
@@ -290,4 +302,5 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 		device.setRate(rate);
 
 	}
+
 }

@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 public class RS232Builder extends AbstractDeviceBuilder {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RS232Builder.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RS232Builder.class);
 
 	public RS232Builder(final List<ConfigGroup> devicelines,
 			final String filename) {
@@ -36,45 +37,35 @@ public class RS232Builder extends AbstractDeviceBuilder {
 	}
 
 	@Override
-	public Device build(final int devicenr,
-			final ClientsHandler clients, final String type)
+	public DeviceRS232 createDevice(ClientsHandler clientsHandler,
+			int devicenr, String type, List<ConfigGroup> deviceLines)
 			throws BoblightConfigurationException {
-		final DeviceRS232 device = new DeviceRS232(clients);
 
-		this.setDeviceName(device, devicenr);
-		this.setDeviceOutput(device, devicenr);
-		this.setDeviceChannels(device, devicenr);
-		this.setDeviceRate(device, devicenr);
-		this.setDeviceInterval(device, devicenr);
+		DeviceRS232 deviceRS232 = new DeviceRS232(clientsHandler);
+		ConfigGroup configGroup = deviceLines.get(devicenr);
 
-		// optional
-		this.setDeviceAllowSync(device, devicenr);
-		this.setDeviceDebug(device, devicenr);
-		this.setDeviceBits(device, devicenr);
-		this.setDeviceDelayAfterOpen(device, devicenr);
+		this.setDeviceBits(deviceRS232, configGroup);
 
 		if (type.equals("momo")) {
-			device.setType(DeviceType.MOMO);
-			this.setDevicePrefix(device, devicenr);
-			this.setDevicePostfix(device, devicenr);
-			this.setDeviceEscapeFlag(device, devicenr);
-			device.getProtocol().checkValid();
+			deviceRS232.setType(DeviceType.MOMO);
+			this.setDevicePrefix(deviceRS232, configGroup);
+			this.setDevicePostfix(deviceRS232, configGroup);
+			this.setDeviceEscapeFlag(deviceRS232, configGroup);
+			deviceRS232.getProtocol().checkValid();
 		} else if (type.equals("atmo")) {
-			device.setType(DeviceType.ATMO);
+			deviceRS232.setType(DeviceType.ATMO);
 		} else if (type.equals("karate")) {
-			device.setType(DeviceType.KARATE);
+			deviceRS232.setType(DeviceType.KARATE);
 		}
-		return device;
+
+		return deviceRS232;
 	}
 
-	void setDeviceBits(final DeviceRS232 device, final int devicebits)
+	void setDeviceBits(final DeviceRS232 device, final ConfigGroup configGroup)
 			throws BoblightConfigurationException {
-		LOG.debug("Setting devicebits of " + device.getName() + " to "
-				+ devicebits);
 
 		final Pointer<String> line = new Pointer<String>();
-		final int linenr = this.getLineWithKey("bits",
-				this.deviceLines.get(devicebits).lines, line);
+		final int linenr = this.getLineWithKey("bits", configGroup.lines, line);
 		if (linenr == -1) {
 			return;
 		}
@@ -92,11 +83,12 @@ public class RS232Builder extends AbstractDeviceBuilder {
 	}
 
 	private void setDeviceEscapeFlag(final DeviceRS232 device,
-			final int devicenr) throws BoblightConfigurationException {
+			final ConfigGroup configGroup)
+			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		int postfix = 0;
-		final int linenr = this.getLineWithKey("escape",
-				this.deviceLines.get(devicenr).lines, line);
+		final int linenr = this.getLineWithKey("escape", configGroup.lines,
+				line);
 		if (linenr == -1) {
 			return; // postfix is optional, so this is not an error
 		}
@@ -113,15 +105,16 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		device.getProtocol().setEscapeFlag(postfix);
 	}
 
-	private void setDevicePostfix(final DeviceRS232 device, final int devicenr)
+	private void setDevicePostfix(final DeviceRS232 device,
+			final ConfigGroup configGroup)
 			throws BoblightConfigurationException {
 		final Pointer<String> line = new Pointer<String>();
 		int postfix = 0;
-		final int linenr = this.getLineWithKey("postfix",
-				this.deviceLines.get(devicenr).lines, line);
+		final int linenr = this.getLineWithKey("postfix", configGroup.lines,
+				line);
 		if (linenr == -1) {
 			throw new BoblightConfigurationException(
-					"No postfix given for device " + devicenr);
+					"No postfix given for device " + device.getName());
 		}
 
 		String strvalue;
@@ -135,13 +128,13 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		device.getProtocol().setEndFlag(postfix);
 	}
 
-	void setDevicePrefix(final DeviceRS232 device, final int devicenr)
+	void setDevicePrefix(final DeviceRS232 device, ConfigGroup configGroup)
 			throws BoblightConfigurationException {
 		LOG.debug("Setting deviceprefix of " + device.getName());
 		final Pointer<String> line = new Pointer<String>();
 		int prefix = 0;
-		final int linenr = this.getLineWithKey("prefix",
-				this.deviceLines.get(devicenr).lines, line);
+		final int linenr = this.getLineWithKey("prefix", configGroup.lines,
+				line);
 		if (linenr == -1) {
 			return; // prefix is optional, so this is not an error
 		}

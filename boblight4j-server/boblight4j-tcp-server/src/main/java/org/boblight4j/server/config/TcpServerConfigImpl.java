@@ -8,10 +8,10 @@ import java.io.LineNumberReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.Device;
 import org.boblight4j.device.Light;
 import org.boblight4j.device.builder.DeviceBuilder;
@@ -20,7 +20,7 @@ import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.server.ClientsHandler;
-import org.boblight4j.server.RemoteClientsHandlerImpl;
+import org.boblight4j.server.SocketClientsHandlerImpl;
 import org.boblight4j.utils.MBeanUtils;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
@@ -39,7 +39,7 @@ public class TcpServerConfigImpl implements Config {
 	private static final int SECTLIGHT = 4;
 	private static final int SECTNOTHING = 0;
 
-	List<ConfigLine> globalConfigLines = new ArrayList<ConfigLine>();
+	private List<ConfigLine> globalConfigLines = new ArrayList<ConfigLine>();
 
 	private List<ConfigGroup> colorLines = new ArrayList<ConfigGroup>();
 	private List<ConfigGroup> deviceLines = new ArrayList<ConfigGroup>();
@@ -59,14 +59,14 @@ public class TcpServerConfigImpl implements Config {
 	 *             in case of host is not resolvable
 	 */
 	private void buildClientsHandlerConfig(
-			final RemoteClientsHandlerImpl clientsHandler)
+			final SocketClientsHandlerImpl clientsHandler)
 			throws BoblightParseException, UnknownHostException {
 		// empty string means bind to *
 		InetAddress ifc = null;
 		int port = 19333; // default port
-		for (int i = 0; i < this.globalConfigLines.size(); i++) {
-			final Pointer<String> line = new Pointer<String>(
-					this.globalConfigLines.get(i).line);
+		for (int i = 0; i < this.getGlobalConfigLines().size(); i++) {
+			final Pointer<String> line = new Pointer<String>(this
+					.getGlobalConfigLines().get(i).line);
 			String word = Misc.getWord(line);
 			if (word.equals("interface")) {
 				ifc = InetAddress.getByName(Misc.getWord(line));
@@ -127,7 +127,7 @@ public class TcpServerConfigImpl implements Config {
 		LOG.info("building config");
 
 		try {
-			this.buildClientsHandlerConfig((RemoteClientsHandlerImpl) clients);
+			this.buildClientsHandlerConfig((SocketClientsHandlerImpl) clients);
 		} catch (final UnknownHostException e) {
 			// wrap exception
 			throw new BoblightException(e);
@@ -256,6 +256,7 @@ public class TcpServerConfigImpl implements Config {
 	}
 
 	private boolean checkColorConfig() {
+		// TODO implement color config validator
 		return true;
 	}
 
@@ -286,15 +287,16 @@ public class TcpServerConfigImpl implements Config {
 	}
 
 	private boolean checkDeviceConfig() {
+		// TODO implement device config validator
 		return true;
 	}
 
 	private void checkGlobalConfig() throws BoblightException {
 		boolean valid = true;
 
-		for (int i = 0; i < this.globalConfigLines.size(); i++) {
-			final Pointer<String> line = new Pointer<String>(
-					this.globalConfigLines.get(i).line);
+		for (int i = 0; i < this.getGlobalConfigLines().size(); i++) {
+			final Pointer<String> line = new Pointer<String>(this
+					.getGlobalConfigLines().get(i).line);
 			String key = null;
 			String value = null;
 
@@ -306,8 +308,8 @@ public class TcpServerConfigImpl implements Config {
 				value = Misc.getWord(line);
 			} catch (final BoblightParseException e) {
 				LOG.error(String.format("%s line %d: no value for key %s",
-						this.fileName, this.globalConfigLines.get(i).linenr,
-						key));
+						this.fileName,
+						this.getGlobalConfigLines().get(i).linenr, key));
 				valid = false;
 				continue;
 
@@ -321,7 +323,7 @@ public class TcpServerConfigImpl implements Config {
 				int port = -1;
 				final String msg = String.format(
 						"%s line %d: wrong value %s for key %s", this.fileName,
-						this.globalConfigLines.get(i).linenr, value, key);
+						this.getGlobalConfigLines().get(i).linenr, value, key);
 				try {
 					port = Integer.valueOf(value);
 				} catch (final NumberFormatException e) {
@@ -334,8 +336,8 @@ public class TcpServerConfigImpl implements Config {
 			// we don't know this one
 			{
 				throw new BoblightException(String.format(
-						"%s line %d: unknown key %s", this.fileName,
-						this.globalConfigLines.get(i).linenr, key));
+						"%s line %d: unknown key %s", this.fileName, this
+								.getGlobalConfigLines().get(i).linenr, key));
 			}
 		}
 
@@ -347,6 +349,7 @@ public class TcpServerConfigImpl implements Config {
 	}
 
 	private boolean checkLightConfig() {
+		// TODO implement light validator
 		return true;
 	}
 
@@ -448,8 +451,22 @@ public class TcpServerConfigImpl implements Config {
 			}
 		} catch (IOException e) {
 			throw new BoblightConfigurationException("Unable to read file.", e);
+		} finally {
+			if (fr != null) {
+				try {
+					fr.close();
+				} catch (IOException e) {
+					LOG.error("Error closing filereader", e);
+				}
+			}
+			if (lnr != null) {
+				try {
+					lnr.close();
+				} catch (IOException e) {
+					LOG.error("Error closing linenumberreader", e);
+				}
+			}
 		}
-		// PrintConfig();
 	}
 
 	private void setLightName(final Light light, final List<ConfigLine> lines,
@@ -482,6 +499,10 @@ public class TcpServerConfigImpl implements Config {
 			final Object[] sscanf = StdIO.sscanf(line.get(), "%f %f");
 			light.setVscan(new float[] { (Float) sscanf[0], (Float) sscanf[1] });
 		}
+	}
+
+	public List<ConfigLine> getGlobalConfigLines() {
+		return Collections.unmodifiableList(globalConfigLines);
 	}
 
 }

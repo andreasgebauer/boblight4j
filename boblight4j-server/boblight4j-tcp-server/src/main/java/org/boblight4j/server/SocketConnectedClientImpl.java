@@ -7,7 +7,7 @@ import org.boblight4j.device.Light;
 import org.boblight4j.utils.MathUtils;
 import org.boblight4j.utils.MessageQueue;
 
-public class ConnectedClientImpl implements ConnectedClient {
+public class SocketConnectedClientImpl implements ConnectedClient {
 
 	long connectTime;
 	private List<Light> lights;
@@ -15,7 +15,7 @@ public class ConnectedClientImpl implements ConnectedClient {
 	private int priority;
 	private final SocketChannel socketChannel;
 
-	public ConnectedClientImpl(final SocketChannel socketChannel) {
+	public SocketConnectedClientImpl(final SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
 	}
 

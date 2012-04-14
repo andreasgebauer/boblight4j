@@ -5,7 +5,9 @@ import gnu.io.SerialPort;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Locale;
 
+import org.boblight4j.Constants;
 import org.boblight4j.exception.BoblightDeviceException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.Channel;
@@ -15,7 +17,8 @@ import org.slf4j.LoggerFactory;
 
 public class DeviceRS232 extends AbstractDevice {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DeviceRS232.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DeviceRS232.class);
 
 	private long bits;
 	private AbstractOutputWriter deviceOutput;
@@ -26,9 +29,8 @@ public class DeviceRS232 extends AbstractDevice {
 	public DeviceRS232(final ClientsHandler clients) {
 		super(clients);
 		this.setType(DeviceType.NOTHING);
-		// m_buff = null;
+		// default is 8 bit
 		this.bits = 8;
-		// m_buffsize = 0;
 		this.protocol = new Protocol();
 	}
 
@@ -75,7 +77,7 @@ public class DeviceRS232 extends AbstractDevice {
 		} catch (final UnsatisfiedLinkError e) {
 			this.stopThread();
 			LOG.error("No txrx on java.library.path?", e);
-			System.exit(1);
+			return false;
 		}
 
 		if (portId == null) {
@@ -86,7 +88,7 @@ public class DeviceRS232 extends AbstractDevice {
 		try {
 			// open serial port, and use class name for the appName.
 			this.serialPort = (SerialPort) portId.open(this.getClass()
-					.getName(), 10000);
+					.getName(), Constants.DEVICE_CONNECTION_TIMEOUT);
 
 			// set port parameters
 			this.serialPort.setSerialPortParams(this.getRate(),
@@ -102,7 +104,8 @@ public class DeviceRS232 extends AbstractDevice {
 			this.protocol.checkValid();
 
 			this.deviceOutput = new EscapedOutputWriter(
-					this.serialPort.getOutputStream(), this.protocol);
+					this.serialPort.getOutputStream(), this.protocol,
+					this.isDebug());
 
 			// add event listeners
 			// m_serialport.addEventListener(this);
@@ -118,10 +121,12 @@ public class DeviceRS232 extends AbstractDevice {
 				Thread.sleep(this.getDelayAfterOpen());
 			} catch (final InterruptedException e1) {
 				LOG.error("Interrupted while delaying.", e1);
+				return false;
 			}
 		}
 
 		try {
+			// send the begin flag mutliple times to initialize
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
 			this.deviceOutput.begin();
@@ -209,7 +214,7 @@ public class DeviceRS232 extends AbstractDevice {
 
 			if (this.isDebug()) {
 				final String format = String.format("%x",
-						this.protocol.getEndFlag()).toUpperCase();
+						this.protocol.getEndFlag()).toUpperCase(Locale.ENGLISH);
 				buf.append(format);
 				if (format.length() == 1) {
 					buf.append("0");

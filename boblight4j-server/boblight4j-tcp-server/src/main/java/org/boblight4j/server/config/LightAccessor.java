@@ -21,8 +21,7 @@ public class LightAccessor implements LightAccessorMBean {
 	@Override
 	public float[] getAdjust() {
 		final float[] value = new float[this.light.getNrColors()];
-		for (int i = 0; i < this.light.getNrColors(); i++)
-		{
+		for (int i = 0; i < this.light.getNrColors(); i++) {
 			value[i] = this.light.getAdjust(i);
 		}
 		return value;
@@ -31,8 +30,7 @@ public class LightAccessor implements LightAccessorMBean {
 	@Override
 	public float[] getBlacklevel() {
 		final float[] value = new float[this.light.getNrColors()];
-		for (int i = 0; i < this.light.getNrColors(); i++)
-		{
+		for (int i = 0; i < this.light.getNrColors(); i++) {
 			value[i] = this.light.getBlacklevel(i);
 		}
 		return value;
@@ -46,18 +44,16 @@ public class LightAccessor implements LightAccessorMBean {
 
 		int i = 0;
 		for (final Iterator<Color> iterator = colors.iterator(); iterator
-				.hasNext(); i++)
-		{
+				.hasNext(); i++) {
 			final Color color = iterator.next();
 
 			final List<Point> points = new ArrayList<Point>();
 			final Float[] adjusts = this.light.getAdjusts(i);
-			for (int j = 0; adjusts != null && j < adjusts.length; j++)
-			{
+			for (int j = 0; adjusts != null && j < adjusts.length; j++) {
 				points.add(new Point(adjusts[j]));
 			}
 
-			final Point[] array = points.toArray(new Point[] {});
+			final Point[] array = points.toArray(new Point[points.size()]);
 			value.put(color.getName(), array);
 		}
 
@@ -67,8 +63,7 @@ public class LightAccessor implements LightAccessorMBean {
 	@Override
 	public float[] getGamma() {
 		final float[] value = new float[this.light.getNrColors()];
-		for (int i = 0; i < this.light.getNrColors(); i++)
-		{
+		for (int i = 0; i < this.light.getNrColors(); i++) {
 			value[i] = this.light.getGamma(i);
 		}
 		return value;

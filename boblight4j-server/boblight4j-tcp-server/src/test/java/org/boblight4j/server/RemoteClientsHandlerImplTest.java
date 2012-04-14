@@ -27,23 +27,23 @@ public class RemoteClientsHandlerImplTest {
 	public static void setUpBeforeClass() throws Exception {
 	}
 
-	private RemoteClientsHandlerImpl testable;
+	private SocketClientsHandlerImpl testable;
 
 	@Before
 	public void setUp() throws Exception {
-		testable = new RemoteClientsHandlerImpl(new ArrayList<Light>());
+		testable = new SocketClientsHandlerImpl(new ArrayList<Light>());
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ConnectedClientImpl> getClients() {
-		return (List<ConnectedClientImpl>) Whitebox.getInternalState(testable,
+	private List<SocketConnectedClientImpl> getClients() {
+		return (List<SocketConnectedClientImpl>) Whitebox.getInternalState(testable,
 				"clients");
 	}
 
 	@Test
 	public void testAddClient() throws IOException {
-		final List<ConnectedClientImpl> clients = getClients();
-		final ConnectedClientImpl client = mock(ConnectedClientImpl.class);
+		final List<SocketConnectedClientImpl> clients = getClients();
+		final SocketConnectedClientImpl client = mock(SocketConnectedClientImpl.class);
 		final SocketChannel socketChannel = mock(SocketChannel.class);
 
 		// socketChannel.isConnected() will return null, so the first client
@@ -79,7 +79,7 @@ public class RemoteClientsHandlerImplTest {
 	@Test
 	public void testFillChannels() throws IOException {
 		// setup
-		final ConnectedClientImpl client = new ConnectedClientImpl(null);
+		final SocketConnectedClientImpl client = new SocketConnectedClientImpl(null);
 		final ArrayList<Light> lights = new ArrayList<Light>();
 		lights.add(new Light());
 		Whitebox.setInternalState(testable, "lights", lights);
@@ -93,7 +93,7 @@ public class RemoteClientsHandlerImplTest {
 
 	@Test
 	public void testHandleMessages() throws BoblightException, IOException {
-		final ConnectedClientImpl client = mock(ConnectedClientImpl.class);
+		final SocketConnectedClientImpl client = mock(SocketConnectedClientImpl.class);
 		client.messagequeue = new MessageQueue();
 
 		final SocketChannel sockChannel = mock(SocketChannel.class);
@@ -117,7 +117,7 @@ public class RemoteClientsHandlerImplTest {
 
 	@Test
 	public void testRemoveClient() {
-		testable.removeClient(mock(ConnectedClientImpl.class));
+		testable.removeClient(mock(SocketConnectedClientImpl.class));
 	}
 
 	@Test

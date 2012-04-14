@@ -35,10 +35,10 @@ public class NioServer implements Runnable {
 	// The selector we'll be monitoring
 	private final Selector selector;
 	private boolean stop;
-	private final RemoteClientsHandlerImpl worker;
+	private final SocketClientsHandlerImpl worker;
 
 	public NioServer(final InetAddress hostAddress, final int port,
-			final RemoteClientsHandlerImpl worker) throws IOException {
+			final SocketClientsHandlerImpl worker) throws IOException {
 		this.hostAddress = hostAddress;
 		this.port = port;
 		this.worker = worker;
@@ -57,7 +57,7 @@ public class NioServer implements Runnable {
 		LOG.info(String.format("%s connected", socketChannel.socket()
 				.getRemoteSocketAddress()));
 
-		this.worker.addClient(new ConnectedClientImpl(socketChannel));
+		this.worker.addClient(new SocketConnectedClientImpl(socketChannel));
 
 		socketChannel.configureBlocking(false);
 
