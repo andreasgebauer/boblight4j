@@ -22,7 +22,7 @@ public class FlagManagerX11Test {
 			throws BoblightConfigurationException {
 		testable = new FlagManagerX11();
 
-		testable.parseFlags("-u 16 -x -i 1.0".split("\\s"));
+		testable.parseFlags("-u 16 -x -i 1.0 -d".split("\\s"));
 
 		assertEquals(16, testable.getPixels());
 		assertEquals(1.0, testable.getInterval(), 0);

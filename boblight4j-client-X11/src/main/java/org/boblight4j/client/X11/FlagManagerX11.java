@@ -54,85 +54,29 @@ public class FlagManagerX11 extends AbstractFlagManager<X11Flags> {
 	}
 
 	@Override
-	protected void parseFlagsExtended(final X11Flags argv)
+	protected void parseFlagsExtended(final X11Flags args)
 			throws BoblightConfigurationException {
 
-		this.flagManager = argv;
+		this.flagManager = args;
 		// starting interval with v means vblank interval
 
-		if (argv.interval <= 0.0f)
-		{
+		if (args.interval <= 0.0f) {
 			throw new BoblightConfigurationException("Wrong value "
-					+ argv.interval + " for interval");
+					+ args.interval + " for interval");
 		}
 
-		if (argv.pixels <= 0)
-		{
+		if (args.pixels <= 0) {
 			throw new BoblightConfigurationException("Wrong value "
-					+ argv.pixels + " for pixels");
+					+ args.pixels + " for pixels");
 		}
 
-		this.method = argv.useXRender ? RenderMethod.XGETIMAGE
+		this.method = args.useXRender ? RenderMethod.XGETIMAGE
 				: RenderMethod.XRENDER;
 
-		this.debug = argv.debug;
+		this.debug = args.debug;
 
-		this.debugdpy = argv.debugDisplay;
+		this.debugdpy = args.debugDisplay;
 
-		// if (c == 'i') // interval
-		// {
-		// final boolean vblank = false;
-		// // starting interval with v means vblank interval
-		// if (optarg.charAt(0) == 'v')
-		// {
-		// // #ifdef HAVE_LIBGL
-		// // optarg++;
-		// // vblank = true;
-		// // #else
-		// throw new BoblightConfigurationException(
-		// "Compiled without opengl support");
-		// // #endif
-		// }
-		//
-		// this.interval = Float.parseFloat(optarg);
-		// if (this.interval <= 0.0f)
-		// {
-		// throw new BoblightConfigurationException("Wrong value "
-		// + optarg + " for interval");
-		// }
-		//
-		// if (vblank)
-		// {
-		// if (this.interval < 1.0)
-		// {
-		// throw new BoblightConfigurationException("Wrong value "
-		// + optarg + " for vblank interval");
-		// }
-		// // negative interval means vblank optarg--;
-		// this.interval *= -1.0;
-		// }
-		// }
-		// else if (c == 'u') // nr of pixels to use
-		// {
-		// this.pixels = Integer.valueOf(optarg);
-		// if (this.pixels <= 0)
-		// {
-		// throw new BoblightConfigurationException("Wrong value "
-		// + optarg + " for pixels");
-		// }
-		// }
-		// else if (c == 'x') // use crap xgetimage instead of sleek xrender
-		// {
-		// this.method = BoblightX11.XGETIMAGE;
-		// }
-		// else if (c == 'd') // turn on debug mode
-		// {
-		// this.debug = true;
-		// if (optarg != null && optarg.length() > 0) // optional debug dpy
-		// {
-		// this.debugdpy = optarg;
-		// }
-		// }
 	}
 
 	// @Override
