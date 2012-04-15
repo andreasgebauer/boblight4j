@@ -44,13 +44,14 @@ public abstract class AbstractBoblightClient {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				LOG.info("Caught KILL signal");
+				LOG.info("Caught KILL signal. Will halt program.");
 				AbstractBoblightClient.this.stop = true;
 			}
 		}));
 
-		while (!this.stop)
-		{
+		while (!this.stop) {
+			// will run the client until it returns ( in case of error or normal
+			// termination)
 			return this.run();
 		}
 		return 1;
@@ -82,20 +83,15 @@ public abstract class AbstractBoblightClient {
 	 */
 	public final void parseArgs(final FlagManager flagmanager,
 			final String[] args) {
-		try
-		{
+		try {
 			flagmanager.parseFlags(args);
-		}
-		catch (final BoblightConfigurationException error)
-		{
+		} catch (final BoblightConfigurationException error) {
 			LOG.error(
 					"Error occured configuring client with passed program arguments.",
 					error);
 			flagmanager.printHelpMessage();
 			System.exit(1);
-		}
-		catch (final BoblightRuntimeException error)
-		{
+		} catch (final BoblightRuntimeException error) {
 			flagmanager.printHelpMessage();
 			System.exit(1);
 		}
@@ -107,8 +103,7 @@ public abstract class AbstractBoblightClient {
 		}
 
 		// print boblight options (-o [light:]option=value)
-		if (flagmanager.isPrintOptions())
-		{
+		if (flagmanager.isPrintOptions()) {
 			flagmanager.printOptions();
 			System.exit(1);
 		}
@@ -132,8 +127,7 @@ public abstract class AbstractBoblightClient {
 	 * @return true if setup succeeds, false otherwise
 	 */
 	public final boolean trySetup(final Client client) {
-		try
-		{
+		try {
 			LOG.info("Connecting to boblightd");
 
 			// try to connect, if we can't then bitch to stderr and destroy
@@ -142,17 +136,12 @@ public abstract class AbstractBoblightClient {
 					this.flagManager.getPort(), Constants.CONNECTION_TIMEOUT);
 
 			client.setPriority(this.flagManager.getPriority());
-		}
-		catch (final BoblightException e)
-		{
+		} catch (final BoblightException e) {
 			LOG.info("Waiting 10 seconds before trying again");
 			client.destroy();
-			try
-			{
+			try {
 				Thread.sleep(Constants.RETRY_DELAY_ERROR);
-			}
-			catch (final InterruptedException ex)
-			{
+			} catch (final InterruptedException ex) {
 				LOG.warn("", ex);
 			}
 			return false;
