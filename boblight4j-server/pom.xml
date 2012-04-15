@@ -15,9 +15,9 @@
 	<name>Boblight4J Server Modules</name>
 
 	<modules>
+		<module>boblight4j-server-config</module>
 		<module>boblight4j-server-commons</module>
 		<module>boblight4j-server-xbmc-plugin</module>
-		<module>boblight4j-server-config</module>
 	</modules>
 
 	<profiles>
