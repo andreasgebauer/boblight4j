@@ -21,11 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
-public class RemoteClientsHandlerImplTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+public class SocketClientsHandlerImplTest {
 
 	private SocketClientsHandlerImpl testable;
 

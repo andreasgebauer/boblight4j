@@ -173,7 +173,7 @@ public class BoblightDaemon {
 	}
 
 	private void printHelpMessage() {
-
+		// TODO: print help message
 	}
 
 	protected void shutdown() {
