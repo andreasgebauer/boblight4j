@@ -44,15 +44,6 @@
 									<mainClass>org.boblight4j.jmx.client.MainFrame</mainClass>
 								</transformer>
 							</transformers>
-							<filters>
-								<filter>
-									<artifact>gnu.getopt:java-getopt</artifact>
-									<excludes>
-										<exclude>META-INF/TESTKEY.SF</exclude>
-										<exclude>META-INF/TESTKEY.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
 						</configuration>
 					</execution>
 				</executions>

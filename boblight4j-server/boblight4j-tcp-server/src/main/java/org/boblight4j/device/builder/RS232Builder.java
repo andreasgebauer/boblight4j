@@ -3,7 +3,6 @@ package org.boblight4j.device.builder;
 import java.util.List;
 
 import org.boblight4j.device.AbstractDevice.DeviceType;
-import org.boblight4j.device.Device;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;

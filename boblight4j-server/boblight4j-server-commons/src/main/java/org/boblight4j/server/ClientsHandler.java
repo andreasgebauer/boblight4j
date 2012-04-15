@@ -1,16 +1,20 @@
 package org.boblight4j.server;
 
 import java.io.IOException;
-import java.nio.channels.SocketChannel;
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
+import org.boblight4j.server.config.Device;
 
-public interface ClientsHandler {
+public interface ClientsHandler<T extends ConnectedClient> {
 
-	void addClient(ConnectedClient client) throws IOException;
+	/**
+	 * Adds a client
+	 * 
+	 * @param client
+	 * @throws IOException
+	 */
+	void addClient(T client) throws IOException;
 
 	/**
 	 * Set accept of new clients.
@@ -22,15 +26,12 @@ public interface ClientsHandler {
 
 	void fillChannels(List<Channel> channels, long timestamp, Device device);
 
-	void handleMessages(SocketChannel socketChannel, byte[] array, int numRead)
-			throws BoblightException;
-
 	/**
 	 * Removes a client by disconnecting it from the server.
 	 * 
 	 * @param socketChannel
 	 *            the socket channel the client uses
 	 */
-	void removeClient(ConnectedClient socketChannel);
+	void removeClient(T socketChannel);
 
 }

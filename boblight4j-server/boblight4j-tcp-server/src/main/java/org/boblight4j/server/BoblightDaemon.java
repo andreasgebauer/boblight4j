@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.BoblightDaemon.ServerArgs;
 import org.boblight4j.server.config.ConfigUpdater;
+import org.boblight4j.server.config.Device;
+import org.boblight4j.server.config.Light;
 import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

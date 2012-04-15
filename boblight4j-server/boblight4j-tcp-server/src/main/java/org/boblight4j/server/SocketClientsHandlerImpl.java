@@ -2,26 +2,20 @@ package org.boblight4j.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.boblight4j.device.AbstractDevice;
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightParseException;
-import org.boblight4j.server.config.Channel;
+import org.boblight4j.server.config.Device;
+import org.boblight4j.server.config.Light;
 import org.boblight4j.server.utils.NioUtils;
-import org.boblight4j.utils.MBeanUtils;
 import org.boblight4j.utils.Message;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;
@@ -29,18 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SocketClientsHandlerImpl extends
-		AbstractClientsHandler<SocketConnectedClientImpl> implements ClientsHandler {
-
-	private static final int FD_SETSIZE = 1024;
+		AbstractClientsHandler<SocketConnectedClientImpl> {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SocketClientsHandlerImpl.class);
 	private static final int MAXDATA = 100000;
 
 	private InetAddress address;
-
-	private final List<SocketConnectedClientImpl> clients = new ArrayList<SocketConnectedClientImpl>();
-	private final List<Light> lights;
 
 	private final Object mutex = new Object();
 
@@ -50,46 +39,7 @@ public class SocketClientsHandlerImpl extends
 
 	public SocketClientsHandlerImpl(final List<Light> lights)
 			throws IOException {
-		if (lights == null) {
-			throw new IllegalArgumentException(
-					"Argument lights cannot be null.");
-		}
-
-		this.lights = lights;
-
-		// register jmx bean
-		MBeanUtils.registerBean("org.boblight.server.config:type=Lights",
-				new LightsAccessor(this.lights));
-
-	}
-
-	@Override
-	public final void addClient(final ConnectedClient client)
-			throws IOException {
-
-		// clean disconnected clients before adding new
-		for (Iterator<SocketConnectedClientImpl> it = this.clients.iterator(); it
-				.hasNext();) {
-			ConnectedClient cl = it.next();
-			if (!cl.isConnected() && !cl.isConnectionPending()) {
-				it.remove();
-			}
-		}
-
-		if (this.clients.size() >= FD_SETSIZE) // maximum number of clients
-												// reached
-		{
-			LOG.error(String.format("number of clients reached maximum %d",
-					FD_SETSIZE));
-			NioUtils.write((SocketConnectedClientImpl) client, "full\n");
-			this.clients.remove(client);
-			return;
-		}
-
-		synchronized (this.mutex) {
-			client.setLights(this.lights);
-			this.clients.add((SocketConnectedClientImpl) client);
-		}
+		super(lights);
 	}
 
 	@Override
@@ -104,137 +54,19 @@ public class SocketClientsHandlerImpl extends
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public final void fillChannels(final List<Channel> channels,
-			final long time, final Device device) {
-
-		final Collection<Light> usedLights = doFillChannels(channels, time,
-				device);
-
-		// reset singlechange
-		Iterator<Light> usedLgthsIt = usedLights.iterator();
-		while (usedLgthsIt.hasNext()) {
-			final Light light = usedLgthsIt.next();
-			light.resetSingleChange(device);
-		}
-
-		// update which lights we're using
-		for (int i = 0; i < this.clients.size(); i++) {
-			final ConnectedClient client = this.clients.get(i);
-			for (int j = 0; j < client.getLights().size(); j++) {
-				boolean lightUsed = false;
-
-				final Light clientLight = client.getLights().get(j);
-
-				usedLgthsIt = usedLights.iterator();
-				while (usedLgthsIt.hasNext()) {
-					final Light usedLight = usedLgthsIt.next();
-					if (usedLight.equals(clientLight)) {
-						lightUsed = true;
-						break;
-					}
-				}
-
-				if (lightUsed) {
-					clientLight.addUser(device);
-				} else {
-					clientLight.clearUser(device);
-				}
-			}
-		}
-	}
-
-	private Collection<Light> doFillChannels(final List<Channel> channels,
-			final long time, final Device device) {
-		List<Light> usedLights = new ArrayList<Light>();
-		for (int i = 0; i < channels.size(); i++) {
-			// get the oldest client with the highest priority
-			final Channel channel = channels.get(i);
-			final int light = channel.getLight();
-			final int color = channel.getColor();
-
-			if (light == -1 || color == -1) {
-				continue;
-			}
-
-			int clientnr = chooseClient(light);
-
-			if (clientnr == -1) // no client for the light on this channel
-			{
-				channel.setUsed(false);
-				channel.setSpeed(this.lights.get(light).getSpeed());
-				channel.setValueToFallback();
-				channel.setGamma(1.0);
-				channel.setAdjust(1.0);
-				channel.setBlacklevel(0.0);
-				continue;
-			}
-
-			// fill channel with values from the client
-			channel.setUsed(true);
-
-			final ConnectedClient cClient = this.clients.get(clientnr);
-			final Light cLight = cClient.getLights().get(light);
-
-			final float colorValue = cLight.getColorValue(color, time);
-
-			channel.setValue(colorValue);
-			channel.setSpeed(cLight.getSpeed());
-			channel.setGamma(cLight.getGamma(color));
-			channel.setAdjust(cLight.getAdjust(color));
-			channel.setAdjusts(cLight.getAdjusts(color));
-			channel.setBlacklevel(cLight.getBlacklevel(color));
-			channel.setSingleChange(cLight.getSingleChange(device));
-
-			// save light because we have to reset the singlechange later
-			// more than one channel can use a light so can't do this from the
-			// loop
-			usedLights.add(cLight);
-		}
-		return usedLights;
-	}
-
-	private int chooseClient(final int light) {
-		int clientnr = -1;
-		{
-			long clienttime = Long.MAX_VALUE;
-			int priority = 255;
-
-			for (int j = 0; j < this.clients.size(); j++) {
-				final ConnectedClient cClient = this.clients.get(j);
-				final Light cLight = cClient.getLights().get(light);
-
-				if (cClient.getPriority() == 255
-						|| cClient.getConnectTime() == -1 || !cLight.isUse()) {
-					// this client we don't use
-					continue;
-				}
-
-				// this client has a high priority (lower number) than the
-				// current one, or has the same and is older
-				if (cClient.getPriority() < priority
-						|| priority == cClient.getPriority()
-						&& cClient.getConnectTime() < clienttime) {
-					clientnr = j;
-					clienttime = cClient.getConnectTime();
-					priority = cClient.getPriority();
-				}
-			}
-		}
-		return clientnr;
-	}
-
-	@Override
 	public void handleMessages(final SocketChannel socketChannel,
 			final byte[] bs, final int numRead) throws BoblightException {
 		SocketConnectedClientImpl client = null;
-		final Iterator<SocketConnectedClientImpl> iterator = this.clients.iterator();
+		final Iterator<SocketConnectedClientImpl> iterator = this.getClients()
+				.iterator();
 		while (iterator.hasNext()) {
 			final SocketConnectedClientImpl selected = iterator.next();
 			final InetAddress inetAddress2 = socketChannel.socket()
 					.getInetAddress();
+			// remove disconnected clients
 			if (!selected.isConnected() && !selected.isConnectionPending()) {
 				LOG.info("Removing client " + selected);
+				selected.disconnect();
 				iterator.remove();
 				continue;
 			}
@@ -254,7 +86,7 @@ public class SocketClientsHandlerImpl extends
 
 		// loop until there are no more messages
 		while (client.messagequeue.getNrMessages() > 0) {
-			final Message message = client.messagequeue.getMessage();
+			final Message message = client.messagequeue.nextMessage();
 			try {
 				this.parseMessage(client, message);
 			} catch (final BoblightParseException e) {
@@ -447,39 +279,6 @@ public class SocketClientsHandlerImpl extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.boblight4j.server.ClientsHandler#removeClient(java.nio.channels.
-	 * SocketChannel)
-	 */
-	@Override
-	public void removeClient(final ConnectedClient socketChannel) {
-		SocketConnectedClientImpl remoteClient = (SocketConnectedClientImpl) socketChannel;
-		synchronized (this.mutex) {
-			final Iterator<SocketConnectedClientImpl> iterator = this.clients
-					.iterator();
-			while (iterator.hasNext()) {
-				final SocketConnectedClientImpl client = iterator.next();
-				if (client.getSocketChannel().equals(socketChannel)) {
-					final Socket socket = remoteClient.getSocketChannel()
-							.socket();
-					final SocketAddress remoteAddress = socket
-							.getRemoteSocketAddress();
-					LOG.info(String.format("removing %s", remoteAddress));
-					try {
-						remoteClient.getSocketChannel().close();
-						socket.close();
-					} catch (final IOException e) {
-						LOG.error("Error during Socket.close()", e);
-					}
-					iterator.remove();
-					return;
-				}
-			}
-		}
-	}
-
 	/**
 	 * Sends light info, like name and area
 	 * 
@@ -513,8 +312,8 @@ public class SocketClientsHandlerImpl extends
 	}
 
 	@Override
-	public void doSendPing(final SocketConnectedClientImpl client, int lightsused)
-			throws BoblightCommunicationException {
+	public void doSendPing(final SocketConnectedClientImpl client,
+			int lightsused) throws BoblightCommunicationException {
 		try {
 			NioUtils.write(client, "ping " + lightsused + "\n");
 		} catch (final IOException e) {
@@ -523,8 +322,8 @@ public class SocketClientsHandlerImpl extends
 	}
 
 	@Override
-	public void doSendVersion(final SocketConnectedClientImpl client, String version)
-			throws BoblightCommunicationException {
+	public void doSendVersion(final SocketConnectedClientImpl client,
+			String version) throws BoblightCommunicationException {
 		try {
 			NioUtils.write(client, "version " + version + "\n");
 		} catch (final IOException e) {
@@ -534,11 +333,12 @@ public class SocketClientsHandlerImpl extends
 
 	public void setInterface(final InetAddress address, final int port)
 			throws UnknownHostException {
-		this.address = address;
-		if (this.address == null) {
+		if (address == null) {
+			LOG.warn("Defaulting to ip address 0.0.0.0 because argument address was null.");
 			this.address = InetAddress.getByName("0.0.0.0");
+		} else {
+			this.address = address;
 		}
-
 		this.port = port;
 	}
 
@@ -553,12 +353,18 @@ public class SocketClientsHandlerImpl extends
 	}
 
 	private SocketConnectedClientImpl getClient(SocketChannel socketChannel) {
-		for (SocketConnectedClientImpl client : this.clients) {
+		for (SocketConnectedClientImpl client : this.getClients()) {
 			if (client.getSocketChannel().socket().getInetAddress()
 					.equals(socketChannel.socket().getInetAddress())) {
 				return client;
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void writeFull(SocketConnectedClientImpl client)
+			throws IOException {
+		NioUtils.write((SocketConnectedClientImpl) client, "full\n");
 	}
 }

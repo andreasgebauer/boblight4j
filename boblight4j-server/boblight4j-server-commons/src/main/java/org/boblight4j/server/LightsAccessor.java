@@ -2,7 +2,7 @@ package org.boblight4j.server;
 
 import java.util.List;
 
-import org.boblight4j.device.Light;
+import org.boblight4j.server.config.Light;
 
 public class LightsAccessor implements LightsAccessorMBean {
 

@@ -203,7 +203,7 @@ public class ClientImpl implements Client {
 
 			this.readDataToQueue();
 
-			message = this.messageQueue.getMessage();
+			message = this.messageQueue.nextMessage();
 			if (!this.parseWord(message, "hello")) {
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " sent gibberish: "
@@ -215,7 +215,7 @@ public class ClientImpl implements Client {
 
 			this.readDataToQueue();
 
-			message = this.messageQueue.getMessage();
+			message = this.messageQueue.nextMessage();
 
 			if (!this.parseWord(message, "version")
 					|| (word = Misc.getWord(message.message)) == null) {
@@ -237,7 +237,7 @@ public class ClientImpl implements Client {
 
 			this.readDataToQueue();
 
-			message = this.messageQueue.getMessage();
+			message = this.messageQueue.nextMessage();
 
 			this.parseLights(message);
 		} catch (final IOException e) {
@@ -333,7 +333,7 @@ public class ClientImpl implements Client {
 				this.readDataToQueue();
 			}
 
-			message = this.messageQueue.getMessage();
+			message = this.messageQueue.nextMessage();
 
 			// first word sent is "light, second one is the name
 			String lightName;
@@ -399,7 +399,7 @@ public class ClientImpl implements Client {
 
 		this.readDataToQueue();
 
-		final Message message = this.messageQueue.getMessage();
+		final Message message = this.messageQueue.nextMessage();
 
 		if ((word = Misc.getWord(message.message)) == null
 				|| !word.equals("ping")) {

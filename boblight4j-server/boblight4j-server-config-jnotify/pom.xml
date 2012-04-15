@@ -11,9 +11,11 @@
 
 	<artifactId>boblight4j-server-config-jnotify</artifactId>
 
+	<name>Boblight4J Server Config Reloader (JNotify)</name>
+
 	<dependencies>
 		<dependency>
-			<groupId>org.boblight</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>boblight4j-server-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -22,6 +24,13 @@
 			<artifactId>jnotify</artifactId>
 			<version>0.93</version>
 		</dependency>
+		<dependency>
+			<groupId>net.contentobjects</groupId>
+			<artifactId>jnotify-native</artifactId>
+			<version>0.93</version>
+			<type>jar</type>
+			<scope>provided</scope>
+			<classifier>${nativeclassifier}</classifier>
+		</dependency>
 	</dependencies>
-	<name>Boblight4J Server Config Reloader (JNotify)</name>
 </project>

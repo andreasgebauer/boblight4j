@@ -2,13 +2,12 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.AbstractDevice.DeviceType;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.server.ClientsHandler;
 import org.boblight4j.server.config.ConfigGroup;
 import org.boblight4j.server.config.ConfigLine;
+import org.boblight4j.server.config.Device;
 import org.boblight4j.utils.BooleanParser;
 import org.boblight4j.utils.Misc;
 import org.boblight4j.utils.Pointer;

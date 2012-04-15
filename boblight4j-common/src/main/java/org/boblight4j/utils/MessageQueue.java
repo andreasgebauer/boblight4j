@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 
 public class MessageQueue {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MessageQueue.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MessageQueue.class);
 
 	private final ArrayDeque<Message> messages = new ArrayDeque<Message>();
 	private final Message remainingData = new Message();
@@ -17,14 +18,13 @@ public class MessageQueue {
 
 		final long now = System.currentTimeMillis();
 		String data = packet;
-		int nlpos = data.indexOf('\n'); // position of the newline
+		// position of the newline
+		int nlpos = data.indexOf('\n');
 
 		// no newline
-		if (nlpos == -1)
-		{
+		if (nlpos == -1) {
 			// set the timestamp if there's no remaining data
-			if (this.remainingData.message.length() == 0)
-			{
+			if (this.remainingData.message.length() == 0) {
 				this.remainingData.time = now;
 			}
 
@@ -35,14 +35,12 @@ public class MessageQueue {
 		// add the data from the last time
 		// if there is none, use the now timestamp
 		Message message = new Message(this.remainingData);
-		if (message.message == null)
-		{
+		if (message.message == null) {
 			message.time = now;
 			message.message = new StringBuilder();
 		}
 
-		while (nlpos != -1)
-		{
+		while (nlpos != -1) {
 			message.message.append(data.substring(0, nlpos) + "\n"); // get the
 																		// string
 			// until
@@ -54,8 +52,7 @@ public class MessageQueue {
 			message.time = now;
 
 			// if the newline is at the end of the string, we're done here
-			if (nlpos + 1 >= data.length())
-			{
+			if (nlpos + 1 >= data.length()) {
 				data = "";
 				break;
 			}
@@ -72,9 +69,13 @@ public class MessageQueue {
 		this.remainingData.time = now;
 	}
 
-	public Message getMessage() {
-		if (this.messages.isEmpty())
-		{
+	/**
+	 * Polls the next message. If messages are empty returns null.
+	 * 
+	 * @return next message or null
+	 */
+	public Message nextMessage() {
+		if (this.messages.isEmpty()) {
 			return null;
 		}
 		return this.messages.poll();

@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.boblight4j.device.AbstractDevice;
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
 import org.slf4j.Logger;
@@ -21,13 +18,13 @@ public abstract class AbstractConfigUpdater {
 			.getLogger(AbstractConfigUpdater.class);
 
 	private final ClientsHandler clients;
-	private final Config config;
+	private final AbstractConfig config;
 	private final List<Device> devices;
 	private final List<Light> lights;
 	protected File watchFile;
 
 	public AbstractConfigUpdater(final File watchFile,
-			final ClientsHandler clients, final Config config,
+			final ClientsHandler clients, final AbstractConfig config,
 			final List<Device> devices, final List<Light> lights) {
 		super();
 		this.config = config;
@@ -53,8 +50,7 @@ public abstract class AbstractConfigUpdater {
 		this.config.clearConfig();
 
 		// load and parse config
-		try
-		{
+		try {
 			this.config.loadConfigFromFile(this.watchFile);
 
 			this.config.checkConfig();
@@ -63,13 +59,10 @@ public abstract class AbstractConfigUpdater {
 					.buildDeviceConfig(this.clients);
 			final List<Device> unhandledNewDevices = new ArrayList<Device>();
 
-			for (final Device newDevice : newDevices)
-			{
+			for (final Device newDevice : newDevices) {
 				boolean oldDeviceFound = false;
-				for (final Device oldDevice : this.devices)
-				{
-					if (newDevice.getName().equals(oldDevice.getName()))
-					{
+				for (final Device oldDevice : this.devices) {
+					if (newDevice.getName().equals(oldDevice.getName())) {
 						oldDeviceFound = true;
 						oldDevice.setAllowSync(newDevice.isAllowSync());
 						oldDevice.setDebug(newDevice.isDebug());
@@ -79,8 +72,7 @@ public abstract class AbstractConfigUpdater {
 					}
 				}
 
-				if (!oldDeviceFound)
-				{
+				if (!oldDeviceFound) {
 					unhandledNewDevices.add(newDevice);
 				}
 			}
@@ -107,43 +99,32 @@ public abstract class AbstractConfigUpdater {
 			final List<Light> unhandledNewLights = new Vector<Light>();
 			final List<Light> newLights = this.config.buildLightConfig(
 					this.devices, newColors);
-			for (final Light newLight : newLights)
-			{
+			for (final Light newLight : newLights) {
 				boolean oldLightFound = false;
-				for (final Light oldLight : this.lights)
-				{
-					if (newLight.getName().equals(oldLight.getName()))
-					{
+				for (final Light oldLight : this.lights) {
+					if (newLight.getName().equals(oldLight.getName())) {
 						oldLightFound = true;
 						oldLight.setHscan(newLight.getHscan());
 						oldLight.setVscan(newLight.getVscan());
 
-						for (int i = 0; i < oldLight.getNrColors(); i++)
-						{
+						for (int i = 0; i < oldLight.getNrColors(); i++) {
 							oldLight.setColor(i, newColors.get(i));
 						}
 					}
 				}
 
-				if (!oldLightFound)
-				{
+				if (!oldLightFound) {
 					unhandledNewLights.add(newLight);
 				}
 			}
 
 			// config.buildConfig(clients, devices, lights);
 
-		}
-		catch (final FileNotFoundException e)
-		{
+		} catch (final FileNotFoundException e) {
 			LOG.error("Error during config update.", e);
-		}
-		catch (final IOException e)
-		{
+		} catch (final IOException e) {
 			LOG.error("Error during config update.", e);
-		}
-		catch (final BoblightException e)
-		{
+		} catch (final BoblightException e) {
 			LOG.error("Error during config update.", e);
 		}
 

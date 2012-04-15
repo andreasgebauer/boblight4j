@@ -3,6 +3,8 @@ package org.boblight4j.device;
 import java.util.Vector;
 
 import org.boblight4j.server.config.Color;
+import org.boblight4j.server.config.Device;
+import org.boblight4j.server.config.Light;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

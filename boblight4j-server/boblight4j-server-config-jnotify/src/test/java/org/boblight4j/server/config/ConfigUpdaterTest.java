@@ -7,20 +7,15 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandler;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO make runnable
-@Ignore
 public class ConfigUpdaterTest {
 
 	private static final Logger LOG = LoggerFactory
@@ -39,7 +34,7 @@ public class ConfigUpdaterTest {
 		this.lights = new ArrayList<Light>();
 		this.clients = Mockito.mock(ClientsHandler.class);
 
-		Config config = Mockito.mock(Config.class);
+		AbstractConfig config = Mockito.mock(AbstractConfig.class);
 		this.devices = new ArrayList<Device>();
 		final Device device = Mockito.mock(Device.class);
 		Mockito.when(device.getName()).thenReturn("arduino");

@@ -22,13 +22,13 @@ public class AbstractConfigUpdaterTest {
 
 	private AbstractConfigUpdater testable;
 
-	private Config config;
+	private AbstractConfig config;
 	private File watchFile;
 	private ClientsHandler clientsHandler;
 
 	@Before
 	public void setUp() throws Exception {
-		config = mock(Config.class);
+		config = mock(AbstractConfig.class);
 		watchFile = mock(File.class);
 		clientsHandler = mock(ClientsHandler.class);
 		testable = new AbstractConfigUpdater(watchFile, clientsHandler, config,

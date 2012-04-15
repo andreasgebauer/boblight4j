@@ -17,6 +17,7 @@
 	<modules>
 		<module>boblight4j-server-commons</module>
 		<module>boblight4j-server-xbmc-plugin</module>
+		<module>boblight4j-server-config</module>
 	</modules>
 
 	<profiles>
@@ -39,19 +40,6 @@
 				<module>boblight4j-server-config-jdk7</module>
 				<module>boblight4j-tcp-server</module>
 			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<configuration>
-							<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 

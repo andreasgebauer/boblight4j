@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.device.builder.DeviceBuilder;
 import org.boblight4j.device.builder.DeviceBuilderFactory;
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -28,7 +26,7 @@ import org.boblight4j.utils.StdIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TcpServerConfigImpl implements Config {
+public class TcpServerConfigImpl extends AbstractConfig {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(TcpServerConfigImpl.class);
@@ -120,8 +118,7 @@ public class TcpServerConfigImpl implements Config {
 		return colors;
 	}
 
-	@Override
-	public void buildConfig(final ClientsHandler clients,
+	public void buildConfig(final ClientsHandler<?> clients,
 			final List<Device> devices, final List<Light> lights)
 			throws BoblightException {
 		LOG.info("building config");
@@ -153,7 +150,6 @@ public class TcpServerConfigImpl implements Config {
 		LOG.info("built config successfully");
 	}
 
-	@Override
 	public List<Device> buildDeviceConfig(final ClientsHandler clients)
 			throws BoblightConfigurationException, BoblightParseException {
 		final List<Device> devices = new ArrayList<Device>();

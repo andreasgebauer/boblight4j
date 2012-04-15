@@ -11,10 +11,10 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.Channel;
+import org.boblight4j.server.config.Device;
+import org.boblight4j.server.config.Light;
 import org.boblight4j.utils.MessageQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;

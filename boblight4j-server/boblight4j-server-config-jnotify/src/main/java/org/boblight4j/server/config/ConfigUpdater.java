@@ -7,8 +7,6 @@ import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
-import org.boblight4j.device.Device;
-import org.boblight4j.device.Light;
 import org.boblight4j.server.ClientsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +57,7 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 	private boolean stop;
 
 	public ConfigUpdater(final File file, final ClientsHandler clients,
-			final Config config, final List<Device> devices,
+			final AbstractConfig config, final List<Device> devices,
 			final List<Light> lights) {
 		super(file, clients, config, devices, lights);
 	}

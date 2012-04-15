@@ -1,5 +1,7 @@
 package org.boblight4j.utils;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,13 +21,26 @@ public class MessageQueueTest {
 
 	@Test
 	public void testAddData() {
-		testable.addData("Packet");
+		String packet = "Packet1";
+		testable.addData(packet);
 
+		Assert.assertEquals(packet.length(), testable.getRemainingDataSize());
+	}
+
+	@Test
+	public void testAddDataMultiLine() {
+		String packet1 = "Packet1";
+		String packet2 = "LongerPacket2";
+		testable.addData(packet1 + "\n" + packet2);
+
+		Assert.assertEquals(packet2.length(), testable.getRemainingDataSize());
+		
+		testable.nextMessage();
 	}
 
 	@Test
 	public void testGetMessage() {
-		testable.getMessage();
+		testable.nextMessage();
 	}
 
 	@Test

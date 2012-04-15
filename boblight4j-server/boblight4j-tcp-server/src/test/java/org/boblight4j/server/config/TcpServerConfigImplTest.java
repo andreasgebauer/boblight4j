@@ -5,30 +5,37 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
-import org.boblight4j.device.AbstractDevice;
-import org.boblight4j.device.Device;
 import org.boblight4j.device.DeviceRS232;
-import org.boblight4j.device.Light;
+import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.SocketClientsHandlerImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.powermock.reflect.internal.WhiteboxImpl;
 
-public class ConfigImplTest {
+public class TcpServerConfigImplTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
+
+	@Rule
+	public ExpectedException ex = ExpectedException.none();
 
 	@Mock
 	private SocketClientsHandlerImpl clientsHandler;
@@ -99,7 +106,20 @@ public class ConfigImplTest {
 	}
 
 	@Test
-	public void testCheckConfig() throws Exception {
+	public void testCheckConfig() throws BoblightException,
+			IllegalArgumentException, IllegalAccessException {
+
+		this.ex.expect(BoblightException.class);
+
+		final List<ConfigLine> m_globalconfiglines = new ArrayList<ConfigLine>();
+		m_globalconfiglines.add(new ConfigLine("interface 127.0.0.1", 2));
+		m_globalconfiglines.add(new ConfigLine("port 127.0.0.1", 3));
+
+		final Field field = WhiteboxImpl.getField(TcpServerConfigImpl.class,
+				"globalConfigLines");
+
+		field.set(this.testable, m_globalconfiglines);
+
 		this.testable.checkConfig();
 	}
 
@@ -110,7 +130,7 @@ public class ConfigImplTest {
 
 	@Test
 	public void testLoadConfigFromFile() throws Exception {
-		this.testable.loadConfigFromFile(new File(ConfigImplTest.class
+		this.testable.loadConfigFromFile(new File(TcpServerConfigImplTest.class
 				.getResource("/boblight.50pc.conf").toURI()));
 	}
 

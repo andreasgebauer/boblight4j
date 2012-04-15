@@ -2,7 +2,7 @@ package org.boblight4j.server;
 
 import java.util.List;
 
-import org.boblight4j.device.Light;
+import org.boblight4j.server.config.Light;
 
 public interface ConnectedClient {
 
@@ -10,11 +10,15 @@ public interface ConnectedClient {
 
 	boolean isConnectionPending();
 
+	void disconnect();
+
 	long getConnectTime();
 
 	int getPriority();
 
 	void setLights(List<Light> lights);
+
+	boolean isOneLightUsed();
 
 	List<Light> getLights();
 
