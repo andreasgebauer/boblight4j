@@ -114,12 +114,6 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 	}
 
 	@Override
-	public final void exceptionReceived(final V4L4JException e) {
-		this.error = new BoblightException(e);
-		// this.stop = true;
-	}
-
-	@Override
 	public void setup(final FlagManager flagManager) throws BoblightException {
 
 		this.flagManager = (FlagManagerV4l) flagManager;
@@ -152,6 +146,11 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			throw new BoblightException(e1);
 		}
 
+	}
+
+	@Override
+	public final void exceptionReceived(final V4L4JException e) {
+		LOG.warn("Error occurred during capturing.", e);
 	}
 
 	@Override

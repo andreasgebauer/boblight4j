@@ -49,15 +49,6 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 	@Override
 	protected final int run() {
-
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				LOG.info("Caught KILL signal");
-				BoblightV4l.this.stop = true;
-			}
-		}));
-
 		while (!this.stop) {
 			// init boblight
 			// void* boblight = boblight_init();
