@@ -1,4 +1,4 @@
-package org.boblight4j.device;
+package org.boblight4j.server.config;
 
 import java.util.Vector;
 

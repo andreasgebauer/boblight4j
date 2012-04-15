@@ -8,7 +8,7 @@ public class ConfigGroup {
 
 	@Override
 	public String toString() {
-		return "CfgGrp [lines=" + this.lines + "]";
+		return "ConfigGroup [lines=" + this.lines + "]";
 	}
 
 }
