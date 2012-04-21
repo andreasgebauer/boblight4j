@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.exception.BoblightRuntimeException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -14,57 +13,49 @@ import org.kohsuke.args4j.CmdLineParser;
  * 
  * @author agebauer
  * 
+ * @param <T>
+ *            the argument bean
  */
 public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		FlagManager {
 
-	private String address;
-
-	private final List<String> options = new ArrayList<String>();
-	private int port;
-
-	private boolean printBoblightOptions;
-	private boolean printHelp;
-
-	private int priority;
-	private boolean sync;
-	private CmdLineParser parser;
+	private final T args;
 
 	public AbstractFlagManager() {
-		this.port = -1; // -1 tells libboblight to use default port
-		this.address = null; // NULL tells libboblight to use default address
-		this.printHelp = false; // don't print helpmessage unless asked to
-		this.printBoblightOptions = false; // same for libboblight options
-		this.sync = false; // sync mode disabled by default
+		this.args = getArgBean();
 	}
 
 	@Override
 	public final String getAddress() {
-		return this.address;
+		return this.args.getServer().getAddress();
 	}
 
 	@Override
 	public final int getPort() {
-		return this.port;
+		return this.args.getServer().getPort();
 	}
 
 	@Override
 	public final int getPriority() {
-		return this.priority;
+		return this.args.getPriority();
 	}
 
 	@Override
 	public final boolean isPrintHelp() {
-		return this.printHelp;
+		return this.args.isPrintHelp();
 	}
 
 	@Override
 	public final boolean isPrintOptions() {
-		return this.printBoblightOptions;
+		return this.args.isPrintBoblightOptions();
 	}
 
 	public final boolean isSync() {
-		return this.sync;
+		return this.args.isSync();
+	}
+
+	public void setSync(final boolean b) {
+		this.args.setSync(b);
 	}
 
 	/**
@@ -77,8 +68,8 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	public final void parseBoblightOptions(final Client client)
 			throws BoblightException {
 
-		for (int i = 0; i < this.options.size(); i++) {
-			String option = this.options.get(i);
+		for (int i = 0; i < this.args.getOptions().size(); i++) {
+			String option = this.args.getOptions().get(i);
 			String lightname;
 			String optionname;
 			String optionvalue;
@@ -107,7 +98,8 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 				}
 				if (!lightfound) {
 					throw new BoblightException("light \"" + lightname
-							+ "\" used in option \"" + this.options.get(i)
+							+ "\" used in option \""
+							+ this.args.getOptions().get(i)
 							+ "\" doesn't exist");
 				}
 			}
@@ -146,8 +138,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	public T parseFlags(final String[] args)
 			throws BoblightConfigurationException {
 
-		final T commandLineArgs = getArgBean();
-		parser = new CmdLineParser(commandLineArgs);
+		final CmdLineParser parser = new CmdLineParser(this.args);
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e1) {
@@ -155,57 +146,23 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 					"Error parsing program arguments.", e1);
 		}
 
-		this.printBoblightOptions = commandLineArgs.printBoblightOptions;
-
-		if (this.printBoblightOptions) {
+		if (this.args.isPrintBoblightOptions()) {
 			return null;
 		}
 
-		this.priority = commandLineArgs.priority;
-
-		if (priority == -1 || priority < 0 || priority > 255) {
-			throw new BoblightRuntimeException("Wrong option " + priority
-					+ " for argument -p");
-		}
-
-		this.address = commandLineArgs.server;
-
-		// TODO parse address with handler
-		// check if we have a port
-		if (commandLineArgs.server != null
-				&& commandLineArgs.server.indexOf(':') != -1) {
-			this.address = commandLineArgs.server.substring(0,
-					commandLineArgs.server.indexOf(':'));
-			commandLineArgs.server = commandLineArgs.server
-					.substring(commandLineArgs.server.indexOf(':') + 1);
-			try {
-				this.port = Integer.valueOf(commandLineArgs.server);
-			} catch (final NumberFormatException nfe) {
-			}
-
-			if (this.port != -1 && this.port < 0 || this.port > 65535) {
-				throw new BoblightRuntimeException("Wrong option "
-						+ commandLineArgs.server + " for argument -s");
-			}
-		}
-
-		this.printHelp = commandLineArgs.printHelp;
-
-		this.sync = commandLineArgs.sync;
-
-		if (commandLineArgs.options != null) {
-			this.options.addAll(commandLineArgs.options);
-		}
-
 		// pass our argument to a derived class
-		this.parseFlagsExtended(commandLineArgs);
+		this.parseFlagsExtended(this.args);
 
-		// some postprocessing
-		this.postGetopt(parser);
-
-		return commandLineArgs;
+		return this.args;
 	}
 
+	/**
+	 * Returns the arguments bean which is used to hold infromation from the
+	 * command line. Override this method to use a sub-classed
+	 * {@link CommandLineArgs} bean.
+	 * 
+	 * @return the arguments bean (a subclass of {@link CommandLineArgs})
+	 */
 	@SuppressWarnings("unchecked")
 	protected T getArgBean() {
 		return (T) new CommandLineArgs();
@@ -223,19 +180,6 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	}
 
 	/**
-	 * Gets called after Getopt for derived classes.
-	 * 
-	 * @param option
-	 *            the option
-	 * @param args
-	 *            the program arguments
-	 * @throws BoblightConfigurationException
-	 */
-	protected void postGetopt(CmdLineParser parser)
-			throws BoblightConfigurationException {
-	}
-
-	/**
 	 * Prints all available options to stdout.
 	 */
 	@Override
@@ -247,17 +191,17 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		}
 	}
 
-	public void setSync(final boolean b) {
-		this.sync = b;
-	}
-
+	/**
+	 * Prints the help message.
+	 */
 	@Override
-	public void printHelpMessage() {
+	public final void printHelpMessage() {
 		System.out.println("Usage: boblight-[type] [OPTION]");
 		System.out.println("");
 		System.out.println("  [OPTION]:");
 		System.out.println("");
 
+		final CmdLineParser parser = new CmdLineParser(getArgBean());
 		parser.printUsage(System.out);
 	}
 

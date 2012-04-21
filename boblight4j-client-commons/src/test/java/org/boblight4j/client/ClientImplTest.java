@@ -12,6 +12,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.boblight4j.client.mbean.LightConfigMBean;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.Test;

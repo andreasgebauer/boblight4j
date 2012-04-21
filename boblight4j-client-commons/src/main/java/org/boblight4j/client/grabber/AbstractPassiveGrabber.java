@@ -26,9 +26,11 @@ public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 
 	/**
 	 * Use this method in your passive grabber implementation to let the passed
-	 * BufferedImage get converted to .
+	 * BufferedImage get grabbed. Also puts pixels to the debug image if debug
+	 * is set to true.
 	 * 
 	 * @param img
+	 *            the image to grab
 	 */
 	@Override
 	public void frameToBoblight(final BufferedImage img) {
@@ -36,10 +38,8 @@ public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 		final double scaledY = (double) img.getHeight() / (double) this.height;
 
 		// read out pixels and hand them to the boblight client
-		for (int y = 0; y < this.height; y++)
-		{
-			for (int x = 0; x < this.width; x++)
-			{
+		for (int y = 0; y < this.height; y++) {
+			for (int x = 0; x < this.width; x++) {
 				final int resX = (int) (scaledX * x + scaledX / 2);
 				final int resY = (int) (scaledY * y + scaledY / 2);
 
@@ -52,19 +52,17 @@ public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 				rgb[2] = color.getRed();
 
 				// flip
-				this.client.addPixel(this.width - x, y, rgb);
+				this.getClient().addPixel(this.width - x, y, rgb);
 
 				// put pixel on debug image
-				if (this.debug)
-				{
+				if (this.debug) {
 					this.setDebugPixel(x, y, rgb);
 				}
 			}
 		}
 
 		// put debug image on debug window
-		if (this.debug)
-		{
+		if (this.debug) {
 			this.drawDebugImage();
 		}
 	}

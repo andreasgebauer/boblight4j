@@ -1,5 +1,7 @@
 package org.boblight4j.client;
 
+import org.boblight4j.client.mbean.LightConfigMBean;
+
 public class LightConfig implements LightConfigMBean {
 
 	// affected by getRgb method //
@@ -28,7 +30,7 @@ public class LightConfig implements LightConfigMBean {
 
 	@Override
 	public int[] getHScanScaled() {
-		return this.hScanScaled;
+		return this.hScanScaled.clone();
 	}
 
 	@Override
@@ -73,7 +75,7 @@ public class LightConfig implements LightConfigMBean {
 
 	@Override
 	public int[] getVScanScaled() {
-		return this.vScanScaled;
+		return this.vScanScaled.clone();
 	}
 
 	@Override
@@ -143,7 +145,7 @@ public class LightConfig implements LightConfigMBean {
 
 	@Override
 	public void setVScanScaled(final int[] vscanscaled) {
-		this.vScanScaled = vscanscaled;
+		this.vScanScaled = vscanscaled.clone();
 	}
 
 }

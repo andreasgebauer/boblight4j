@@ -26,7 +26,7 @@ public class DeviceRS232 extends AbstractDevice {
 	private SerialPort serialPort;
 	private final Object timer = new Object();
 
-	public DeviceRS232(final ClientsHandler clients) {
+	public DeviceRS232(final ClientsHandler<?> clients) {
 		super(clients);
 		this.setType(DeviceType.NOTHING);
 		// default is 8 bit

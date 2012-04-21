@@ -135,7 +135,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 		this.needsScale = this.fg.getWidth() != this.flagManager.width
 				|| this.fg.getHeight() != this.flagManager.height;
 
-		this.client.setScanRange(this.flagManager.width,
+		this.getClient().setScanRange(this.flagManager.width,
 				this.flagManager.height);
 
 		this.fg.setCaptureCallback(this);
@@ -198,7 +198,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 			this.frameToBoblight(bufferedImage);
 
-			this.client.sendRgb(false, null);
+			this.getClient().sendRgb(false, null);
 		} catch (final Exception e) {
 			LOG.error("", e);
 			this.error = new BoblightException(e);

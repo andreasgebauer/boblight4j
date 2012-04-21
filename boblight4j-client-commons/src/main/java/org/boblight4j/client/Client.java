@@ -17,6 +17,14 @@ public interface Client {
 
 	String getLightName(int j) throws BoblightException;
 
+	/**
+	 * Sets a boblight option.
+	 * 
+	 * @param lightnr
+	 * @param option
+	 * @throws BoblightException
+	 */
+
 	void setOption(int lightnr, String option) throws BoblightException;
 
 	void setScanRange(int width, int height);

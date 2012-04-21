@@ -77,7 +77,7 @@ public class BoblightDaemon {
 	private void init(final String[] args) throws IOException,
 			BoblightException {
 		try {
-			this.parseFlags(args);
+			this.args = this.parseFlags(args);
 			if (this.args.help) {
 				throw new BoblightException("help");
 			}
@@ -153,7 +153,7 @@ public class BoblightDaemon {
 
 	private ServerArgs parseFlags(final String[] args) throws BoblightException {
 		try {
-			ServerArgs argsBean = new ServerArgs();
+			final ServerArgs argsBean = new ServerArgs();
 			new CmdLineParser(argsBean).parseArgument(args.clone());
 			return argsBean;
 		} catch (CmdLineException e) {

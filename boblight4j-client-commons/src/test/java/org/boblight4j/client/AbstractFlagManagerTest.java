@@ -7,15 +7,10 @@ import junit.framework.Assert;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class AbstractFlagManagerTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
 	private AbstractFlagManager<CommandLineArgs> testable;
 

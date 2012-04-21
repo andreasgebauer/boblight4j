@@ -8,8 +8,7 @@ import org.boblight4j.server.ClientsHandler;
 
 public abstract class AbstractConfig implements Config {
 
-	public abstract List<Device> buildDeviceConfig(ClientsHandler clients)
+	public abstract List<Device> buildDeviceConfig(ClientsHandler<?> clients)
 			throws BoblightConfigurationException, BoblightParseException;
 
-	
 }

@@ -15,7 +15,7 @@ public class DioderBuilder extends AbstractDeviceBuilder {
 	}
 
 	@Override
-	public Device createDevice(ClientsHandler clientsHandler, int devicenr,
+	public Device createDevice(ClientsHandler<?> clientsHandler, int devicenr,
 			String type, List<ConfigGroup> deviceLines)
 			throws BoblightConfigurationException {
 		throw new BoblightConfigurationException("Not implemented yet.");

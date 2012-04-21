@@ -17,14 +17,14 @@ public abstract class AbstractConfigUpdater {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractConfigUpdater.class);
 
-	private final ClientsHandler clients;
+	private final ClientsHandler<?> clients;
 	private final AbstractConfig config;
 	private final List<Device> devices;
 	private final List<Light> lights;
 	protected File watchFile;
 
 	public AbstractConfigUpdater(final File watchFile,
-			final ClientsHandler clients, final AbstractConfig config,
+			final ClientsHandler<?> clients, final AbstractConfig config,
 			final List<Device> devices, final List<Light> lights) {
 		super();
 		this.config = config;

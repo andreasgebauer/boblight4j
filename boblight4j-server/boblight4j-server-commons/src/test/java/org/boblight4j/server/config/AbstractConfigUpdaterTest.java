@@ -23,7 +23,7 @@ public class AbstractConfigUpdaterTest {
 	@Mock
 	private File watchFile;
 	@Mock
-	private ClientsHandler clientsHandler;
+	private ClientsHandler<?> clientsHandler;
 
 	@Before
 	public void setUp() throws Exception {

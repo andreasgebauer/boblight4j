@@ -1,4 +1,4 @@
-package org.boblight4j.client;
+package org.boblight4j.client.mbean;
 
 /**
  * Interface for accessing the light configuration via JMX.

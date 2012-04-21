@@ -8,8 +8,13 @@ import java.awt.image.BufferedImage;
  * @author agebauer
  * 
  */
-public interface PassiveGrabber {
+public interface PassiveGrabber extends Grabber {
 
+	/**
+	 * Converts the 
+	 * 
+	 * @param img
+	 */
 	void frameToBoblight(final BufferedImage img);
 
 }

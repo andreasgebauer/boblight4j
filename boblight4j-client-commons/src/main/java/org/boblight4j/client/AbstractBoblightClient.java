@@ -26,8 +26,6 @@ public abstract class AbstractBoblightClient {
 	 * 
 	 * @param args
 	 *            the program arguments
-	 * @param flagManager
-	 *            the flag manager
 	 */
 	public AbstractBoblightClient(final String[] args) {
 		this.flagManager = this.getFlagManager();

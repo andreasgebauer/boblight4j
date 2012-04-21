@@ -2,6 +2,7 @@ package org.boblight4j.client;
 
 import java.util.Arrays;
 
+import org.boblight4j.client.mbean.LightConfigMBean;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.utils.MathUtils;
@@ -16,6 +17,8 @@ import org.boblight4j.utils.Pointer;
  */
 public class Light extends LightConfig {
 
+	private static final float HSV_DEGREES_BASE = 60.0f;
+	private static final float MAX_VALUE_BYTE = 255.0f;
 	private static final float CHANGE_LIMIT = 0.001f;
 	private static final float HSV_DEGREES_BLUE = 240.0f;
 	private static final float HSV_DEGREES_GREEN = 120.0f;
@@ -32,7 +35,7 @@ public class Light extends LightConfig {
 	private final float vscan[] = new float[2];
 
 	// runtime calculated //
-	public int rgb[] = new int[4];
+	int rgb[] = new int[4];
 	private float prevrgb[] = new float[3];
 
 	public Light(final LightConfigMBean globalConfig) {
@@ -40,8 +43,7 @@ public class Light extends LightConfig {
 		this.globalConfig = globalConfig;
 
 		// set default values;
-		for (final BoblightOptions opt : BoblightOptions.values())
-		{
+		for (final BoblightOptions opt : BoblightOptions.values()) {
 			opt.doPostProcess(this, opt.getDefault());
 		}
 
@@ -63,8 +65,7 @@ public class Light extends LightConfig {
 
 	@Override
 	public final float getAutospeed() {
-		if (this.globalConfig.isUse() && this.globalConfig.getAutospeed() != -1)
-		{
+		if (this.globalConfig.isUse() && this.globalConfig.getAutospeed() != -1) {
 			return this.globalConfig.getAutospeed();
 		}
 		return super.getAutospeed();
@@ -85,20 +86,18 @@ public class Light extends LightConfig {
 	public final float[] getRgb() {
 		final float[] rgbNew = new float[4];
 		// if no pixels are set, the denominator is 0, so just return black
-		if (this.rgb[3] == 0)
-		{
-			for (int i = 0; i < 3; i++)
-			{
+		if (this.rgb[3] == 0) {
+			for (int i = 0; i < 3; i++) {
 				rgbNew[i] = this.rgb[i];
 			}
 			return rgbNew;
 		}
 
 		// convert from numerator/denominator to float
-		for (int i = 0; i < 3; i++)
-		{
-			rgbNew[i] = MathUtils.clamp((float) this.rgb[i]
-					/ (float) this.rgb[3] / 255.0f, 0.0f, 1.0f);
+		for (int i = 0; i < 3; i++) {
+			float floatValue = (float) this.rgb[i] / (float) this.rgb[3]
+					/ MAX_VALUE_BYTE;
+			rgbNew[i] = MathUtils.clamp(floatValue, 0.0f, 1.0f);
 		}
 
 		// reset values
@@ -109,8 +108,7 @@ public class Light extends LightConfig {
 
 		// this tries to set the speed based on how fast the input is changing
 		// it needs sync mode to work properly
-		if (this.getAutospeed() > 0.0)
-		{
+		if (this.getAutospeed() > 0.0) {
 			float change = Math.abs(rgbNew[0] - this.prevrgb[0])
 					+ Math.abs(rgbNew[1] - this.prevrgb[1])
 					+ Math.abs(rgbNew[2] - this.prevrgb[2]);
@@ -118,14 +116,11 @@ public class Light extends LightConfig {
 
 			// only apply single change if it's large enough, otherwise we risk
 			// sending it continuously
-			if (change > CHANGE_LIMIT)
-			{
+			if (change > CHANGE_LIMIT) {
 				this.setSingleChange(MathUtils.clamp(
 						(float) (change * this.getAutospeed() / 10.0), 0.0f,
 						1.0f));
-			}
-			else
-			{
+			} else {
 				this.setSingleChange(0.0f);
 			}
 		}
@@ -133,13 +128,18 @@ public class Light extends LightConfig {
 		this.prevrgb = Arrays.copyOf(rgbNew, rgbNew.length);
 		// memcpy(m_prevrgb, rgb, sizeof(m_prevrgb));
 
+		adjustHSV(rgbNew);
+
+		return rgbNew;
+	}
+
+	private void adjustHSV(final float[] rgbNew) {
 		// we need some hsv adjustments
 		if (this.getValue() != 1.0f || this.getValueRangeStart() != 0.0f
 				|| this.getValueRangeEnd() != 1.0f
 				|| this.getSaturation() != 1.0f
 				|| this.getSatRangeStart() != 0.0f
-				|| this.getSatRangeEnd() != 1.0f)
-		{
+				|| this.getSatRangeEnd() != 1.0f) {
 			// rgb - hsv conversion, thanks wikipedia!
 			final float hsv[] = new float[3];
 			final float max = Math.max(rgbNew[0],
@@ -152,26 +152,24 @@ public class Light extends LightConfig {
 				hsv[0] = -1.0f; // undefined
 				hsv[1] = 0.0f; // no saturation
 				hsv[2] = min; // value
-			}
-			else
-			{
+			} else {
 				if (max == rgbNew[0]) // red zone
 				{
-					hsv[0] = 60.0f * ((rgbNew[1] - rgbNew[2]) / (max - min))
+					hsv[0] = HSV_DEGREES_BASE
+							* ((rgbNew[1] - rgbNew[2]) / (max - min))
 							+ HSV_DEGREES_RED;
-					while (hsv[0] >= HSV_DEGREES_RED)
-					{
+					while (hsv[0] >= HSV_DEGREES_RED) {
 						hsv[0] -= HSV_DEGREES_RED;
 					}
-				}
-				else if (max == rgbNew[1]) // green zone
+				} else if (max == rgbNew[1]) // green zone
 				{
-					hsv[0] = 60.0f * ((rgbNew[2] - rgbNew[0]) / (max - min))
+					hsv[0] = HSV_DEGREES_BASE
+							* ((rgbNew[2] - rgbNew[0]) / (max - min))
 							+ HSV_DEGREES_GREEN;
-				}
-				else if (max == rgbNew[2]) // blue zone
+				} else if (max == rgbNew[2]) // blue zone
 				{
-					hsv[0] = 60.0f * ((rgbNew[0] - rgbNew[1]) / (max - min))
+					hsv[0] = HSV_DEGREES_BASE
+							* ((rgbNew[0] - rgbNew[1]) / (max - min))
 							+ HSV_DEGREES_BLUE;
 				}
 
@@ -187,15 +185,13 @@ public class Light extends LightConfig {
 
 			if (hsv[0] == -1.0f) // grayscale
 			{
-				for (int i = 0; i < 3; i++)
-				{
+				for (int i = 0; i < 3; i++) {
 					rgbNew[i] = hsv[2];
 				}
-			}
-			else
-			{
-				final int hi = (int) (hsv[0] / 60.0f) % 6;
-				final float f = hsv[0] / 60.0f - (int) (hsv[0] / 60.0f);
+			} else {
+				final int hi = (int) (hsv[0] / HSV_DEGREES_BASE) % 6;
+				final float f = hsv[0] / HSV_DEGREES_BASE
+						- (int) (hsv[0] / HSV_DEGREES_BASE);
 
 				final float s = hsv[1];
 				final float v = hsv[2];
@@ -203,57 +199,43 @@ public class Light extends LightConfig {
 				final float q = v * (1.0f - f * s);
 				final float t = v * (1.0f - (1.0f - f) * s);
 
-				if (hi == 0)
-				{
+				if (hi == 0) {
 					rgbNew[0] = v;
 					rgbNew[1] = t;
 					rgbNew[2] = p;
-				}
-				else if (hi == 1)
-				{
+				} else if (hi == 1) {
 					rgbNew[0] = q;
 					rgbNew[1] = v;
 					rgbNew[2] = p;
-				}
-				else if (hi == 2)
-				{
+				} else if (hi == 2) {
 					rgbNew[0] = p;
 					rgbNew[1] = v;
 					rgbNew[2] = t;
-				}
-				else if (hi == 3)
-				{
+				} else if (hi == 3) {
 					rgbNew[0] = p;
 					rgbNew[1] = q;
 					rgbNew[2] = v;
-				}
-				else if (hi == 4)
-				{
+				} else if (hi == 4) {
 					rgbNew[0] = t;
 					rgbNew[1] = p;
 					rgbNew[2] = v;
-				}
-				else if (hi == 5)
-				{
+				} else if (hi == 5) {
 					rgbNew[0] = v;
 					rgbNew[1] = p;
 					rgbNew[2] = q;
 				}
 			}
 
-			for (int i = 0; i < 3; i++)
-			{
+			for (int i = 0; i < 3; i++) {
 				rgbNew[i] = MathUtils.clamp(rgbNew[i], 0.0f, 1.0f);
 			}
 		}
-		return rgbNew;
 	}
 
 	@Override
 	public final float getSatRangeEnd() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getSatRangeEnd() != -1)
-		{
+				&& this.globalConfig.getSatRangeEnd() != -1) {
 			return this.globalConfig.getSatRangeEnd();
 		}
 		return super.getSatRangeEnd();
@@ -262,8 +244,7 @@ public class Light extends LightConfig {
 	@Override
 	public final float getSatRangeStart() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getSatRangeStart() != -1)
-		{
+				&& this.globalConfig.getSatRangeStart() != -1) {
 			return this.globalConfig.getSatRangeStart();
 		}
 		return super.getSatRangeStart();
@@ -272,8 +253,7 @@ public class Light extends LightConfig {
 	@Override
 	public final float getSaturation() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getSaturation() != -1)
-		{
+				&& this.globalConfig.getSaturation() != -1) {
 			return this.globalConfig.getSaturation();
 		}
 		return super.getSaturation();
@@ -282,8 +262,7 @@ public class Light extends LightConfig {
 	@Override
 	public final float getSinglechange() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getSinglechange() != -1)
-		{
+				&& this.globalConfig.getSinglechange() != -1) {
 			return this.globalConfig.getSinglechange();
 		}
 		return super.getSinglechange();
@@ -291,8 +270,7 @@ public class Light extends LightConfig {
 
 	@Override
 	public final int getThreshold() {
-		if (this.globalConfig.isUse() && this.globalConfig.getThreshold() != -1)
-		{
+		if (this.globalConfig.isUse() && this.globalConfig.getThreshold() != -1) {
 			return this.globalConfig.getThreshold();
 		}
 		return super.getThreshold();
@@ -300,8 +278,7 @@ public class Light extends LightConfig {
 
 	@Override
 	public final float getValue() {
-		if (this.globalConfig.isUse() && this.globalConfig.getValue() != -1)
-		{
+		if (this.globalConfig.isUse() && this.globalConfig.getValue() != -1) {
 			return this.globalConfig.getValue();
 		}
 		return super.getValue();
@@ -310,8 +287,7 @@ public class Light extends LightConfig {
 	@Override
 	public final float getValueRangeEnd() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getValueRangeEnd() != -1)
-		{
+				&& this.globalConfig.getValueRangeEnd() != -1) {
 			return this.globalConfig.getValueRangeEnd();
 		}
 		return super.getValueRangeEnd();
@@ -320,8 +296,7 @@ public class Light extends LightConfig {
 	@Override
 	public final float getValueRangeStart() {
 		if (this.globalConfig.isUse()
-				&& this.globalConfig.getValueRangeStart() != -1)
-		{
+				&& this.globalConfig.getValueRangeStart() != -1) {
 			return this.globalConfig.getValueRangeStart();
 		}
 		return super.getValueRangeStart();
@@ -366,39 +341,26 @@ public class Light extends LightConfig {
 		final Pointer<String> stroption = new Pointer<String>(option);
 
 		String optName = null;
-		try
-		{
+		try {
 			optName = Misc.getWord(stroption);
-		}
-		catch (final BoblightParseException e)
-		{
+		} catch (final BoblightParseException e) {
 			// string with only whitespace
 			throw new BoblightConfigurationException("Empty option", e);
 		}
 
-		for (final BoblightOptions opt : BoblightOptions.values())
-		{
-			if (optName.equals(opt.getName()))
-			{
-				try
-				{
+		for (final BoblightOptions opt : BoblightOptions.values()) {
+			if (optName.equals(opt.getName())) {
+				try {
 					Object value = null;
-					if (boolean.class.equals(opt.getType()))
-					{
+					if (boolean.class.equals(opt.getType())) {
 						value = Boolean.parseBoolean(stroption.get());
-					}
-					else if (float.class.equals(opt.getType()))
-					{
+					} else if (float.class.equals(opt.getType())) {
 						value = Float.parseFloat(stroption.get());
-					}
-					else if (int.class.equals(opt.getType()))
-					{
+					} else if (int.class.equals(opt.getType())) {
 						value = Integer.parseInt(stroption.get());
 					}
 					return opt.postProcess(this, value);
-				}
-				catch (NumberFormatException ex)
-				{
+				} catch (NumberFormatException ex) {
 					throw new BoblightConfigurationException(
 							"Unable to parse string " + stroption.get()
 									+ " to type " + opt.getType(), ex);

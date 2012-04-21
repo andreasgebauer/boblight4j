@@ -1,4 +1,4 @@
-package org.boblight4j.client;
+package org.boblight4j.cli;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

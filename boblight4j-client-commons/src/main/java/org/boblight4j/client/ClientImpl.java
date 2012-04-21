@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.boblight4j.client.mbean.ClientAccessor;
+import org.boblight4j.client.mbean.LightConfigMBean;
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
@@ -511,12 +512,10 @@ public class ClientImpl implements Client {
 		}
 	}
 
-	/**
-	 * Sets a boblight option.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param lightnr
-	 * @param option
-	 * @throws BoblightException
+	 * @see org.boblight4j.client.Client#setOption(int, java.lang.String)
 	 */
 	public void setOption(final int lightnr, final String option)
 			throws BoblightException {

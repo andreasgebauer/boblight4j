@@ -28,9 +28,9 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
-		<finalName>service.multimedia.boblight4j-server</finalName>
+		<finalName>${addonName}-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/python</directory>
@@ -47,10 +47,18 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+					<skipIfEmpty>true</skipIfEmpty>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-deps</id>
+						<id>unpack-deps</id>
 						<goals>
 							<goal>copy</goal>
 						</goals>
@@ -70,7 +78,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>assemble-addon</id>
@@ -80,6 +87,7 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
 							<descriptor>src/main/assembly/addon.xml</descriptor>
 						</configuration>
 					</execution>

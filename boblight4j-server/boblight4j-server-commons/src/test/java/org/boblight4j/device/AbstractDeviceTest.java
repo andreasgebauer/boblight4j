@@ -5,14 +5,9 @@ import static org.mockito.Mockito.mock;
 import org.boblight4j.exception.BoblightDeviceException;
 import org.boblight4j.server.ClientsHandler;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AbstractDeviceTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
 	private AbstractDevice testable;
 

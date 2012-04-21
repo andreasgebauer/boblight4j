@@ -1,4 +1,4 @@
-package org.boblight4j.client;
+package org.boblight4j.cli;
 
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.utils.BooleanParser;

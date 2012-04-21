@@ -1,8 +1,17 @@
 <project name="boblight4j" default="deploy-artifacts-locally">
 	<target name="deploy-artifacts-locally">
-		<copy todir="${localRepository}" verbose="true">
-			<fileset dir="${basedir}/maven-artifacts">
-			</fileset>
+		<copy todir="${settings.localRepository}" verbose="true">
+			<fileset dir="${basedir}/maven-artifacts" />
 		</copy>
+	</target>
+	<target name="deploy">
+		<apply executable="/bin/sh">
+			<fileset dir="${basedir}" casesensitive="yes">
+				<include name="**/deploy.sh" />
+			</fileset>
+		</apply>
+	</target>
+	<target name="run-deploy-script">
+
 	</target>
 </project>

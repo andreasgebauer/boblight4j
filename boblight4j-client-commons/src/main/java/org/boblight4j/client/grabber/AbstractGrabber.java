@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
 
+import org.boblight4j.Constants;
 import org.boblight4j.client.Client;
 
 /**
@@ -17,7 +18,9 @@ import org.boblight4j.client.Client;
  */
 public abstract class AbstractGrabber implements Grabber {
 
-	protected final Client client;
+	private static final int DEFAULT_DEBUG_WINDOW_HEIGHT = 200;
+	private static final int DEFAULT_DEBUG_WINDOW_WIDTH = 200;
+	private final Client client;
 	protected final boolean sync;
 	protected final int width;
 	protected final int height;
@@ -34,8 +37,7 @@ public abstract class AbstractGrabber implements Grabber {
 	private long measurements;
 	private int nrMeasurements;
 
-	public AbstractGrabber(Client client2, boolean sync, int width,
-			int height) {
+	public AbstractGrabber(Client client2, boolean sync, int width, int height) {
 		this.client = client2;
 		this.sync = sync;
 		this.width = width;
@@ -52,8 +54,10 @@ public abstract class AbstractGrabber implements Grabber {
 	@Override
 	public void setupDebug() {
 
-		this.debugWindowWidth = Math.max(200, this.width);
-		this.debugWindowHeight = Math.max(200, this.height);
+		this.debugWindowWidth = Math
+				.max(DEFAULT_DEBUG_WINDOW_WIDTH, this.width);
+		this.debugWindowHeight = Math.max(DEFAULT_DEBUG_WINDOW_HEIGHT,
+				this.height);
 
 		this.frame = new Frame();
 		this.frame.add(new Canvas());
@@ -88,16 +92,16 @@ public abstract class AbstractGrabber implements Grabber {
 			this.nrMeasurements++; // got another measurement
 			this.lastMeasurement = now; // save the timestamp
 
-			if (now - this.lastUpdate >= 1000) // if we've measured for one
-												// second,
-			// place fps on debug window title
-			{
+			// if we've measured for one second, place fps on debug window title
+			if (now - this.lastUpdate >= Constants.FPS_MEASURE_DELTA) {
 				this.lastUpdate = now;
 
 				double fps = 0.0;
 				if (this.nrMeasurements > 0) {
 					// we need at least one measurement
-					fps = 1.0 / ((float) this.measurements / (float) this.nrMeasurements) * 1000;
+					fps = 1.0
+							/ ((float) this.measurements / (float) this.nrMeasurements)
+							* Constants.FPS_MEASURE_DELTA;
 				}
 				this.measurements = 0;
 				this.nrMeasurements = 0;
@@ -107,6 +111,10 @@ public abstract class AbstractGrabber implements Grabber {
 				this.frame.setTitle(strfps);
 			}
 		}
+	}
+
+	public Client getClient() {
+		return client;
 	}
 
 }

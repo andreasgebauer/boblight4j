@@ -47,7 +47,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
 				<executions>
 					<execution>
 						<goals>
@@ -62,15 +61,6 @@
 									<mainClass>org.boblight4j.client.X11.BoblightX11</mainClass>
 								</transformer>
 							</transformers>
-							<filters>
-								<filter>
-									<artifact>gnu.getopt:java-getopt</artifact>
-									<excludes>
-										<exclude>META-INF/TESTKEY.SF</exclude>
-										<exclude>META-INF/TESTKEY.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
 						</configuration>
 					</execution>
 				</executions>

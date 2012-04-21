@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://bolight4j.org/config"
+	targetNamespace="http://bolight4j.org/config">
+
+	<element name="config">
+		<complexType>
+			<sequence>
+				<element ref="tns:global" maxOccurs="1" />
+				<element ref="tns:device" minOccurs="1" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+		<key name="deviceName">
+			<selector xpath="tns:device" />
+			<field xpath="@name" />
+		</key>
+		<keyref name="deviceReference" refer="tns:deviceName">
+			<selector xpath="tns:light/tns:lightColor" />
+			<field xpath="@device" />
+		</keyref>
+	</element>
+
+	<element name="global">
+		<complexType>
+			<sequence>
+				<element ref="tns:interface"></element>
+				<element ref="tns:port"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="interface">
+		<simpleType>
+			<restriction base="string">
+				<pattern
+					value="0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])">
+				</pattern>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="port">
+		<simpleType>
+			<restriction base="int">
+				<minInclusive value="0"></minInclusive>
+				<whiteSpace value="collapse"></whiteSpace>
+				<maxInclusive value="65535"></maxInclusive>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="device">
+		<complexType>
+			<sequence>
+				<element ref="tns:color" maxOccurs="unbounded" minOccurs="1"></element>
+				<element ref="tns:light" maxOccurs="unbounded" minOccurs="1"></element>
+			</sequence>
+			<attribute name="name" use="required">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</attribute>
+			<attribute name="output" type="string" use="required" />
+			<attribute name="channels" use="required">
+				<simpleType>
+					<restriction base="short">
+						<minInclusive value="1"></minInclusive>
+					</restriction>
+				</simpleType>
+			</attribute>
+			<attribute name="type" use="required">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="momo" />
+					</restriction>
+				</simpleType>
+			</attribute>
+			<attribute name="interval" type="long" use="required" />
+			<attribute name="rate" type="long" use="required" />
+			<attribute name="prefix" type="tns:byteInHex" use="required" />
+			<attribute name="postfix" type="tns:byteInHex" use="required" />
+			<attribute name="escape" type="tns:byteInHex" use="required" />
+			<attribute name="delayafteropen" type="long" />
+			<attribute name="debug" type="boolean" default="false"></attribute>
+		</complexType>
+		<unique name="uniqueChannel">
+			<annotation>
+				<documentation>You must specify an unique channel number for all
+					&lt;lightColor&gt; elements</documentation>
+			</annotation>
+			<selector xpath="tns:light/tns:lightColor" />
+			<field xpath="@channel" />
+		</unique>
+		<unique name="uniqueLightName">
+			<selector xpath="tns:light" />
+			<field xpath="@name" />
+		</unique>
+		<key name="colorKey">
+			<selector xpath="tns:color" />
+			<field xpath="@name" />
+		</key>
+		<keyref name="colorReference" refer="tns:colorKey">
+			<selector xpath="tns:light/tns:lightColor" />
+			<field xpath="@name" />
+		</keyref>
+	</element>
+	<element name="color" type="tns:colorType" />
+	<element name="light" type="tns:lightType">
+		<unique name="colorName">
+			<selector xpath="tns:lightColor" />
+			<field xpath="@name" />
+		</unique>
+	</element>
+	<element name="lightColor" type="tns:lightColorType" />
+
+	<complexType name="colorType" id="name">
+		<attribute name="name" use="required" type="string">
+			<annotation>
+				<documentation>The name of the color</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="rgb" use="required">
+			<annotation>
+				<documentation>RGB value this color represents.</documentation>
+			</annotation>
+			<simpleType>
+				<restriction base="hexBinary">
+					<length value="3" />
+					<whiteSpace value="collapse" />
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="blackLevel" default="0.0">
+			<simpleType>
+				<restriction base="float">
+					<minInclusive value="0.0" />
+					<maxInclusive value="1.0" />
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="adjust" default="1.0">
+			<simpleType>
+				<restriction base="float">
+					<whiteSpace value="collapse"></whiteSpace>
+					<minInclusive value="0.0"></minInclusive>
+					<maxInclusive value="1.0"></maxInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<!-- The LIGHT type -->
+	<complexType name="lightType">
+		<sequence>
+			<element ref="tns:lightColor" minOccurs="1" maxOccurs="unbounded"></element>
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="hscan" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="0*([1-9]?\d|100)\s0*([1-9]?\d|100)" />
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="vscan" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="0*([1-9]?\d|100)\s0*([1-9]?\d|100)" />
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="lightColorType">
+		<attribute name="name" type="string" use="required" />
+		<attribute name="channel" use="required" type="tns:channelID" />
+	</complexType>
+
+	<simpleType name="byteInHex">
+		<restriction base="hexBinary">
+			<whiteSpace value="collapse"></whiteSpace>
+			<length value="1"></length>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="channelID">
+		<annotation>
+			<documentation>The channel number. Must be unique among all
+				lightColor elements.
+			</documentation>
+		</annotation>
+		<restriction base="short" />
+	</simpleType>
+
+</schema>

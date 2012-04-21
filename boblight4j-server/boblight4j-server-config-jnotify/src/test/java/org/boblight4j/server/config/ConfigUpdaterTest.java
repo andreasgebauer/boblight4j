@@ -21,7 +21,7 @@ public class ConfigUpdaterTest {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ConfigUpdaterTest.class);
 
-	private ClientsHandler clients;
+	private ClientsHandler<?> clients;
 	private List<Device> devices;
 	private File file;
 	private List<Light> lights;

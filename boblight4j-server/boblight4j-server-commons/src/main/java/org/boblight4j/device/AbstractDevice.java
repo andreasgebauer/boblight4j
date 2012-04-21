@@ -57,7 +57,7 @@ public abstract class AbstractDevice implements Device, Runnable {
 
 	private boolean allowSync;
 	protected List<Channel> channels = new ArrayList<Channel>();
-	protected ClientsHandler clientsHandler;
+	protected ClientsHandler<?> clientsHandler;
 	private boolean debug;
 	private long delayafteropen;
 
@@ -72,13 +72,20 @@ public abstract class AbstractDevice implements Device, Runnable {
 
 	private float singleChange;
 
-	protected AbstractDevice(final ClientsHandler clients) {
+	protected AbstractDevice(final ClientsHandler<?> clients) {
 		this.clientsHandler = clients;
-		this.type = DeviceType.NOTHING;
 		this.allowSync = true;
 		this.debug = false;
 		this.delayafteropen = 0;
 	}
+
+	protected abstract boolean setup();
+
+	public abstract void sync();
+
+	protected abstract void close();
+
+	protected abstract void writeOutput() throws BoblightDeviceException;
 
 	public String getName() {
 		return this.name;
@@ -145,7 +152,6 @@ public abstract class AbstractDevice implements Device, Runnable {
 		this.rate = rate;
 	}
 
-	// virtual
 	public void setType(final DeviceType momo) {
 		this.type = momo;
 	}
@@ -186,7 +192,7 @@ public abstract class AbstractDevice implements Device, Runnable {
 			while (!this.stop) {
 				try {
 					this.writeOutput();
-				} catch (final BoblightDeviceException e1) {
+				} catch (final Exception e1) {
 					LOG.error(this.name, e1);
 					break;
 				}
@@ -215,14 +221,6 @@ public abstract class AbstractDevice implements Device, Runnable {
 		LOG.info("Stopping device '" + this.name + "'");
 		this.stop = true;
 	}
-
-	protected abstract boolean setup();
-
-	public abstract void sync();
-
-	protected abstract void close();
-
-	protected abstract void writeOutput() throws BoblightDeviceException;
 
 	public void setSingleChange(float f) {
 		this.singleChange = f;

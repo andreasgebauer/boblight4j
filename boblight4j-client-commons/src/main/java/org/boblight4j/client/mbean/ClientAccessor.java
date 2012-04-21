@@ -23,13 +23,12 @@ public class ClientAccessor implements ClientAccessorMBean {
 	}
 
 	public void setAutoSpeed() {
-		// not implemented yet
+		// TODO implement
 	}
 
 	@Override
 	public void setSaturation(final float saturation) {
-		for (final Light l : this.getLights())
-		{
+		for (final Light l : this.getLights()) {
 			l.setSaturation(saturation);
 		}
 	}

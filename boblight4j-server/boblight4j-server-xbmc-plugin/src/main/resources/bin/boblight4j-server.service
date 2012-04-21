@@ -5,7 +5,11 @@ ADDON_HOME="$HOME/.xbmc/userdata/addon_data/${addonName}"
 LOG_FILE="$ADDON_HOME/service.log"
 ADDON_SETTINGS="$ADDON_HOME/settings.xml"
 
-JAVA_HOME=`grep JAVA_HOME $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+JAVA_HOME=`grep java_home $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+BOBLIGHT_DIR="$ADDON_DIR/bin"
+BOBL_SERVER_JAR="$BOBLIGHT_DIR/boblight4j-tcp-server-${project.version}.jar"
+BOBLIGHT_CONF="$BOBLIGHT_DIR/../boblight.conf"
+JAVA="$JAVA_HOME/bin/java"
 
 echo "JAVA-HOME: "$JAVA_HOME
 
@@ -24,19 +28,17 @@ if [ -z "$PID" ];then
 else
   echo "Starting ${processName}"
   
-  BOBLIGHT_DIR=/storage/programs/boblight4j-server-0.0.2-SNAPSHOT
   DEBUGPORT=8000
-  JAVA=/storage/programs/jre/bin/java
-  JVM_MEM_OPTIONS="-Xms32m -Xmx64m -Xmn16m -XX:MaxPermSize=8m "
+  JVM_MEM_OPTIONS="-Xms32m -Xmx64m -Xmn16m -XX:MaxPermSize=8m"
   JVM_DEBUG_OPTIONS="-Xdebug -Xrunjdwp:transport=dt_socket,address="$DEBUGPORT",server=y,suspend=n"
-  JVM_OPTIONS="-Djava.rmi.server.hostname=zbox.local -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false "$JVM_DEBUG_OPTIONS" "$JVM_MEM_OPTIONS
+  JVM_JMX_OPTIONS="-Djava.rmi.server.hostname=zbox.local -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false "
+  JVM_OPTIONS="$JVM_JMX_OPTIONS $JVM_DEBUG_OPTIONS $JVM_MEM_OPTIONS"
 
   if [ ! -d /dev/ttyUSB0 ];then
 	ln -s /dev/ttyACM0 /dev/ttyUSB0
   fi
 
-  CMD="$JAVA $JVM_OPTIONS -Djava.library.path=$BOBLIGHT_DIR/lib/native -jar $BOBLIGHT_DIR/boblight4j-server-0.0.2-SNAPSHOT.jar -c $BOBLIGHT_DIR/boblight.15pc.conf"
-
+  CMD="$JAVA $JVM_OPTIONS -Djava.library.path=$BOBLIGHT_DIR/lib/native -jar $BOBL_SERVER_JAR -c $BOBLIGHT_CONF"
   echo "executing boblight4j server with: "$CMD
   $CMD
 fi

@@ -29,7 +29,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class DeviceRS232Test {
 
 	public static final int startFlag = 0x2D;
-	private ClientsHandler clients;
+	private ClientsHandler<?> clients;
 	private CommPortIdentifier id;
 	private ByteArrayOutputStream outputStream;
 

@@ -28,6 +28,7 @@ public class ImageGrabberFactoryTest {
 
 	private ServiceLoader<ImageGrabberServiceProvider> serviceLoader;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);

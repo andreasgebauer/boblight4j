@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://bolight4j.org/config">
+	<global>
+		<interface>127.0.0.1</interface>
+		<port>19333</port>
+	</global>
+
+	<device name="arduino" output="/dev/ttyUSB0" channels="60" type="momo"
+		interval="20000" rate="115200" prefix="3C" postfix="33" escape="99"
+		delayafteropen="1000000" debug="true">
+
+		<color name="red" rgb="FF0000" />
+		<color name="green" rgb="00FF00" />
+		<color name="blue" rgb="0000FF" />
+
+		<light name="bottom1" hscan="0 20" vscan="80 100">
+			<lightColor name="red" channel="1" />
+			<lightColor name="green" channel="2" />
+			<lightColor name="blue" channel="3" />
+		</light>
+
+		<light name="bottom2" hscan="20 40" vscan="80 100">
+			<lightColor name="red" channel="4" />
+			<lightColor name="green" channel="5" />
+			<lightColor name="blue" channel="6" />
+		</light>
+
+		<light name="bottom3" hscan="40 60" vscan="80 100">
+			<lightColor name="red" channel="7" />
+			<lightColor name="green" channel="8" />
+			<lightColor name="blue" channel="9" />
+		</light>
+
+		<light name="bottom4" hscan="60 80" vscan="80 100">
+			<lightColor name="red" channel="10" />
+			<lightColor name="green" channel="11" />
+			<lightColor name="blue" channel="12" />
+		</light>
+
+		<light name="bottom5" hscan="80 100" vscan="80 100">
+			<lightColor name="red" channel="13" />
+			<lightColor name="green" channel="14" />
+			<lightColor name="blue" channel="15" />
+		</light>
+
+		<light name="left1" hscan="0 20" vscan="0 20">
+			<lightColor name="red" channel="16" />
+			<lightColor name="green" channel="17" />
+			<lightColor name="blue" channel="18" />
+		</light>
+
+		<light name="left2" hscan="0 20" vscan="20 40">
+			<lightColor name="red" channel="19" />
+			<lightColor name="green" channel="20" />
+			<lightColor name="blue" channel="21" />
+		</light>
+
+		<light name="left3" hscan="0 20" vscan="40 60">
+			<lightColor name="red" channel="22" />
+			<lightColor name="green" channel="23" />
+			<lightColor name="blue" channel="24" />
+		</light>
+
+		<light name="left4" hscan="0 20" vscan="60 80">
+			<lightColor name="red" channel="25" />
+			<lightColor name="green" channel="26" />
+			<lightColor name="blue" channel="27" />
+		</light>
+
+		<light name="left5" hscan="0 20" vscan="80 100">
+			<lightColor name="red" channel="28" />
+			<lightColor name="green" channel="29" />
+			<lightColor name="blue" channel="30" />
+		</light>
+
+		<light name="right1" hscan="0 20" vscan="0 20">
+			<lightColor name="red" channel="31" />
+			<lightColor name="green" channel="32" />
+			<lightColor name="blue" channel="33" />
+		</light>
+
+		<light name="right2" hscan="0 20" vscan="20 40">
+			<lightColor name="red" channel="34" />
+			<lightColor name="green" channel="35" />
+			<lightColor name="blue" channel="36" />
+		</light>
+
+		<light name="right3" hscan="0 20" vscan="40 60">
+			<lightColor name="red" channel="37" />
+			<lightColor name="green" channel="38" />
+			<lightColor name="blue" channel="39" />
+		</light>
+
+		<light name="right4" hscan="0 20" vscan="60 80">
+			<lightColor name="red" channel="40" />
+			<lightColor name="green" channel="41" />
+			<lightColor name="blue" channel="42" />
+		</light>
+
+		<light name="right5" hscan="0 20" vscan="80 100">
+			<lightColor name="red" channel="43" />
+			<lightColor name="green" channel="44" />
+			<lightColor name="blue" channel="45" />
+		</light>
+	</device>
+</config>

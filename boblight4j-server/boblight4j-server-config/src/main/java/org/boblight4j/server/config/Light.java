@@ -39,7 +39,7 @@ public class Light {
 		private boolean interpolation;
 		private long time = -1;
 		private long prevtime;
-		private float[] prevrgb;
+		private float[] prevrgb = new float[] { 0, 0, 0 };
 
 		/**
 		 * Constructs a colour calculator.

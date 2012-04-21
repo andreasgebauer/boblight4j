@@ -11,6 +11,10 @@
 	<artifactId>boblight4j-tcp-server</artifactId>
 
 	<name>Boblight4J TCP Server</name>
+	
+	<properties>
+		<mainClass>org.boblight4j.server.BoblightDaemon</mainClass>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -61,7 +65,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>org.boblight4j.server.BoblightDaemon</mainClass>
+							<mainClass>${mainClass}</mainClass>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>
@@ -81,6 +85,27 @@
 						<configuration>
 							<includeScope>compile</includeScope>
 							<excludeGroupIds>org.boblight</excludeGroupIds>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<!-- put your configurations here -->
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>${mainClass}</mainClass>
+								</transformer>
+							</transformers>
 						</configuration>
 					</execution>
 				</executions>

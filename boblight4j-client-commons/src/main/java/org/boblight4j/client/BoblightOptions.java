@@ -26,7 +26,8 @@ enum BoblightOptions {
 		@Override
 		boolean doPostProcess(final Light light, final Object value) {
 			light.setHscanEnd(MathUtils.clamp(((Float) value).floatValue(),
-					light.getHscanStart(), ((Float) this.maxValue).floatValue()));
+					light.getHscanStart(),
+					((Float) this.getMaxValue()).floatValue()));
 			return false;
 		}
 	},
@@ -34,7 +35,8 @@ enum BoblightOptions {
 		@Override
 		boolean doPostProcess(final Light light, final Object value) {
 			light.setHscanStart(MathUtils.clamp(((Float) value).floatValue(),
-					((Float) this.minValue).floatValue(), light.getHscanEnd()));
+					((Float) this.getMinValue()).floatValue(),
+					light.getHscanEnd()));
 			return false;
 		}
 	},
@@ -111,7 +113,7 @@ enum BoblightOptions {
 		boolean doPostProcess(final Light light, final Object value) {
 			light.setValueRangeStart(MathUtils.clamp(
 					light.getValueRangeStart(),
-					((Float) this.minValue).floatValue(),
+					((Float) this.getMinValue()).floatValue(),
 					light.getValueRangeEnd()));
 			return false;
 		}
@@ -120,7 +122,8 @@ enum BoblightOptions {
 		@Override
 		boolean doPostProcess(final Light light, final Object value) {
 			light.setVscanEnd(MathUtils.clamp(((Float) value).floatValue(),
-					light.getVscanStart(), ((Float) this.maxValue).floatValue()));
+					light.getVscanStart(),
+					((Float) this.getMaxValue()).floatValue()));
 			return false;
 		}
 	},
@@ -128,16 +131,17 @@ enum BoblightOptions {
 		@Override
 		boolean doPostProcess(final Light light, final Object value) {
 			light.setVscanStart(MathUtils.clamp(((Float) value).floatValue(),
-					((Float) this.minValue).floatValue(), light.getVscanEnd()));
+					((Float) this.getMinValue()).floatValue(),
+					light.getVscanEnd()));
 			return false;
 		}
 	};
 
 	private final Object defaultValue;
-	protected final Object maxValue;
-	protected final Object minValue;
-	private String name;
-	private Class<?> type;
+	private final Object maxValue;
+	private final Object minValue;
+	private final String name;
+	private final Class<?> type;
 
 	private <T> BoblightOptions(final String name, final Class<T> type,
 			final T min, final T max, final T defaultValue) {
@@ -150,8 +154,8 @@ enum BoblightOptions {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Number> T clamp(final T value2) {
-		return (T) MathUtils
-				.clamp(value2, (T) this.minValue, (T) this.maxValue);
+		return (T) MathUtils.clamp(value2, (T) this.getMinValue(),
+				(T) this.getMaxValue());
 	}
 
 	abstract boolean doPostProcess(Light light, Object value);
@@ -161,11 +165,11 @@ enum BoblightOptions {
 	}
 
 	public Object getMax() {
-		return this.maxValue;
+		return this.getMaxValue();
 	}
 
 	public Object getMin() {
-		return this.minValue;
+		return this.getMinValue();
 	}
 
 	public String getName() {
@@ -178,12 +182,12 @@ enum BoblightOptions {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Number> T max(final T value, final T min) {
-		return MathUtils.clamp(value, min, (T) this.maxValue);
+		return MathUtils.clamp(value, min, (T) this.getMaxValue());
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Number> T min(final T value, final T max) {
-		return MathUtils.clamp(value, (T) this.minValue, max);
+		return MathUtils.clamp(value, (T) this.getMinValue(), max);
 	}
 
 	<T> boolean postProcess(final Light light, final T value) {
@@ -266,6 +270,14 @@ enum BoblightOptions {
 		}
 
 		return OPTIONS.get(option);
+	}
+
+	public Object getMaxValue() {
+		return maxValue;
+	}
+
+	public Object getMinValue() {
+		return minValue;
 	}
 
 }

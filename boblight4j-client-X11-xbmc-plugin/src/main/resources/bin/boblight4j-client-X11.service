@@ -8,7 +8,7 @@ ADDON_SETTINGS="$ADDON_HOME/settings.xml"
 
 JAVA_HOME=`grep id=\"java_home\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
 
-BOBLIGHT_DIR=$ADDON_DIR/bin/client
+BOBLIGHT_DIR=$ADDON_DIR/bin
 JAVA=$JAVA_HOME/bin/java
 JAR=$BOBLIGHT_DIR/boblight4j-X11-${project.version}.jar
 

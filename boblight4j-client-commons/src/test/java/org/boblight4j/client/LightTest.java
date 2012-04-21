@@ -4,17 +4,15 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
+import org.boblight4j.client.mbean.LightConfigMBean;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class LightTest {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+	private static final int HUNDRET = 100;
 
 	private Light testable;
 
@@ -25,7 +23,7 @@ public class LightTest {
 
 	@Test
 	public void testCalculateScaledScanRange() {
-		this.testable.calculateScaledScanRange(100, 100);
+		this.testable.calculateScaledScanRange(HUNDRET, HUNDRET);
 
 		Assert.assertEquals(0, this.testable.getHScanScaled()[0]);
 		Assert.assertEquals(0, this.testable.getHScanScaled()[1]);
@@ -33,7 +31,7 @@ public class LightTest {
 		this.testable.setHscan(0, 50);
 		this.testable.setVscan(0, 50);
 
-		this.testable.calculateScaledScanRange(100, 100);
+		this.testable.calculateScaledScanRange(HUNDRET, HUNDRET);
 
 		Assert.assertEquals(0, this.testable.getHScanScaled()[0]);
 		Assert.assertEquals(50, this.testable.getHScanScaled()[1]);

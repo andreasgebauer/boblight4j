@@ -36,7 +36,7 @@ public class RS232Builder extends AbstractDeviceBuilder {
 	}
 
 	@Override
-	public DeviceRS232 createDevice(ClientsHandler clientsHandler,
+	public DeviceRS232 createDevice(ClientsHandler<?> clientsHandler,
 			int devicenr, String type, List<ConfigGroup> deviceLines)
 			throws BoblightConfigurationException {
 

@@ -38,12 +38,12 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 		reader = new InputStreamRGBReader();
 		reader.setup(System.in, this);
 		new Thread(reader).start();
-		this.client.connect(flagManager.getAddress(), flagManager.getPort(),
+		this.getClient().connect(flagManager.getAddress(), flagManager.getPort(),
 				5000);
 
 		this.flagManager = (FlagManagerInputStreamGrabber) flagManager;
 
-		this.flagManager.parseBoblightOptions(this.client);
+		this.flagManager.parseBoblightOptions(this.getClient());
 	}
 
 	@Override
@@ -51,12 +51,12 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 		final int commaPos = substring.indexOf(',');
 		final int width = Integer.parseInt(substring.substring(0, commaPos));
 		final int height = Integer.parseInt(substring.substring(commaPos + 1));
-		this.client.setScanRange(width, height);
+		this.getClient().setScanRange(width, height);
 	}
 
 	@Override
 	public void handle(RGBValue parse) {
-		this.client.addPixel(parse.xPos, parse.yPos, parse.rgb);
+		this.getClient().addPixel(parse.xPos, parse.yPos, parse.rgb);
 	}
 
 	@Override
@@ -72,12 +72,7 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 	@Override
 	public void sendRgb(boolean b, Object object) throws IOException,
 			BoblightException {
-		this.client.sendRgb(this.sync, null);
-	}
-
-	@Override
-	public Client getClient() {
-		return this.client;
+		this.getClient().sendRgb(this.sync, null);
 	}
 
 }

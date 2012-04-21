@@ -59,7 +59,7 @@ public abstract class AbstractDeviceBuilder implements DeviceBuilder {
 	}
 
 	@Override
-	public final Device build(final int devicenr, final ClientsHandler clients,
+	public final Device build(final int devicenr, final ClientsHandler<?> clients,
 			final String type) throws BoblightConfigurationException {
 
 		final Device device = createDevice(clients, devicenr, type,

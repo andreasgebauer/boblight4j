@@ -150,7 +150,7 @@ public class TcpServerConfigImpl extends AbstractConfig {
 		LOG.info("built config successfully");
 	}
 
-	public List<Device> buildDeviceConfig(final ClientsHandler clients)
+	public List<Device> buildDeviceConfig(final ClientsHandler<?> clients)
 			throws BoblightConfigurationException, BoblightParseException {
 		final List<Device> devices = new ArrayList<Device>();
 
