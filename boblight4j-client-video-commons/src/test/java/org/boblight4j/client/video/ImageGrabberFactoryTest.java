@@ -6,6 +6,7 @@ import java.util.ServiceLoader;
 
 import org.boblight4j.client.Client;
 import org.boblight4j.client.grabber.Grabber;
+import org.boblight4j.exception.BoblightRuntimeException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -69,8 +70,34 @@ public class ImageGrabberFactoryTest {
 	}
 
 	@Test
+	public void testGetImageGrabberReturnNoGrabber() {
+		ArrayList<ImageGrabberServiceProvider> serviceProviders = new ArrayList<ImageGrabberServiceProvider>();
+
+		PowerMockito
+				.when(ServiceLoader.load(ImageGrabberServiceProvider.class))
+				.thenReturn(serviceLoader);
+		PowerMockito.when(serviceLoader.iterator()).thenReturn(
+				serviceProviders.iterator());
+
+		thrown.expect(BoblightRuntimeException.class);
+
+		testable.getImageGrabber(null, false, 0, 0);
+	}
+
+	@Test
 	public void testGetImageGrabberThrowsException() {
-		thrown.expect(RuntimeException.class);
+		ArrayList<ImageGrabberServiceProvider> serviceProviders = new ArrayList<ImageGrabberServiceProvider>();
+		ImageGrabberServiceProvider serviceProvider = Mockito
+				.mock(ImageGrabberServiceProvider.class);
+		serviceProviders.add(serviceProvider);
+
+		PowerMockito
+				.when(ServiceLoader.load(ImageGrabberServiceProvider.class))
+				.thenReturn(serviceLoader);
+		PowerMockito.when(serviceLoader.iterator()).thenReturn(
+				serviceProviders.iterator());
+
+		thrown.expect(BoblightRuntimeException.class);
 
 		testable.getImageGrabber(null, false, 0, 0);
 	}
