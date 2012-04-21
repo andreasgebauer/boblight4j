@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.boblight</groupId>
 	<artifactId>boblight4j</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<packaging>pom</packaging>
 
 	<name>Boblight4J Parent</name>
@@ -19,8 +18,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/trunk/</developerConnection>
-		<connection>http://boblight4j.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/tags/boblight4j-0.0.2</developerConnection>
+		<connection>http://boblight4j.googlecode.com/svn/tags/boblight4j-0.0.2</connection>
 	</scm>
 
 	<modules>
@@ -233,7 +232,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
