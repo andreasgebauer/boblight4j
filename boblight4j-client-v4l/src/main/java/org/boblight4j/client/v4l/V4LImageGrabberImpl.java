@@ -40,13 +40,13 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 
 	private final boolean blackBarDetection = true;
 
-	private BoblightException error;
+//	private BoblightException error;
 
 	private FrameGrabber fg;
 
 	private FlagManagerV4l flagManager;
 
-	private boolean needsScale;
+//	private boolean needsScale;
 
 	private boolean stop;
 
@@ -131,8 +131,8 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			throw new BoblightException(e);
 		}
 
-		this.needsScale = this.fg.getWidth() != this.flagManager.width
-				|| this.fg.getHeight() != this.flagManager.height;
+//		this.needsScale = this.fg.getWidth() != this.flagManager.width
+//				|| this.fg.getHeight() != this.flagManager.height;
 
 		this.getClient().setScanRange(this.flagManager.width,
 				this.flagManager.height);
@@ -200,7 +200,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 			this.getClient().sendRgb(false, null);
 		} catch (final Exception e) {
 			LOG.error("", e);
-			this.error = new BoblightException(e);
+//			this.error = new BoblightException(e);
 			// stop = true;
 		}
 		frame.recycle();

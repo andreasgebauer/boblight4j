@@ -3,7 +3,7 @@ package org.boblight4j.client;
 import java.util.List;
 
 import org.boblight4j.cli.BooleanOptionHandler;
-import org.boblight4j.cli.CustomOptionHandler;
+import org.boblight4j.cli.BoblightOptionHandler;
 import org.boblight4j.cli.DefaultArgs;
 import org.boblight4j.cli.PriorityOptionHandler;
 import org.boblight4j.cli.ServerOptionHandler;
@@ -28,6 +28,8 @@ public class CommandLineArgs {
 				try {
 					this.port = Integer.valueOf(server);
 				} catch (final NumberFormatException nfe) {
+					throw new BoblightRuntimeException("Wrong option " + server
+							+ " for argument -s");
 				}
 
 				if (this.port != -1 && this.port < 0 || this.port > 65535) {
@@ -50,10 +52,10 @@ public class CommandLineArgs {
 	@Option(name = "-l", usage = "list libboblight options")
 	private boolean printBoblightOptions;
 
-	@Option(name = "-o", handler = CustomOptionHandler.class, usage = "add libboblight option, syntax: [light:]option=value")
+	@Option(name = "-o", handler = BoblightOptionHandler.class, usage = "add libboblight option, syntax: [light:]option=value")
 	private List<String> options;
 
-	@Option(name = "-p", metaVar = "priority", usage = "from 0 to 255, default is 128", handler=PriorityOptionHandler.class)
+	@Option(name = "-p", metaVar = "priority", usage = "from 0 to 255, default is 128", handler = PriorityOptionHandler.class)
 	private int priority = DefaultArgs.PRIORITY;
 
 	@Option(name = "-s", metaVar = "address:[port]", usage = "set the address and optional port to connect to", handler = ServerOptionHandler.class)

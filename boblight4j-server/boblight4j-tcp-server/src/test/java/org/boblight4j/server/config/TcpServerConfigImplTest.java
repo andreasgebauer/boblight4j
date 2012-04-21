@@ -10,7 +10,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightException;
@@ -23,7 +22,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.powermock.reflect.internal.WhiteboxImpl;
@@ -59,13 +57,20 @@ public class TcpServerConfigImplTest {
 		final List<Device> devices = new ArrayList<Device>();
 		final List<Light> lights = new ArrayList<Light>();
 
+		final String hostname = "localhost";
+		testable.globalConfigLines.add(new ConfigLine("interface " + hostname,
+				1));
+		testable.globalConfigLines.add(new ConfigLine("port 19333", 1));
+
 		this.testable.buildConfig(this.clientsHandler, devices, lights);
 
 		verify(this.clientsHandler).setInterface(
 				argThat(new ArgumentMatcher<InetAddress>() {
 					@Override
 					public boolean matches(Object item) {
-						if (item == null)
+						if (item instanceof InetAddress
+								&& ((InetAddress) item).getHostName().equals(
+										hostname))
 							return true;
 						return false;
 					}

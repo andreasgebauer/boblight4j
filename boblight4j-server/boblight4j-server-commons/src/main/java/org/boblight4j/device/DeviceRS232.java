@@ -28,7 +28,6 @@ public class DeviceRS232 extends AbstractDevice {
 
 	public DeviceRS232(final ClientsHandler<?> clients) {
 		super(clients);
-		this.setType(DeviceType.NOTHING);
 		// default is 8 bit
 		this.bits = 8;
 		this.protocol = new Protocol();

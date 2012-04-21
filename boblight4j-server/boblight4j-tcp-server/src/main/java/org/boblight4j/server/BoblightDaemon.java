@@ -33,10 +33,10 @@ public class BoblightDaemon {
 	 */
 	public static class ServerArgs {
 
-		@Option(name = "-c")
+		@Option(name = "-c", usage = "The config file")
 		private File configFile = new File(DEFAULTCONF);
 
-		@Option(name = "-h")
+		@Option(name = "-h", usage = "Print this help message")
 		private boolean help;
 
 	}
@@ -57,10 +57,12 @@ public class BoblightDaemon {
 	 *            the program arguments
 	 */
 	public static void main(final String[] args) {
+		BoblightDaemon boblightDaemon = new BoblightDaemon();
 		try {
-			new BoblightDaemon().init(args);
+			boblightDaemon.init(args);
 		} catch (final Exception e) {
 			LOG.error("Fatal error occurred", e);
+			boblightDaemon.printHelpMessage();
 			System.exit(1);
 		}
 		System.exit(0);
@@ -76,14 +78,9 @@ public class BoblightDaemon {
 	 */
 	private void init(final String[] args) throws IOException,
 			BoblightException {
-		try {
-			this.args = this.parseFlags(args);
-			if (this.args.help) {
-				throw new BoblightException("help");
-			}
-		} catch (final BoblightException e1) {
-			this.printHelpMessage();
-			System.exit(1);
+		this.args = this.parseFlags(args);
+		if (this.args.help) {
+			throw new BoblightException("help");
 		}
 
 		// init our logfile
@@ -173,7 +170,8 @@ public class BoblightDaemon {
 	}
 
 	private void printHelpMessage() {
-		// TODO: print help message
+		final ServerArgs argsBean = new ServerArgs();
+		new CmdLineParser(argsBean).printUsage(System.out);
 	}
 
 	protected void shutdown() {

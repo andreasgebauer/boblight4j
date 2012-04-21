@@ -68,7 +68,6 @@ public abstract class AbstractDevice implements Device, Runnable {
 	private String output;
 	private int rate;
 	private boolean stop;
-	private DeviceType type;
 
 	private float singleChange;
 
@@ -150,10 +149,6 @@ public abstract class AbstractDevice implements Device, Runnable {
 
 	public void setRate(final int rate) {
 		this.rate = rate;
-	}
-
-	public void setType(final DeviceType momo) {
-		this.type = momo;
 	}
 
 	public void addChannel(final Channel channel) {

@@ -46,15 +46,12 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		this.setDeviceBits(deviceRS232, configGroup);
 
 		if (type.equals("momo")) {
-			deviceRS232.setType(DeviceType.MOMO);
 			this.setDevicePrefix(deviceRS232, configGroup);
 			this.setDevicePostfix(deviceRS232, configGroup);
 			this.setDeviceEscapeFlag(deviceRS232, configGroup);
 			deviceRS232.getProtocol().checkValid();
 		} else if (type.equals("atmo")) {
-			deviceRS232.setType(DeviceType.ATMO);
 		} else if (type.equals("karate")) {
-			deviceRS232.setType(DeviceType.KARATE);
 		}
 
 		return deviceRS232;

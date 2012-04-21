@@ -17,7 +17,6 @@ import org.boblight4j.server.config.Device;
 import org.boblight4j.server.config.Light;
 import org.boblight4j.utils.MessageQueue;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 

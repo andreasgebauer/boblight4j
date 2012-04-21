@@ -26,20 +26,26 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 		@Option(name = "-w", usage = "widthxheight of the captured image, example: -w 400x300")
 		private String sscanf;
 
-		@Option(name = "-v", usage = "video standard")
-		private String standard;
+		// @Option(name = "-v", usage = "video standard")
+		// private String standard;
 
-		@Option(name = "-i", usage = "video input number")
-		private int channel = -1;
+		// @Option(name = "-i", usage = "video input number")
+		// private int channel = -1;
 
 		@Option(name = "-d", metaVar = "debug", usage = "debug mode")
 		private boolean debug;
 
-		@Option(name = "-n", usage = "only turn on boblight client when there's a video signal")
-		private boolean checkSignal;
+		public boolean isDebug() {
+			return this.debug;
+		}
 
-		@Option(name = "-e", usage = "use custom codec, default is video4linux2 or video4linux")
-		private String customCodec;
+		// @Option(name = "-n", usage =
+		// "only turn on boblight client when there's a video signal")
+		// private boolean checkSignal;
+
+		// @Option(name = "-e", usage =
+		// "use custom codec, default is video4linux2 or video4linux")
+		// private String customCodec;
 	}
 
 	private int channel;
@@ -86,27 +92,21 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 
 		this.device = argv.device;
 
-		if (argv.sscanf != null)
-		{
+		if (argv.sscanf != null) {
 			Object[] sscanf;
-			try
-			{
+			try {
 				sscanf = StdIO.sscanf(argv.sscanf, "%ix%i");
 
-				if (sscanf.length != 2)
-				{
+				if (sscanf.length != 2) {
 					this.width = (Integer) sscanf[0];
 					this.height = (Integer) sscanf[1];
 
-					if (this.width < 1 || this.height < 1)
-					{
+					if (this.width < 1 || this.height < 1) {
 						throw new BoblightRuntimeException("Wrong value "
 								+ argv.sscanf + " for widthxheight");
 					}
 				}
-			}
-			catch (BoblightParseException e)
-			{
+			} catch (BoblightParseException e) {
 				throw new BoblightConfigurationException("", e);
 			}
 		}

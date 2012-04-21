@@ -38,6 +38,14 @@ public abstract class AbstractGrabber implements Grabber {
 	private int nrMeasurements;
 
 	public AbstractGrabber(Client client2, boolean sync, int width, int height) {
+		if (width <= 0) {
+			throw new IllegalArgumentException(
+					"Grab width must be at least 1 pixel long.");
+		}
+		if (height <= 0) {
+			throw new IllegalArgumentException(
+					"Grab height must be at least 1 pixel long.");
+		}
 		this.client = client2;
 		this.sync = sync;
 		this.width = width;

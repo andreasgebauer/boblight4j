@@ -1,8 +1,5 @@
 package org.boblight4j.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
 import org.kohsuke.args4j.CmdLineException;

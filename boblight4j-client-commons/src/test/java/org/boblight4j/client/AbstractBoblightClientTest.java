@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.exception.BoblightRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

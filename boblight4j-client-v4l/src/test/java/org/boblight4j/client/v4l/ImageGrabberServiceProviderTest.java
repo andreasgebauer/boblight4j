@@ -9,8 +9,8 @@ public class ImageGrabberServiceProviderTest {
 
 	@Test
 	public void test() {
-		assertNotNull(new ImageGrabberFactory().getImageGrabber(null, false, 0,
-				0));
+		assertNotNull(new ImageGrabberFactory().getImageGrabber(null, false,
+				100, 80));
 	}
 
 }

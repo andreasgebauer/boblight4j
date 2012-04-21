@@ -74,7 +74,7 @@ final class CaptureRunner implements Runnable {
 				final Runnable command = new DCTRunnable(samples, this.boblight);
 				final Future<?> submit = this.executor.submit(command);
 
-				final boolean done = submit.isDone();
+				submit.isDone();
 			}
 		}
 	}

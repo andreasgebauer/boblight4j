@@ -7,9 +7,9 @@ import org.kohsuke.args4j.spi.OptionHandler;
 import org.kohsuke.args4j.spi.Parameters;
 import org.kohsuke.args4j.spi.Setter;
 
-public class CustomOptionHandler extends OptionHandler<String> {
+public class BoblightOptionHandler extends OptionHandler<String> {
 
-	public CustomOptionHandler(CmdLineParser parser, OptionDef option,
+	public BoblightOptionHandler(CmdLineParser parser, OptionDef option,
 			Setter<String> setter) {
 		super(parser, option, setter);
 	}

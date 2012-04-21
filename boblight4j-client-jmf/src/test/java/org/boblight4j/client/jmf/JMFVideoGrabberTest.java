@@ -9,7 +9,7 @@ public class JMFVideoGrabberTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.testable = new JMFVideoGrabber(null, false, 0, 0);
+		this.testable = new JMFVideoGrabber(null, false, 100, 80);
 	}
 
 	@Test

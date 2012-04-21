@@ -50,7 +50,7 @@ public class AbstractSmartActiveGrabberTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.grabber = new AbstractSmartActiveGrabberImpl(null, false, 0, 0);
+		this.grabber = new AbstractSmartActiveGrabberImpl(null, false, 100, 80);
 	}
 
 	@Test

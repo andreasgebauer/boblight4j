@@ -1,9 +1,6 @@
 package org.boblight4j.server;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 

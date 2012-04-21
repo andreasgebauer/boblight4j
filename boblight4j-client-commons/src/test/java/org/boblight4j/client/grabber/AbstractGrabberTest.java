@@ -1,73 +1,50 @@
 package org.boblight4j.client.grabber;
 
-import static org.mockito.Mockito.doAnswer;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.util.Random;
+import java.awt.Canvas;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.font.GraphicAttribute;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.WritableRaster;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.reflect.Whitebox;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ AbstractGrabber.class })
 public class AbstractGrabberTest {
 
-	private static final int SCREEN_WIDTH_MIN = 320;
-	private static final int SCREEN_WIDTH_MAX = 1920;
-
-	private static final int SCREEN_HEIGHT_MIN = 240;
-	private static final int SCREEN_HEIGHT_MAX = 1080;
-
-	private AbstractActiveGrabber testable;
-
-	private ClientImpl client;
+	private AbstractGrabber testable;
+	private Graphics canvasGraphics;
+	private WritableRaster debugImgRaster;
+	private int grabWidth;
+	private int grabHeight;
 
 	@Before
 	public void setUp() throws Exception {
-		client = mock(ClientImpl.class);
-	}
+		grabWidth = 100;
+		grabHeight = 80;
 
-	/**
-	 * Tests whether 
-	 * 
-	 * @throws IOException
-	 * @throws BoblightException
-	 */
-	@Test
-	public void testGrabPixelAt() throws IOException, BoblightException {
-		final Random random = new Random();
-		final int scrWidth = SCREEN_WIDTH_MIN
-				+ random.nextInt(SCREEN_WIDTH_MAX - SCREEN_WIDTH_MIN);
-		final int scrHeight = SCREEN_HEIGHT_MIN
-				+ random.nextInt(SCREEN_HEIGHT_MAX - SCREEN_HEIGHT_MIN);
-
-		testable = spy(new AbstractActiveGrabber(client, false, 0, 0) {
-
-			@Override
-			public int[] grabPixelAt(int xpos, int ypos) {
-				return null;
-			}
-
-			@Override
-			protected void updateDimensions() {
-			}
-
-			@Override
-			protected int getScreenWidth() {
-				return scrWidth;
-			}
-
-			@Override
-			protected int getScreenHeight() {
-				return scrHeight;
-			}
+		testable = new AbstractGrabber(mock(Client.class), false, grabWidth,
+				grabHeight) {
 
 			@Override
 			public void setup(FlagManager flagManager) throws BoblightException {
@@ -76,39 +53,57 @@ public class AbstractGrabberTest {
 			@Override
 			public void cleanup() {
 			}
-		});
+		};
 
-		int size = 2 + random.nextInt(64 - 2);
-		Whitebox.setInternalState(testable, "width", size);
-		Whitebox.setInternalState(testable, "height", size);
+		BufferedImage image = mock(BufferedImage.class);
+		PowerMockito.whenNew(BufferedImage.class)
+				.withArguments(anyInt(), anyInt(), anyInt()).thenReturn(image);
+		debugImgRaster = mock(WritableRaster.class);
+		when(image.getRaster()).thenReturn(debugImgRaster);
 
-		// stop after first cycle
-		doAnswer(new Answer<Object>() {
+		Frame frame = mock(Frame.class);
+		PowerMockito.whenNew(Frame.class).withNoArguments().thenReturn(frame);
 
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				Whitebox.setInternalState(testable, "stop", true);
-				return null;
-			}
-		}).when(client).sendRgb(false, null);
+		Canvas canvas = mock(Canvas.class);
+		PowerMockito.whenNew(Canvas.class).withNoArguments().thenReturn(canvas);
 
-		System.out.println("Starting test method.");
+		when(frame.getComponents()).thenReturn(new Component[] { canvas });
+		canvasGraphics = mock(Graphics.class);
+		when(canvas.getGraphics()).thenReturn(canvasGraphics);
+	}
 
-		testable.run();
+	@Test
+	public void testSetupDebug() throws Exception {
+		testable.setupDebug();
 
-		double cellWidth = (double) scrWidth / (double) size;
-		double cellHeight = (double) scrHeight / size;
+		PowerMockito.verifyNew(Canvas.class).withNoArguments();
+		PowerMockito.verifyNew(Frame.class).withNoArguments();
+		PowerMockito.verifyNew(BufferedImage.class).withArguments(
+				eq(grabWidth), eq(grabHeight), anyInt());
+	}
 
-		System.out.println("Starting verification.");
-		// TODO speed-up!: verification takes long
-		for (int width = 0; width < size; width++) {
-			for (int height = 0; height < size; height++) {
-				final int xpos = (int) (cellWidth / 2 + cellWidth * width);
-				final int ypos = (int) (cellHeight / 2 + cellHeight * height);
+	@Test
+	public void testSetDebugPixel() {
+		testable.setupDebug();
 
-				verify(testable).grabPixelAt(xpos, ypos);
-			}
-		}
+		testable.setDebugPixel(0, 0, new int[] { 0, 0, 0 });
+	}
+
+	@Test
+	public void testDrawDebugImage() {
+		testable.setupDebug();
+
+		testable.drawDebugImage();
+
+		verify(canvasGraphics).drawImage(any(BufferedImage.class), eq(0),
+				eq(0), eq(200), eq(200), any(ImageObserver.class));
+	}
+
+	@Test
+	public void testUpdateDebugFps() {
+		testable.setupDebug();
+
+		testable.updateDebugFps();
 	}
 
 }
