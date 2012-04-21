@@ -125,13 +125,12 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 		}
 
 		try {
-			this.fg = this.vd.getRawFrameGrabber(64, 64,
-					this.flagManager.getChannel(), 1);
+			this.fg = this.vd.getRawFrameGrabber(this.flagManager.width,
+					this.flagManager.height, this.flagManager.getChannel(), 1);
 		} catch (final V4L4JException e) {
 			throw new BoblightException(e);
 		}
 
-		// check if we need to scale with libswscale
 		this.needsScale = this.fg.getWidth() != this.flagManager.width
 				|| this.fg.getHeight() != this.flagManager.height;
 

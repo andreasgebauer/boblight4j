@@ -74,6 +74,13 @@ class FlagManagerV4l extends AbstractFlagManager<V4lArgs> {
 	}
 
 	@Override
+	public V4lArgs parseFlags(String[] args)
+			throws BoblightConfigurationException {
+		// TODO Auto-generated method stub
+		return super.parseFlags(args);
+	}
+
+	@Override
 	protected void parseFlagsExtended(final V4lArgs argv)
 			throws BoblightConfigurationException {
 

@@ -52,9 +52,10 @@ public class BoblightV4l extends AbstractBoblightClient {
 		while (!this.stop) {
 			// init boblight
 			// void* boblight = boblight_init();
-			final ClientImpl boblight = new ClientImpl();
+			final ClientImpl client = new ClientImpl();
 
-			if (!this.trySetup(boblight)) {
+			if (!this.trySetup(client)) {
+				LOG.warn("Setup failed. Retrying ...");
 				continue;
 			}
 
@@ -63,7 +64,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 			// if we can't parse the boblight option lines (given with -o)
 			// properly, just exit
 			try {
-				flagManager.parseBoblightOptions(boblight);
+				flagManager.parseBoblightOptions(client);
 			} catch (final Exception error) {
 				LOG.error("Error parsing boblight options", error);
 				return 1;
@@ -71,7 +72,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 
 			// set up videograbber
 			final Grabber grabber = new ImageGrabberFactory().getImageGrabber(
-					boblight, true, this.flagManager.width,
+					client, true, this.flagManager.width,
 					this.flagManager.height);
 			try {
 				grabber.setup(flagManager);
@@ -89,7 +90,7 @@ public class BoblightV4l extends AbstractBoblightClient {
 				} catch (final InterruptedException e) {
 					LOG.warn("Error during call of Thread.sleep().", e);
 				}
-				boblight.destroy();
+				client.destroy();
 				continue;
 			}
 
@@ -102,18 +103,17 @@ public class BoblightV4l extends AbstractBoblightClient {
 				} catch (final Exception error) {
 					LOG.error("Fatal error occurred", error);
 					grabber.cleanup();
-					boblight.destroy();
+					client.destroy();
 					return 1;
 				}
 
 				grabber.cleanup();
 
-				boblight.destroy();
+				client.destroy();
 			}
 
 		}
 
-		LOG.info("Exiting\n");
 		return 0;
 	}
 

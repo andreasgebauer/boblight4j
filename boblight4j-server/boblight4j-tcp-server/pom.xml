@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>boblight4j-server</artifactId>
@@ -10,7 +11,7 @@
 	<artifactId>boblight4j-tcp-server</artifactId>
 
 	<name>Boblight4J TCP Server</name>
-	
+
 	<properties>
 		<mainClass>org.boblight4j.server.BoblightDaemon</mainClass>
 	</properties>
@@ -20,19 +21,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>boblight4j-server-commons</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gnu.io</groupId>
-			<artifactId>rxtx-comm</artifactId>
-			<version>2.2pre2</version>
-		</dependency>
-		<dependency>
-			<groupId>gnu.io</groupId>
-			<artifactId>rxtx-comm-native</artifactId>
-			<classifier>${nativeclassifier}</classifier>
-			<version>2.2pre2</version>
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>args4j</groupId>
@@ -100,7 +88,8 @@
 						<configuration>
 							<!-- put your configurations here -->
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>${mainClass}</mainClass>
 								</transformer>
 							</transformers>

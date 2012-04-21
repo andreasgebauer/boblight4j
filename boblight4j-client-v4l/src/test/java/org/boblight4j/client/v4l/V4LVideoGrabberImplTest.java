@@ -1,96 +1,92 @@
 package org.boblight4j.client.v4l;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.util.Hashtable;
 
 import org.boblight4j.client.ClientImpl;
 import org.boblight4j.exception.BoblightException;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.PrepareOnlyThisForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.internal.WhiteboxImpl;
+import org.powermock.reflect.Whitebox;
 
+import au.edu.jcu.v4l4j.FrameGrabber;
 import au.edu.jcu.v4l4j.RawFrameGrabber;
+import au.edu.jcu.v4l4j.RawFrameGrabberExt;
+import au.edu.jcu.v4l4j.V4L4JRaster;
 import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.VideoFrame;
+import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = { V4LImageGrabberImpl.class, VideoDevice.class,
-		RawFrameGrabber.class })
-@PrepareOnlyThisForTest(fullyQualifiedNames = { "au.edu.jcu.v4l4j.AbstractGrabber" })
-@SuppressStaticInitializationFor({ "au.edu.jcu.v4l4j.VideoDevice" })
-// TODO make fit for test
-@Ignore
+@PrepareForTest({ V4LImageGrabberImpl.class, VideoDevice.class,
+		RawFrameGrabber.class, V4L4JRaster.class })
+@SuppressStaticInitializationFor({ "au.edu.jcu.v4l4j.VideoDevice",
+		"au.edu.jcu.v4l4j.AbstractGrabber" })
 public class V4LVideoGrabberImplTest {
 
 	private static V4LImageGrabberImpl testable;
 
 	private static ClientImpl client;
+	private static RawFrameGrabber grabber;
+
+	private static int width = 32;
+
+	private static int height = 24;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+
 		client = mock(ClientImpl.class);
 
-		testable = new V4LImageGrabberImpl(client, false, 0, 0);
-	}
-
-	@Mock
-	private FlagManagerV4l flagManager;
-
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
+		testable = new V4LImageGrabberImpl(client, false, width, height);
 
 		final VideoDevice vd = Mockito.mock(VideoDevice.class);
 		PowerMockito.whenNew(VideoDevice.class)
 				.withParameterTypes(String.class)
 				.withArguments(Matchers.anyString()).thenReturn(vd);
 
-		final RawFrameGrabber fg = PowerMockito.mock(RawFrameGrabber.class);
-
-		// PowerMockito
-		// .whenNew(RawFrameGrabber.class)
-		// .withParameterTypes(DeviceInfo.class, long.class, int.class,
-		// int.class, int.class, int.class, Tuner.class,
-		// ImageFormat.class)
-		// .withArguments(Matchers.any(DeviceInfo.class),
-		// Matchers.anyLong(), Matchers.anyInt(),
-		// Matchers.anyInt(), Matchers.anyInt(),
-		// Matchers.anyInt(), Matchers.any(Tuner.class),
-		// Matchers.any(ImageFormat.class)).thenReturn(fg);
+		grabber = PowerMockito.mock(RawFrameGrabberExt.class);
 
 		PowerMockito.when(
 				vd.getRawFrameGrabber(Matchers.anyInt(), Matchers.anyInt(),
-						Matchers.anyInt(), Matchers.anyInt())).thenReturn(fg);
+						Matchers.anyInt(), Matchers.anyInt())).thenReturn(
+				grabber);
 
-		final int width = 64;
-
-		PowerMockito
-				.doReturn(width)
-				.when(fg,
-						WhiteboxImpl.getMethod(RawFrameGrabber.class,
-								"getWidth")).withNoArguments();
-
-		// PowerMockito.when(fg.getWidth()).thenReturn(width);
-		// PowerMockito.when(fg.getHeight()).thenReturn(width);
-
-		this.flagManager.device = "/dev/video1";
 	}
 
 	@Test
-	public void testNextFrame() {
+	public void testSetup() throws BoblightException, V4L4JException {
+		FlagManagerV4l flagManager = mock(FlagManagerV4l.class);
+		flagManager.device = "/dev/video1";
+
+		testable.setup(flagManager);
+
+		Mockito.verify(grabber).startCapture();
+	}
+
+	@Test
+	public void testNextFrame() throws Exception {
 		final VideoFrame frame = Mockito.mock(VideoFrame.class);
 		Mockito.when(frame.getCaptureTime()).thenAnswer(new Answer<Long>() {
 
@@ -101,12 +97,27 @@ public class V4LVideoGrabberImplTest {
 			}
 		});
 
+		FrameGrabber frameGrabber = Mockito.mock(FrameGrabber.class);
+		when(frameGrabber.getWidth()).thenReturn(320);
+		when(frameGrabber.getHeight()).thenReturn(240);
+		Whitebox.setInternalState(testable, FrameGrabber.class, frameGrabber);
+
+		V4L4JRaster raster = mock(V4L4JRaster.class);
+		PowerMockito
+				.whenNew(V4L4JRaster.class)
+				.withParameterTypes(SampleModel.class, DataBuffer.class,
+						Point.class).withArguments(any(), any(), any())
+				.thenReturn(raster);
+		BufferedImage image = mock(BufferedImage.class);
+		PowerMockito
+				.whenNew(BufferedImage.class)
+				.withParameterTypes(ColorModel.class, WritableRaster.class,
+						boolean.class, Hashtable.class)
+				.withArguments(any(), any(), any(), any()).thenReturn(image);
+
 		testable.nextFrame(frame);
-	}
 
-	@Test
-	public void testSetup() throws BoblightException {
-		testable.setup(this.flagManager);
+		verify(client, times(width * height)).addPixel(anyInt(), anyInt(),
+				any(int[].class));
 	}
-
 }
