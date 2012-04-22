@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="${project.build.finalName}" name="Boblight4J X11 client service"
+<addon id="${addonName}" name="Boblight4J X11 client service"
 	version="${project.version}" provider-name="agebauer">
 	<requires>
 		<import addon="xbmc.python" version="1.0" />
