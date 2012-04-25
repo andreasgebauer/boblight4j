@@ -1,9 +1,10 @@
 package org.boblight4j.client.v4l;
 
-
-import org.boblight4j.client.AbstractBoblightClient;
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.AbstractRemoteBoblightClient;
+import org.boblight4j.client.Client;
 import org.boblight4j.client.FlagManager;
+import org.boblight4j.client.LightsHolderImpl;
+import org.boblight4j.client.SocketClientImpl;
 import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.client.video.ImageGrabberFactory;
@@ -17,11 +18,12 @@ import org.slf4j.LoggerFactory;
  * @author agebauer
  * 
  */
-public class BoblightV4l extends AbstractBoblightClient {
+public class BoblightV4l extends AbstractRemoteBoblightClient {
 
 	private static final int SLEEP_AFTER_ERROR = 5000;
 
-	private static final Logger LOG = LoggerFactory.getLogger(BoblightV4l.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BoblightV4l.class);
 
 	private FlagManagerV4l flagManager;
 
@@ -52,7 +54,8 @@ public class BoblightV4l extends AbstractBoblightClient {
 		while (!this.stop) {
 			// init boblight
 			// void* boblight = boblight_init();
-			final ClientImpl client = new ClientImpl();
+			final Client client = new SocketClientImpl(
+					new LightsHolderImpl());
 
 			if (!this.trySetup(client)) {
 				LOG.warn("Setup failed. Retrying ...");

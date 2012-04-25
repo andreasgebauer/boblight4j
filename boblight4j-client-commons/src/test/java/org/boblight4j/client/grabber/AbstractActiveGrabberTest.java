@@ -4,11 +4,13 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Random;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.LightsHolder;
+import org.boblight4j.client.SocketClientImpl;
 import org.boblight4j.client.FlagManager;
 import org.boblight4j.exception.BoblightException;
 import org.junit.Before;
@@ -27,11 +29,12 @@ public class AbstractActiveGrabberTest {
 
 	private AbstractActiveGrabber testable;
 
-	private ClientImpl client;
+	private SocketClientImpl client;
 
 	@Before
 	public void setUp() throws Exception {
-		client = mock(ClientImpl.class);
+		client = mock(SocketClientImpl.class);
+		when(client.getLightsHolder()).thenReturn(mock(LightsHolder.class));
 	}
 
 	/**

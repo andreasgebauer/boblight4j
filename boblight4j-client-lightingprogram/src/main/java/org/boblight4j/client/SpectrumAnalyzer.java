@@ -9,7 +9,7 @@ import javax.sound.sampled.TargetDataLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SpectrumAnalyzer extends AbstractBoblightClient {
+public class SpectrumAnalyzer extends AbstractRemoteBoblightClient {
 
 	static final Logger LOG = LoggerFactory.getLogger(SpectrumAnalyzer.class);
 
@@ -24,8 +24,7 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 	}
 
 	private void captureAudio(final Client boblight) {
-		try
-		{
+		try {
 			final AudioFormat format = this.getFormat();
 			final DataLine.Info info = new DataLine.Info(TargetDataLine.class,
 					format);
@@ -37,9 +36,7 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 			final Runnable runner = new CaptureRunner(line, format, boblight);
 			final Thread captureThread = new Thread(runner);
 			captureThread.start();
-		}
-		catch (final LineUnavailableException e)
-		{
+		} catch (final LineUnavailableException e) {
 			LOG.error("Line unavailable.", e);
 		}
 	}
@@ -57,9 +54,9 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 	@Override
 	protected int run() {
 
-		final ClientImpl boblight = new ClientImpl();
-		if (!this.trySetup(boblight))
-		{
+		final AbstractRemoteClient boblight = new SocketClientImpl(
+				new LightsHolderImpl());
+		if (!this.trySetup(boblight)) {
 			return 1;
 		}
 
@@ -95,8 +92,7 @@ public class SpectrumAnalyzer extends AbstractBoblightClient {
 
 	@Override
 	protected FlagManager getFlagManager() {
-		if (this.flagManager == null)
-		{
+		if (this.flagManager == null) {
 			this.flagManager = new FlagManagerSpectrumAnalyzer();
 		}
 		return this.flagManager;

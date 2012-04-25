@@ -21,4 +21,5 @@
 			<artifactId>args4j</artifactId>
 		</dependency>
 	</dependencies>
+	<name>Boblight4J Common Client Classes</name>
 </project>

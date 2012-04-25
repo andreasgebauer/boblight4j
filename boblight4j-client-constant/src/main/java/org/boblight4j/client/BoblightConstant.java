@@ -4,12 +4,12 @@ import org.boblight4j.exception.BoblightException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class BoblightConstant extends AbstractBoblightClient {
+public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 	private static final int BYTE_SHIFT = 0xFF;
 
-	private static final Logger LOG = LoggerFactory.getLogger(BoblightConstant.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BoblightConstant.class);
 
 	private FlagManagerConstant flagmanager;
 
@@ -23,12 +23,11 @@ public class BoblightConstant extends AbstractBoblightClient {
 
 	protected final int run() {
 
-		while (!isStop())
-		{
-			ClientImpl boblight = new ClientImpl();
+		while (!isStop()) {
+			SocketClientImpl boblight = new SocketClientImpl(
+					new LightsHolderImpl());
 
-			if (!trySetup(boblight))
-			{
+			if (!trySetup(boblight)) {
 				continue;
 			}
 
@@ -36,33 +35,28 @@ public class BoblightConstant extends AbstractBoblightClient {
 
 			// if we can't parse the boblight option lines (given with -o)
 			// properly, just exit
-			try
-			{
+			try {
 				flagmanager.parseBoblightOptions(boblight);
-			}
-			catch (Exception error)
-			{
+			} catch (Exception error) {
 				LOG.error("", error);
 				return 1;
 			}
 
 			// load the color into int array
-			int rgb[] = new int[] { (flagmanager.getColor() >> 16) & BYTE_SHIFT,
+			int rgb[] = new int[] {
+					(flagmanager.getColor() >> 16) & BYTE_SHIFT,
 					(flagmanager.getColor() >> 8) & BYTE_SHIFT,
 					flagmanager.getColor() & BYTE_SHIFT };
 
-			try
-			{
+			try {
 				// set all lights to the color we want and send it
-				boblight.addPixel(-1, rgb);
+				boblight.getLightsHolder().addPixel(null, rgb);
 
 				// some error happened, probably connection
 				// broken, so bitch and try again
 				boblight.sendRgb(true, null);
 
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 
 				LOG.error(
 						"Exception occured during add pixel or sending rgb values",
@@ -73,25 +67,18 @@ public class BoblightConstant extends AbstractBoblightClient {
 
 			// keep checking the connection to boblightd every 10 seconds, if it
 			// breaks we try to connect again
-			while (!isStop())
-			{
+			while (!isStop()) {
 
-				try
-				{
+				try {
 					boblight.ping(null, true);
-				}
-				catch (BoblightException e)
-				{
+				} catch (BoblightException e) {
 					LOG.error("BoblightException occurred during Ping", e);
 					break;
 				}
 
-				try
-				{
+				try {
 					Thread.sleep(10000);
-				}
-				catch (InterruptedException e)
-				{
+				} catch (InterruptedException e) {
 					LOG.error("", e);
 				}
 			}
@@ -105,8 +92,7 @@ public class BoblightConstant extends AbstractBoblightClient {
 
 	@Override
 	protected FlagManager getFlagManager() {
-		if (this.flagmanager == null)
-		{
+		if (this.flagmanager == null) {
 			this.flagmanager = new FlagManagerConstant();
 		}
 		return this.flagmanager;

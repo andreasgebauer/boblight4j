@@ -25,5 +25,6 @@ VALUE=`grep id=\"value\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,
 OPTS="-o speed="$SPEED" -o interpolation="$INTERPOLATION" -o threshold="$THRESHOLD" -o saturation="$SATURATION" -o value="$VALUE
 ARGS="-u "$PIXELS" -x "$OPTS
 
-echo "Starting ${processName} with options "$ARGS
-$JAVA -jar $JAR $ARGS
+CMD="$JAVA -jar $JAR $ARGS"
+echo "Starting boblight4j-client-X11 with options $CMD"
+$CMD

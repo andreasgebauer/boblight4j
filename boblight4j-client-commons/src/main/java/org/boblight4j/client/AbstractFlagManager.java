@@ -67,10 +67,9 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 
 		for (int i = 0; i < this.args.getOptions().size(); i++) {
 			String option = this.args.getOptions().get(i);
-			String lightname;
+			String lightname = null;
 			String optionname;
 			String optionvalue;
-			int lightnr = -1;
 
 			// check if we have a light name, otherwise we use all lights
 			final int indexOfColon = option.indexOf(':');
@@ -85,19 +84,13 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 				option = option.substring(indexOfColon + 1);
 
 				// check which light this is
-				boolean lightfound = false;
-				for (int j = 0; j < client.getNrLights(); j++) {
-					if (lightname.equals(client.getLightName(j))) {
-						lightfound = true;
-						lightnr = j;
-						break;
-					}
-				}
-				if (!lightfound) {
+				try {
+					client.getLightsHolder().checkLightExists(lightname);
+				} catch (BoblightException e) {
 					throw new BoblightException("light \"" + lightname
 							+ "\" used in option \""
 							+ this.args.getOptions().get(i)
-							+ "\" doesn't exist");
+							+ "\" doesn't exist", e);
 				}
 			}
 
@@ -118,7 +111,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 			option = optionname + " " + optionvalue;
 
 			// bitch if we can't set this option
-			client.setOption(lightnr, option);
+			client.setOption(lightname, option);
 		}
 	}
 
@@ -139,6 +132,7 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e1) {
+			printHelpMessage();
 			throw new BoblightConfigurationException(
 					"Error parsing program arguments.", e1);
 		}

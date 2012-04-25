@@ -64,7 +64,6 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
-							<createSourcesJar>true</createSourcesJar>
 							<artifactSet>
 								<excludes>
 									<exclude>*:*:${nativeclassifier}</exclude>

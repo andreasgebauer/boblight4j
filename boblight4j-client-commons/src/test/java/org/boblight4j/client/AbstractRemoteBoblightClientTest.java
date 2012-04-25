@@ -23,28 +23,29 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Tests {@link AbstractBoblightClient}.
+ * Tests {@link AbstractRemoteBoblightClient}.
  * 
  * @author agebauer
  * 
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AbstractBoblightClient.class, System.class, Thread.class })
-public class AbstractBoblightClientTest {
+@PrepareForTest({ AbstractRemoteBoblightClient.class, System.class,
+		Thread.class })
+public class AbstractRemoteBoblightClientTest {
 
 	@Mock
 	private FlagManager flagManager;
 
-	private AbstractBoblightClient testable;
+	private AbstractRemoteBoblightClient testable;
 
 	@Before
 	public void setUp() throws Exception {
 		final String[] args = "".split("\\s");
-		this.testable = new AbstractBoblightClient(args) {
+		this.testable = new AbstractRemoteBoblightClient(args) {
 
 			@Override
 			protected FlagManager getFlagManager() {
-				return AbstractBoblightClientTest.this.flagManager;
+				return AbstractRemoteBoblightClientTest.this.flagManager;
 			}
 
 			@Override
@@ -129,24 +130,10 @@ public class AbstractBoblightClientTest {
 
 	@Test
 	public void testTrySetup() throws BoblightException {
-		Client client = mock(Client.class);
+		RemoteClient client = mock(RemoteClient.class);
 		this.testable.trySetup(client);
 
-		verify(client).connect(null, 0, 5000);
+		verify(client).setup(0);
 	}
 
-	@Test
-	public void testTrySetupCatchingException() throws BoblightException {
-		Client client = mock(Client.class);
-
-		doThrow(new BoblightException("")).when(client).connect(anyString(),
-				anyInt(), anyInt());
-
-		PowerMockito.mockStatic(Thread.class);
-
-		// will do a sleep of 10 secs
-		this.testable.trySetup(client);
-
-		verify(client).connect(null, 0, 5000);
-	}
 }

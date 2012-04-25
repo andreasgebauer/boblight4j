@@ -134,7 +134,7 @@ public class V4LImageGrabberImpl extends AbstractPassiveGrabber implements
 //		this.needsScale = this.fg.getWidth() != this.flagManager.width
 //				|| this.fg.getHeight() != this.flagManager.height;
 
-		this.getClient().setScanRange(this.flagManager.width,
+		this.getClient().getLightsHolder().setScanRange(this.flagManager.width,
 				this.flagManager.height);
 
 		this.fg.setCaptureCallback(this);

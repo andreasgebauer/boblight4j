@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
+import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import org.slf4j.Logger;
@@ -30,8 +31,7 @@ public final class MBeanUtils {
 
 			mbs.registerMBean(bean, objName);
 		} catch (final Exception e) {
-			LOG.error("", e);
+			LOG.error("Unable to register bean with name " + name);
 		}
 	}
-
 }

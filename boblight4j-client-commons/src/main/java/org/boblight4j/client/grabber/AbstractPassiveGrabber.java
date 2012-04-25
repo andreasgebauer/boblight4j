@@ -52,7 +52,7 @@ public abstract class AbstractPassiveGrabber extends AbstractGrabber implements
 				rgb[2] = color.getRed();
 
 				// flip
-				this.getClient().addPixel(this.width - x, y, rgb);
+				this.getClient().getLightsHolder().addPixel(this.width - x, y, rgb);
 
 				// put pixel on debug image
 				if (this.debug) {

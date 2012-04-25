@@ -41,15 +41,14 @@ public class MessageQueue {
 		}
 
 		while (nlpos != -1) {
-			message.message.append(data.substring(0, nlpos) + "\n"); // get the
-																		// string
-			// until
-			// the newline
-			this.messages.add(message); // put the message in the queue
+			// get the string
+			message.message.append(data.substring(0, nlpos));
+			message.message.append('\n');
 
-			// reset the message
-			// message.message = "";
 			message.time = now;
+
+			// put the message in the queue
+			this.messages.add(message);
 
 			// if the newline is at the end of the string, we're done here
 			if (nlpos + 1 >= data.length()) {

@@ -1,25 +1,32 @@
 package org.boblight4j.client.mbean;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.AbstractRemoteClient;
 import org.boblight4j.client.Light;
 
 public class ClientAccessor implements ClientAccessorMBean {
 
-	private final ClientImpl client;
+	private final AbstractRemoteClient client;
 
-	public ClientAccessor(final ClientImpl boblightClient) {
+	public ClientAccessor(final AbstractRemoteClient boblightClient) {
 		this.client = boblightClient;
 	}
 
-	private List<Light> getLights() {
-		return this.client.getLights();
+	private Collection<Light> getLights() {
+		return this.client.getLightsHolder().getLights();
 	}
 
 	@Override
 	public float getSaturation() {
-		return this.getLights().get(0).getSaturation();
+		final Collection<Light> lights = this.getLights();
+		final Iterator<Light> iterator = lights.iterator();
+		if (iterator.hasNext()) {
+			return iterator.next().getSaturation();
+		}
+		return -1;
 	}
 
 	public void setAutoSpeed() {

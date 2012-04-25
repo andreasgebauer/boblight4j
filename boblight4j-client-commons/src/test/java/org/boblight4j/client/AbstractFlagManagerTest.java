@@ -1,7 +1,11 @@
 package org.boblight4j.client;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Collection;
+
 import junit.framework.Assert;
 
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -29,21 +33,23 @@ public class AbstractFlagManagerTest {
 		final Client client = Mockito.mock(Client.class);
 		this.testable.parseBoblightOptions(client);
 
-		Mockito.verify(client).setOption(-1, "saturation 2.0");
+		Mockito.verify(client).setOption(null, "saturation 2.0");
 	}
 
 	@Test
 	public void testParseBoblightOptionsLightSettings()
 			throws BoblightException {
+		final Client client = Mockito.mock(Client.class);
+		final LightsHolder lightsHolder = mock(LightsHolder.class);
 
 		this.testable.parseFlags("-o light1:saturation=2.0".split("\\s"));
 
-		final Client client = Mockito.mock(Client.class);
-		when(client.getNrLights()).thenReturn(1);
-		when(client.getLightName(0)).thenReturn("light1");
+		when(lightsHolder.getLights()).thenReturn(mock(Collection.class));
+		when(client.getLightsHolder()).thenReturn(lightsHolder);
+		when(client.getLightsHolder().getLights().size()).thenReturn(1);
 		this.testable.parseBoblightOptions(client);
 
-		Mockito.verify(client).setOption(0, "saturation 2.0");
+		Mockito.verify(client).setOption("light1", "saturation 2.0");
 	}
 
 	@Test

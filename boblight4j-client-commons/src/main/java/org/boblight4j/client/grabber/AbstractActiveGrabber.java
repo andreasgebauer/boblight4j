@@ -32,7 +32,7 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 	 * Starts the processing.
 	 */
 	public final void run() {
-		this.getClient().setScanRange(this.width, this.height);
+		this.getClient().getLightsHolder().setScanRange(this.width, this.height);
 
 		while (!this.stop)
 		{
@@ -86,7 +86,7 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 				final int rgb[] = this.grabPixelAt(xpos, ypos);
 
 				// add pixel to boblight
-				this.getClient().addPixel(x, y, rgb);
+				this.getClient().getLightsHolder().addPixel(x, y, rgb);
 
 				// put pixel on debug image
 				if (this.debug)

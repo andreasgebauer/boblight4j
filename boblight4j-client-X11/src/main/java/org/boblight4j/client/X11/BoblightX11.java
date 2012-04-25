@@ -1,8 +1,9 @@
 package org.boblight4j.client.X11;
 
 import org.boblight4j.Constants;
-import org.boblight4j.client.AbstractBoblightClient;
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.AbstractRemoteBoblightClient;
+import org.boblight4j.client.LightsHolderImpl;
+import org.boblight4j.client.SocketClientImpl;
 import org.boblight4j.client.grabber.ActiveGrabber;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.exception.BoblightConfigurationException;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author agebauer
  * 
  */
-public class BoblightX11 extends AbstractBoblightClient {
+public class BoblightX11 extends AbstractRemoteBoblightClient {
 
 	public enum RenderMethod {
 		XGETIMAGE, XRENDER
@@ -37,8 +38,7 @@ public class BoblightX11 extends AbstractBoblightClient {
 
 	@Override
 	protected FlagManagerX11 getFlagManager() {
-		if (this.flagmanager == null)
-		{
+		if (this.flagmanager == null) {
 			this.flagmanager = new FlagManagerX11();
 		}
 		return this.flagmanager;
@@ -51,16 +51,12 @@ public class BoblightX11 extends AbstractBoblightClient {
 		int height = this.flagmanager.getPixels();
 
 		// set default pixels
-		if (this.flagmanager.getPixels() == -1)
-		{
+		if (this.flagmanager.getPixels() == -1) {
 			// xgetimage is crap slow so we grab 16x16 pixels
-			if (this.flagmanager.method == RenderMethod.XGETIMAGE)
-			{
+			if (this.flagmanager.method == RenderMethod.XGETIMAGE) {
 				width = 16;
 				height = 16;
-			}
-			else
-			{
+			} else {
 				// xrender is very fast so we scale down the root window
 				// to a 64x64 pixels pixmap
 				width = 64;
@@ -68,11 +64,10 @@ public class BoblightX11 extends AbstractBoblightClient {
 			}
 		}
 
-		while (!this.isStop())
-		{
-			final ClientImpl client = new ClientImpl();
-			try
-			{
+		while (!this.isStop()) {
+			final SocketClientImpl client = new SocketClientImpl(
+					new LightsHolderImpl());
+			try {
 				// init boblight
 				// void* boblight = boblight_init();
 
@@ -85,22 +80,17 @@ public class BoblightX11 extends AbstractBoblightClient {
 						this.flagmanager.getPort(),
 						Constants.CONNECTION_TIMEOUT);
 
-				client.setPriority(this.flagmanager.getPriority());
+				client.sendPriority(this.flagmanager.getPriority());
 
 				// LOG.log(Level.SEVERE, boblight.getError().getMessage(),
 				// boblight.getError());
-			}
-			catch (final BoblightException e)
-			{
+			} catch (final BoblightException e) {
 				LOG.error("Error occurred during connect", e);
 				LOG.info("Waiting 10 seconds before trying again\n");
 				client.destroy();
-				try
-				{
+				try {
 					Thread.sleep(Constants.RETRY_DELAY_ERROR);
-				}
-				catch (final InterruptedException ex)
-				{
+				} catch (final InterruptedException ex) {
 					ex.printStackTrace();
 				}
 				continue;
@@ -109,69 +99,51 @@ public class BoblightX11 extends AbstractBoblightClient {
 			LOG.info("Connection to boblightd opened\n");
 			// if we can't parse the boblight option lines (given with -o)
 			// properly, just exit
-			try
-			{
+			try {
 				this.flagmanager.parseBoblightOptions(client);
-			}
-			catch (final BoblightException error)
-			{
+			} catch (final BoblightException error) {
 				LOG.error("Error parsing boblight4j options.", error);
 				this.flagmanager.printOptions();
 				return 1;
-			}
-			catch (final Exception error)
-			{
+			} catch (final Exception error) {
 				LOG.error("Unexpected Error:", error);
 				return 1;
 			}
 
-			try
-			{
+			try {
 				// set up grabber, based on whether we want to use xrender or
 				// xgetimage
 				Grabber grabber = null;
-				if (this.flagmanager.method == RenderMethod.XGETIMAGE)
-				{
+				if (this.flagmanager.method == RenderMethod.XGETIMAGE) {
 					grabber = new GrabberXGetImage(client,
 							this.flagmanager.isSync(), width, height,
 							this.flagmanager.getInterval());
-				}
-				else if (this.flagmanager.method == RenderMethod.XRENDER)
-				{
+				} else if (this.flagmanager.method == RenderMethod.XRENDER) {
 					grabber = new GrabberXRender(client,
 							this.flagmanager.isSync(), width, height,
 							this.flagmanager.getInterval());
-				}
-				else
-				{
+				} else {
 					throw new BoblightConfigurationException("Grab method "
 							+ this.flagmanager.method + " not supported.");
 				}
 
-				if (this.flagmanager.debug)
-				{
+				if (this.flagmanager.debug) {
 					grabber.setupDebug();
 				}
 
 				grabber.setup(this.flagmanager);
 
-				if (grabber instanceof ActiveGrabber)
-				{
+				if (grabber instanceof ActiveGrabber) {
 					((ActiveGrabber) grabber).run();
 				}
-			}
-			catch (final Exception e)
-			{
+			} catch (final Exception e) {
 				client.destroy();
 				LOG.error(
 						"Exception occured during add pixel or sending rgb values. Trying again in a few seconds.",
 						e);
-				try
-				{
+				try {
 					Thread.sleep(Constants.RETRY_DELAY_ERROR);
-				}
-				catch (final InterruptedException ex)
-				{
+				} catch (final InterruptedException ex) {
 					LOG.error("", ex);
 				}
 				continue;
@@ -179,24 +151,17 @@ public class BoblightX11 extends AbstractBoblightClient {
 
 			// keep checking the connection to boblightd every 10 seconds, if it
 			// breaks we try to connect again
-			while (!this.isStop())
-			{
-				try
-				{
+			while (!this.isStop()) {
+				try {
 					client.ping(null, true);
-				}
-				catch (final BoblightException e)
-				{
+				} catch (final BoblightException e) {
 					LOG.error("BoblightException occurred during Ping", e);
 					break;
 				}
 
-				try
-				{
+				try {
 					Thread.sleep(Constants.RETRY_DELAY_ERROR);
-				}
-				catch (final InterruptedException e)
-				{
+				} catch (final InterruptedException e) {
 					LOG.error("", e);
 				}
 			}

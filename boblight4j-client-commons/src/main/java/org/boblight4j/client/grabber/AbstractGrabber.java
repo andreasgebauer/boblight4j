@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import org.boblight4j.Constants;
 import org.boblight4j.client.Client;
+import org.boblight4j.client.RemoteClient;
 
 /**
  * This is base class for a grabber implementation which grabs pixels from a
@@ -37,7 +38,7 @@ public abstract class AbstractGrabber implements Grabber {
 	private long measurements;
 	private int nrMeasurements;
 
-	public AbstractGrabber(Client client2, boolean sync, int width, int height) {
+	public AbstractGrabber(Client client, boolean sync, int width, int height) {
 		if (width <= 0) {
 			throw new IllegalArgumentException(
 					"Grab width must be at least 1 pixel long.");
@@ -46,7 +47,7 @@ public abstract class AbstractGrabber implements Grabber {
 			throw new IllegalArgumentException(
 					"Grab height must be at least 1 pixel long.");
 		}
-		this.client = client2;
+		this.client = client;
 		this.sync = sync;
 		this.width = width;
 		this.height = height;

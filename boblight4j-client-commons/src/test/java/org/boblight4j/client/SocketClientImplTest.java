@@ -1,14 +1,18 @@
 package org.boblight4j.client;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -27,35 +31,35 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ClientImpl.class, SocketChannel.class })
+@PrepareForTest({ SocketClientImpl.class, SocketChannel.class })
 @PowerMockIgnore("javax.management.*")
-public class ClientImplTest {
+public class SocketClientImplTest {
 
 	private Socket socket;
 	private SocketChannel socketChannel;
-	private ClientImpl testable;
+	private SocketClientImpl testable;
 
 	@Before
 	public void setUp() throws Exception {
-		this.testable = new ClientImpl();
+		this.testable = new SocketClientImpl(new LightsHolderImpl());
+		this.socketChannel = Mockito.mock(SocketChannel.class);
+		Whitebox.setInternalState(this.testable, SocketChannel.class,
+				this.socketChannel);
+		this.socket = Mockito.mock(Socket.class);
+		stubSocketChannel();
 	}
 
 	private void stubSocketChannel() throws IOException {
 		PowerMockito.mockStatic(SocketChannel.class);
-		this.socketChannel = Mockito.mock(SocketChannel.class);
 		Mockito.when(SocketChannel.open()).thenReturn(this.socketChannel);
 		Mockito.when(this.socketChannel.isConnected()).thenReturn(true);
 		Whitebox.setInternalState(this.socketChannel, "open", true);
-		this.socket = Mockito.mock(Socket.class);
 		Mockito.when(this.socketChannel.socket()).thenReturn(this.socket);
-
 	}
 
 	@Test
-	public void testAddPixelIntArrayIntInt() throws BoblightException {
-		@SuppressWarnings("unchecked")
-		final List<Light> lights = Whitebox.getInternalState(this.testable,
-				List.class);
+	public void testAddPixelIntArrayIntInt() throws BoblightException,
+			IOException {
 		final Light light = Mockito.mock(Light.class);
 		Whitebox.setInternalState(light, LightConfigMBean.class,
 				Mockito.mock(LightConfigMBean.class));
@@ -64,33 +68,54 @@ public class ClientImplTest {
 		Mockito.when(light.getHScanScaled()).thenReturn(new int[] { 0, 20 });
 		Mockito.when(light.getVScanScaled()).thenReturn(new int[] { 0, 20 });
 
-		lights.add(light);
+		this.testable.getLightsHolder().addLight(light);
 
-		this.testable.addPixel(0, 0, new int[] { 255, 255, 255 });
+		this.testable.getLightsHolder().addPixel(0, 0,
+				new int[] { 255, 255, 255 });
 
 		Assert.assertEquals(255, light.rgb[0]);
 		Assert.assertEquals(255, light.rgb[1]);
 		Assert.assertEquals(255, light.rgb[2]);
 		Assert.assertEquals(1, light.rgb[3]);
+
+		this.testable.sendRgb(true, null);
+
+		this.testable.getLightsHolder().addPixel(0, 0, new int[] { 0, 0, 0 });
+
+		Assert.assertEquals(0, light.rgb[0]);
+		Assert.assertEquals(0, light.rgb[1]);
+		Assert.assertEquals(0, light.rgb[2]);
+		Assert.assertEquals(1, light.rgb[3]);
+
+		this.testable.getLightsHolder().addPixel(0, 0,
+				new int[] { 128, 128, 128 });
+
+		Assert.assertEquals(128, light.rgb[0]);
+		Assert.assertEquals(128, light.rgb[1]);
+		Assert.assertEquals(128, light.rgb[2]);
+		Assert.assertEquals(2, light.rgb[3]);
 	}
 
 	@Test
-	public void testAddPixelIntIntArray() throws BoblightException {
+	public void testAddPixelIntIntArray() throws BoblightException, IOException {
 		@SuppressWarnings("unchecked")
-		final List<Light> lights = Whitebox.getInternalState(this.testable,
-				List.class);
+		final Map<String, Light> lights = Whitebox.getInternalState(
+				this.testable.getLightsHolder(), Map.class);
 		final Light light = Mockito.mock(Light.class);
 		Whitebox.setInternalState(light, LightConfigMBean.class,
 				Mockito.mock(LightConfigMBean.class));
 		Whitebox.setInternalState(light, int[].class, new int[] { 0, 0, 0, 0 });
-		lights.add(light);
+		lights.put("light1", light);
 
-		this.testable.addPixel(0, new int[] { 255, 255, 255 });
+		this.testable.getLightsHolder().addPixel("light1",
+				new int[] { 255, 255, 255 });
 
 		Assert.assertEquals(255, light.rgb[0]);
 		Assert.assertEquals(255, light.rgb[1]);
 		Assert.assertEquals(255, light.rgb[2]);
 		Assert.assertEquals(1, light.rgb[3]);
+
+		this.testable.sendRgb(true, null);
 	}
 
 	@Test
@@ -114,16 +139,11 @@ public class ClientImplTest {
 					public boolean matches(final Object item) {
 						final ByteBuffer buf = (ByteBuffer) item;
 						final String string = new String(buf.array());
-						if (string.equals("hello\n"))
-						{
+						if (string.equals("hello\n")) {
 							return true;
-						}
-						else if (string.equals("get version\n"))
-						{
+						} else if (string.equals("get version\n")) {
 							return true;
-						}
-						else if (string.equals("get lights\n"))
-						{
+						} else if (string.equals("get lights\n")) {
 							return true;
 						}
 						return false;
@@ -175,7 +195,7 @@ public class ClientImplTest {
 		Whitebox.setInternalState(mock, LightConfigMBean.class,
 				mock(LightConfigMBean.class));
 
-		this.testable.getLights().add(mock);
+		this.testable.getLightsHolder().addLight(mock);
 
 		this.testable.sendRgb(true, null);
 	}
@@ -184,9 +204,9 @@ public class ClientImplTest {
 	public void testSetOption() throws Exception {
 		// setup
 		final Light mock = new Light(Mockito.mock(LightConfigMBean.class));
-		this.testable.getLights().add(mock);
+		this.testable.getLightsHolder().addLight(mock);
 
-		this.testable.setOption(-1, "saturation 2.0");
+		this.testable.setOption(null, "saturation 2.0");
 
 		Assert.assertEquals(2f, mock.getSaturation());
 
@@ -196,10 +216,42 @@ public class ClientImplTest {
 		Whitebox.setInternalState(this.testable, SocketChannel.class,
 				this.socketChannel);
 
-		this.testable.setOption(-1, "interpolation true");
+		this.testable.setOption(null, "interpolation true");
 
 		Mockito.verify(this.socketChannel).write(
 				ByteBuffer.wrap("set light null interpolation true\n"
 						.getBytes()));
 	}
+
+	@Test
+	public void testTrySetup() throws BoblightException,
+			IOException {
+
+		final ByteArrayInputStream hello = new ByteArrayInputStream(
+				"hello\n".getBytes());
+		final ByteArrayInputStream version = new ByteArrayInputStream(
+				"version 5\n".getBytes());
+		final ByteArrayInputStream lights = new ByteArrayInputStream(
+				"lights 1\nlight red scan 66 66 66 66".getBytes());
+		final ByteArrayInputStream light = new ByteArrayInputStream(
+				"light red\nscan 66 66 66 66".getBytes());
+		when(socket.getInputStream()).thenReturn(hello, version, lights, light);
+
+		RemoteClient client = mock(RemoteClient.class);
+
+		doThrow(new BoblightException("")).when(client).connect(anyString(),
+				anyInt(), anyInt());
+
+		PowerMockito.mockStatic(Thread.class);
+
+		// will do a sleep of 10 secs
+		this.testable.setup(0);
+
+		verify(socketChannel).write(ByteBuffer.wrap("hello\n".getBytes()));
+		verify(socketChannel)
+				.write(ByteBuffer.wrap("get version\n".getBytes()));
+		verify(socketChannel).write(ByteBuffer.wrap("get lights\n".getBytes()));
+
+	}
+
 }

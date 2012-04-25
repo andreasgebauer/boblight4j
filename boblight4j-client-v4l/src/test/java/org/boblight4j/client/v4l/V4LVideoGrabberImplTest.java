@@ -15,9 +15,10 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 
-import org.boblight4j.client.ClientImpl;
+import org.boblight4j.client.LightsHolder;
+import org.boblight4j.client.SocketClientImpl;
 import org.boblight4j.exception.BoblightException;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -45,19 +46,23 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 		"au.edu.jcu.v4l4j.AbstractGrabber" })
 public class V4LVideoGrabberImplTest {
 
-	private static V4LImageGrabberImpl testable;
+	private V4LImageGrabberImpl testable;
 
-	private static ClientImpl client;
-	private static RawFrameGrabber grabber;
+	private SocketClientImpl client;
+	private RawFrameGrabber grabber;
 
 	private static int width = 32;
 
 	private static int height = 24;
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
+	private LightsHolder lightsHolder;
 
-		client = mock(ClientImpl.class);
+	@Before
+	public void setUpClass() throws Exception {
+		lightsHolder = mock(LightsHolder.class);
+
+		client = mock(SocketClientImpl.class);
+		when(client.getLightsHolder()).thenReturn(lightsHolder);
 
 		testable = new V4LImageGrabberImpl(client, false, width, height);
 
@@ -117,7 +122,7 @@ public class V4LVideoGrabberImplTest {
 
 		testable.nextFrame(frame);
 
-		verify(client, times(width * height)).addPixel(anyInt(), anyInt(),
-				any(int[].class));
+		verify(lightsHolder, times(width * height)).addPixel(anyInt(),
+				anyInt(), any(int[].class));
 	}
 }

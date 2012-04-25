@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.boblight4j.client.Client;
+import org.boblight4j.client.RemoteClient;
 import org.boblight4j.client.grabber.Grabber;
 import org.boblight4j.exception.BoblightRuntimeException;
 import org.slf4j.Logger;

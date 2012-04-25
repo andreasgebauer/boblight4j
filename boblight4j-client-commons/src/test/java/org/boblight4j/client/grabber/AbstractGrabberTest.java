@@ -1,10 +1,8 @@
 package org.boblight4j.client.grabber;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +11,6 @@ import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.font.GraphicAttribute;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;

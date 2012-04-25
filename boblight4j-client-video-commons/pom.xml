@@ -17,4 +17,5 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<name>Boblight4J Common Video Classes</name>
 </project>

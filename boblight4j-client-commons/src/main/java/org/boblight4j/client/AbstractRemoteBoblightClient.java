@@ -1,8 +1,6 @@
 package org.boblight4j.client;
 
-import org.boblight4j.Constants;
 import org.boblight4j.exception.BoblightConfigurationException;
-import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +11,10 @@ import org.slf4j.LoggerFactory;
  * @author agebauer
  * 
  */
-public abstract class AbstractBoblightClient {
+public abstract class AbstractRemoteBoblightClient {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractBoblightClient.class);
+			.getLogger(AbstractRemoteBoblightClient.class);
 
 	private final FlagManager flagManager;
 	private boolean stop = false;
@@ -27,7 +25,7 @@ public abstract class AbstractBoblightClient {
 	 * @param args
 	 *            the program arguments
 	 */
-	public AbstractBoblightClient(final String[] args) {
+	public AbstractRemoteBoblightClient(final String[] args) {
 		this.flagManager = this.getFlagManager();
 		this.parseArgs(this.flagManager, args);
 	}
@@ -43,7 +41,7 @@ public abstract class AbstractBoblightClient {
 			@Override
 			public void run() {
 				LOG.info("Caught KILL signal. Will halt program.");
-				AbstractBoblightClient.this.stop = true;
+				AbstractRemoteBoblightClient.this.stop = true;
 			}
 		}));
 
@@ -125,26 +123,7 @@ public abstract class AbstractBoblightClient {
 	 * @return true if setup succeeds, false otherwise
 	 */
 	public final boolean trySetup(final Client client) {
-		try {
-			LOG.info("Connecting to boblightd");
-
-			// try to connect, if we can't then bitch to stderr and destroy
-			// boblight
-			client.connect(this.flagManager.getAddress(),
-					this.flagManager.getPort(), Constants.CONNECTION_TIMEOUT);
-
-			client.setPriority(this.flagManager.getPriority());
-		} catch (final BoblightException e) {
-			LOG.info("Waiting 10 seconds before trying again");
-			client.destroy();
-			try {
-				Thread.sleep(Constants.RETRY_DELAY_ERROR);
-			} catch (final InterruptedException ex) {
-				LOG.warn("", ex);
-			}
-			return false;
-		}
-		return true;
+		return client.setup(this.flagManager.getPriority());
 	}
 
 }

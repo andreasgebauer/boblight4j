@@ -23,48 +23,35 @@ public class InputStreamRGBReader implements Runnable {
 
 	@Override
 	public void run() {
-		while (!stop)
-		{
+		while (!stop) {
 			String readLine;
-			try
-			{
+			try {
 				readLine = lineNumberReader.readLine();
-				if (readLine == null)
-				{
+				if (readLine == null) {
 					System.err.println("Stopping because of end of stream");
 					this.rgbHandler.stop();
 
 					break;
 				}
 
-				if (readLine.startsWith("getNrLights"))
-				{
+				if (readLine.startsWith("getNrLights")) {
 					final String nrLights = String.valueOf(rgbHandler
-							.getClient().getNrLights());
+							.getClient().getLightsHolder().getLights().size());
 					System.out.println(nrLights);
 					System.out.flush();
-				}
-				else if (readLine.startsWith("scan"))
-				{
+				} else if (readLine.startsWith("scan")) {
 					rgbHandler.setScanRange(readLine.substring(4));
-				}
-				else if (readLine.startsWith("send"))
-				{
+				} else if (readLine.startsWith("send")) {
 					rgbHandler.sendRgb(false, null);
 				}
 
 				final RGBValue rgbValue = RGBValue.parse(readLine);
-				if (rgbValue != null)
-				{
+				if (rgbValue != null) {
 					rgbHandler.handle(rgbValue);
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			catch (BoblightException e)
-			{
+			} catch (BoblightException e) {
 				e.printStackTrace();
 			}
 		}

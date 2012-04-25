@@ -3,6 +3,8 @@ package org.boblight4j.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.boblight4j.exception.BoblightParseException;
+
 public class Scanner {
 
 	private static final Pattern INT_PATTERN = Pattern.compile("(\\d+).*");
@@ -16,20 +18,17 @@ public class Scanner {
 	}
 
 	public final char nextChar() {
-		synchronized (this.val)
-		{
+		synchronized (this.val) {
 			final char charAt0 = this.val.charAt(0);
 			this.val = this.val.substring(1);
 			return charAt0;
 		}
 	}
 
-	public final float nextFloat() {
-		synchronized (this.val)
-		{
+	public final float nextFloat() throws BoblightParseException {
+		synchronized (this.val) {
 			final Matcher matcher = FLOAT_PATTERN.matcher(this.val);
-			if (matcher.matches())
-			{
+			if (matcher.matches()) {
 				final String group2 = matcher.group(1);
 				final Float valueOf = Float.valueOf(group2);
 
@@ -37,16 +36,14 @@ public class Scanner {
 
 				return valueOf;
 			}
+			throw new BoblightParseException("Could not get float");
 		}
-		return 0;
 	}
 
 	public final int nextInt() {
-		synchronized (this.val)
-		{
+		synchronized (this.val) {
 			final Matcher matcher = INT_PATTERN.matcher(this.val);
-			if (matcher.matches())
-			{
+			if (matcher.matches()) {
 				final String group2 = matcher.group(1);
 				final Integer valueOf = Integer.valueOf(group2);
 

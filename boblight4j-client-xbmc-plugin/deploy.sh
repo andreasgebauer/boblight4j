@@ -15,7 +15,9 @@ if [ -z $XBMC_ADDONS_DIR ]; then
 	exit 1
 fi
 
+BASEDIR="$( cd "$( dirname "$0" )" && pwd )"
+
 REMOTE_ADDONS_DIR=$XBMC_USER@$XBMC_HOST:$XBMC_ADDONS_DIR
 
-scp -r target/resources/* $REMOTE_ADDONS_DIR/service.multimedia.boblight4j-client/
-scp target/service.multimedia.*.jar $REMOTE_ADDONS_DIR/service.multimedia.boblight4j-client/bin
+scp -r $BASEDIR/target/resources/* $REMOTE_ADDONS_DIR/service.multimedia.boblight4j-client/
+scp $BASEDIR/target/service.multimedia.*.jar $REMOTE_ADDONS_DIR/service.multimedia.boblight4j-client/bin

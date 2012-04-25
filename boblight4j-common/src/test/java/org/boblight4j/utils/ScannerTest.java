@@ -2,6 +2,7 @@ package org.boblight4j.utils;
 
 import static junit.framework.Assert.assertEquals;
 
+import org.boblight4j.exception.BoblightParseException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class ScannerTest {
 	}
 
 	@Test
-	public void testNextFloat() {
+	public void testNextFloat() throws BoblightParseException {
 		testable = new Scanner(".888 .22 .33 .44");
 
 		assertEquals(.888f, testable.nextFloat());

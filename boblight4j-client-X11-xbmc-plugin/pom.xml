@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -52,6 +53,7 @@
 				<executions>
 					<execution>
 						<id>copy-deps</id>
+						<phase>package</phase>
 						<goals>
 							<goal>unpack</goal>
 						</goals>
@@ -61,7 +63,8 @@
 									<groupId>org.boblight</groupId>
 									<artifactId>boblight4j-client-X11</artifactId>
 									<version>${project.version}</version>
-									<type>jar</type>
+									<type>zip</type>
+									<classifier>dist</classifier>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
