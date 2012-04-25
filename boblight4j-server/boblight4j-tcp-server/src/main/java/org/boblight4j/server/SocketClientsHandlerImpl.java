@@ -7,7 +7,6 @@ import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.boblight4j.exception.BoblightCommunicationException;
@@ -129,7 +128,7 @@ public class SocketClientsHandlerImpl extends
 					.socket().getRemoteSocketAddress();
 			LOG.info(String.format("%s said hello", inetAddress));
 			try {
-				NioUtils.write(client, "hello\n");
+				NioUtils.write(client.getSocketChannel(), "hello\n");
 			} catch (final IOException e) {
 				throw new BoblightCommunicationException(e);
 			}
@@ -297,7 +296,7 @@ public class SocketClientsHandlerImpl extends
 		}
 
 		try {
-			NioUtils.write(client, msg.toString());
+			NioUtils.write(client.getSocketChannel(), msg.toString());
 		} catch (final IOException e) {
 			LOG.error("", e);
 			return false;
@@ -310,7 +309,7 @@ public class SocketClientsHandlerImpl extends
 	public void doSendPing(final SocketConnectedClientImpl client,
 			int lightsused) throws BoblightCommunicationException {
 		try {
-			NioUtils.write(client, "ping " + lightsused + "\n");
+			NioUtils.write(client.getSocketChannel(), "ping " + lightsused + "\n");
 		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
@@ -320,7 +319,7 @@ public class SocketClientsHandlerImpl extends
 	public void doSendVersion(final SocketConnectedClientImpl client,
 			String version) throws BoblightCommunicationException {
 		try {
-			NioUtils.write(client, "version " + version + "\n");
+			NioUtils.write(client.getSocketChannel(), "version " + version + "\n");
 		} catch (final IOException e) {
 			throw new BoblightCommunicationException(e);
 		}
@@ -360,7 +359,7 @@ public class SocketClientsHandlerImpl extends
 	@Override
 	protected void writeFull(SocketConnectedClientImpl client)
 			throws IOException {
-		NioUtils.write((SocketConnectedClientImpl) client, "full\n");
+		NioUtils.write(client.getSocketChannel(), "full\n");
 	}
 
 }
