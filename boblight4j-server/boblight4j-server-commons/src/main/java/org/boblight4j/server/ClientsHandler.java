@@ -3,7 +3,6 @@ package org.boblight4j.server;
 import java.io.IOException;
 import java.util.List;
 
-import org.boblight4j.server.config.Channel;
 import org.boblight4j.server.config.Device;
 
 public interface ClientsHandler<T extends ConnectedClient> {

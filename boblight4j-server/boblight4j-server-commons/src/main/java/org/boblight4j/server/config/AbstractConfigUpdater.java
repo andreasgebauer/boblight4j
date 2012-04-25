@@ -19,17 +19,16 @@ public abstract class AbstractConfigUpdater {
 
 	private final ClientsHandler<?> clients;
 	private final AbstractConfig config;
-	private final List<Device> devices;
-	private final List<Light> lights;
 	protected File watchFile;
 
+	private final ConfigCreator configCreator;
+
 	public AbstractConfigUpdater(final File watchFile,
-			final ClientsHandler<?> clients, final AbstractConfig config,
-			final List<Device> devices, final List<Light> lights) {
+			ConfigCreator configCreator, final ClientsHandler<?> clients,
+			final AbstractConfig config) {
 		super();
+		this.configCreator = configCreator;
 		this.config = config;
-		this.devices = devices;
-		this.lights = lights;
 		this.clients = clients;
 		this.watchFile = watchFile;
 	}
@@ -51,33 +50,34 @@ public abstract class AbstractConfigUpdater {
 
 		// load and parse config
 		try {
-			this.config.loadConfigFromFile(this.watchFile);
 
-			this.config.checkConfig();
+			this.configCreator.loadConfig(clients, config);
 
-			final List<Device> newDevices = this.config
-					.buildDeviceConfig(this.clients);
-			final List<Device> unhandledNewDevices = new ArrayList<Device>();
+			// this.config.checkConfig();
 
-			for (final Device newDevice : newDevices) {
-				boolean oldDeviceFound = false;
-				for (final Device oldDevice : this.devices) {
-					if (newDevice.getName().equals(oldDevice.getName())) {
-						oldDeviceFound = true;
-						oldDevice.setAllowSync(newDevice.isAllowSync());
-						oldDevice.setDebug(newDevice.isDebug());
-						oldDevice.setDelayAfterOpen(newDevice
-								.getDelayAfterOpen());
-						oldDevice.setInterval(newDevice.getInterval());
-					}
-				}
+			// final List<Device> newDevices = this.config
+			// .buildDeviceConfig(this.clients);
+			// final List<Device> unhandledNewDevices = new ArrayList<Device>();
+			//
+			// for (final Device newDevice : newDevices) {
+			// boolean oldDeviceFound = false;
+			// for (final Device oldDevice : this.devices) {
+			// if (newDevice.getName().equals(oldDevice.getName())) {
+			// oldDeviceFound = true;
+			// oldDevice.setAllowSync(newDevice.isAllowSync());
+			// oldDevice.setDebug(newDevice.isDebug());
+			// oldDevice.setDelayAfterOpen(newDevice
+			// .getDelayAfterOpen());
+			// oldDevice.setInterval(newDevice.getInterval());
+			// }
+			// }
+			//
+			// if (!oldDeviceFound) {
+			// unhandledNewDevices.add(newDevice);
+			// }
+			// }
 
-				if (!oldDeviceFound) {
-					unhandledNewDevices.add(newDevice);
-				}
-			}
-
-			final List<Color> newColors = this.config.buildColorConfig();
+			// final List<Color> newColors = this.config.buildColorConfig();
 			// for (Color color : newColors) {
 			// boolean oldDeviceFound = false;
 			// for (Color oldDevice : this.devices) {
@@ -96,34 +96,34 @@ public abstract class AbstractConfigUpdater {
 			// }
 			// }
 
-			final List<Light> unhandledNewLights = new Vector<Light>();
-			final List<Light> newLights = this.config.buildLightConfig(
-					this.devices, newColors);
-			for (final Light newLight : newLights) {
-				boolean oldLightFound = false;
-				for (final Light oldLight : this.lights) {
-					if (newLight.getName().equals(oldLight.getName())) {
-						oldLightFound = true;
-						oldLight.setHscan(newLight.getHscan());
-						oldLight.setVscan(newLight.getVscan());
-
-						for (int i = 0; i < oldLight.getNrColors(); i++) {
-							oldLight.setColor(i, newColors.get(i));
-						}
-					}
-				}
-
-				if (!oldLightFound) {
-					unhandledNewLights.add(newLight);
-				}
-			}
+			// final List<Light> unhandledNewLights = new Vector<Light>();
+			// final List<Light> newLights = this.config.buildLightConfig(
+			// this.devices, newColors);
+			// for (final Light newLight : newLights) {
+			// boolean oldLightFound = false;
+			// for (final Light oldLight : this.lights) {
+			// if (newLight.getName().equals(oldLight.getName())) {
+			// oldLightFound = true;
+			// oldLight.setHscan(newLight.getHscan());
+			// oldLight.setVscan(newLight.getVscan());
+			//
+			// for (int i = 0; i < oldLight.getNrColors(); i++) {
+			// oldLight.setColor(i, newColors.get(i));
+			// }
+			// }
+			// }
+			//
+			// if (!oldLightFound) {
+			// unhandledNewLights.add(newLight);
+			// }
+			// }
 
 			// config.buildConfig(clients, devices, lights);
 
-		} catch (final FileNotFoundException e) {
-			LOG.error("Error during config update.", e);
-		} catch (final IOException e) {
-			LOG.error("Error during config update.", e);
+			// } catch (final FileNotFoundException e) {
+			// LOG.error("Error during config update.", e);
+			// } catch (final IOException e) {
+			// LOG.error("Error during config update.", e);
 		} catch (final BoblightException e) {
 			LOG.error("Error during config update.", e);
 		}

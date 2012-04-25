@@ -9,8 +9,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import org.boblight4j.server.Channel;
 import org.boblight4j.server.ClientsHandler;
-import org.boblight4j.server.config.Channel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +40,7 @@ public class DeviceRS232Test {
 		Assert.assertEquals("Unexpected length of both arrays",
 				byteArray.length, byteArray2.length);
 
-		for (int i = 0; i < byteArray.length; i++)
-		{
+		for (int i = 0; i < byteArray.length; i++) {
 			Assert.assertEquals(byteArray[i], byteArray2[i]);
 		}
 	}
@@ -134,7 +133,7 @@ public class DeviceRS232Test {
 		baos.reset();
 		this.outputStream.reset();
 
-		final Channel channel = new Channel(0, 0);
+		final Channel channel = new Channel(0, 0, "channel");
 		channel.setValue(1.0f);
 		this.testable.addChannel(channel);
 

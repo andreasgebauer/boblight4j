@@ -7,10 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.boblight4j.exception.BoblightCommunicationException;
-import org.boblight4j.server.config.Channel;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.Light;
-import org.boblight4j.utils.MBeanUtils;
+import org.boblight4j.server.config.LightConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +24,21 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 
 	private Object mutex = new Object();
 
-	private List<T> clients = new ArrayList<T>();
-	private final List<Light> lights;
+	private final List<T> clients = new ArrayList<T>();
+	private final List<Light> lights = new ArrayList<Light>();
 
-	public AbstractClientsHandler(final List<Light> lights) {
-		if (lights == null) {
-			throw new IllegalArgumentException(
-					"Argument lights cannot be null.");
+	public AbstractClientsHandler() {
+	}
+
+	public void createLights(List<LightConfig> lights) {
+		this.lights.clear();
+		for (LightConfig lightConfig : lights) {
+			this.lights.add(new Light(lightConfig, false));
 		}
+	}
 
-		this.lights = lights;
-
-		// register jmx bean
-		MBeanUtils.registerBean("org.boblight.server.config:type=Lights",
-				new LightsAccessor(this.lights));
-
+	public List<T> getClients() {
+		return clients;
 	}
 
 	protected abstract void writeFull(T client) throws IOException;
@@ -121,21 +119,15 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 				device);
 
 		// reset singlechange
-		Iterator<Light> usedLgthsIt = usedLights.iterator();
-		while (usedLgthsIt.hasNext()) {
-			final Light light = usedLgthsIt.next();
-			light.resetSingleChange(device);
+		if (!usedLights.isEmpty()) {
+			device.setSingleChange(0.0f);
 		}
 
 		// update which lights we're using
-		for (int i = 0; i < this.getClients().size(); i++) {
-			final ConnectedClient client = this.getClients().get(i);
-			for (int j = 0; j < client.getLights().size(); j++) {
+		for (T client : this.getClients()) {
+			for (Light clientLight : client.getLights()) {
 				boolean lightUsed = false;
-
-				final Light clientLight = client.getLights().get(j);
-
-				usedLgthsIt = usedLights.iterator();
+				Iterator<Light> usedLgthsIt = usedLights.iterator();
 				while (usedLgthsIt.hasNext()) {
 					final Light usedLight = usedLgthsIt.next();
 					if (usedLight.equals(clientLight)) {
@@ -159,19 +151,19 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 		for (int i = 0; i < channels.size(); i++) {
 			// get the oldest client with the highest priority
 			final Channel channel = channels.get(i);
-			final int light = channel.getLight();
+			final int lightNr = channel.getLight();
 			final int color = channel.getColor();
 
-			if (light == -1 || color == -1) {
+			if (lightNr == -1 || color == -1) {
 				continue;
 			}
 
-			int clientnr = chooseClient(light);
+			int clientnr = chooseClient(lightNr);
 
 			if (clientnr == -1) // no client for the light on this channel
 			{
 				channel.setUsed(false);
-				channel.setSpeed(this.lights.get(light).getSpeed());
+				channel.setSpeed(this.lights.get(lightNr).getSpeed());
 				channel.setValueToFallback();
 				channel.setGamma(1.0);
 				channel.setAdjust(1.0);
@@ -183,22 +175,22 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 			channel.setUsed(true);
 
 			final ConnectedClient cClient = this.getClients().get(clientnr);
-			final Light cLight = cClient.getLights().get(light);
+			final Light light = cClient.getLight(channel.getLightName());
 
-			final float colorValue = cLight.getColorValue(color, time);
+			final float colorValue = light.getColorValue(color);
 
 			channel.setValue(colorValue);
-			channel.setSpeed(cLight.getSpeed());
-			channel.setGamma(cLight.getGamma(color));
-			channel.setAdjust(cLight.getAdjust(color));
-			channel.setAdjusts(cLight.getAdjusts(color));
-			channel.setBlacklevel(cLight.getBlacklevel(color));
-			channel.setSingleChange(cLight.getSingleChange(device));
+			channel.setSpeed(light.getSpeed());
+			channel.setGamma(light.getConfig().getGamma(color));
+			channel.setAdjust(light.getConfig().getAdjust(color));
+			channel.setAdjusts(light.getConfig().getAdjusts(color));
+			channel.setBlacklevel(light.getConfig().getBlacklevel(color));
+			channel.setSingleChange(device.getSingleChange());
 
 			// save light because we have to reset the singlechange later
 			// more than one channel can use a light so can't do this from the
 			// loop
-			usedLights.add(cLight);
+			usedLights.add(light);
 		}
 		return usedLights;
 	}
@@ -214,7 +206,8 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 				final Light cLight = cClient.getLights().get(light);
 
 				if (cClient.getPriority() == 255
-						|| cClient.getConnectTime() == -1 || !cLight.isUse()) {
+						|| cClient.getConnectTime() == -1
+						|| !cLight.getConfig().isUse()) {
 					// this client we don't use
 					continue;
 				}
@@ -231,10 +224,6 @@ public abstract class AbstractClientsHandler<T extends ConnectedClient>
 			}
 		}
 		return clientnr;
-	}
-
-	public List<T> getClients() {
-		return clients;
 	}
 
 }

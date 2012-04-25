@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.boblight4j.exception.BoblightDeviceException;
+import org.boblight4j.server.Channel;
 import org.boblight4j.server.ClientsHandler;
-import org.boblight4j.server.config.Channel;
 import org.boblight4j.server.config.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

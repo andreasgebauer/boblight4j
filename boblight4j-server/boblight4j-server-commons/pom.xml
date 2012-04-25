@@ -35,7 +35,6 @@
 			<classifier>${nativeclassifier}</classifier>
 			<version>2.2pre2</version>
 			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

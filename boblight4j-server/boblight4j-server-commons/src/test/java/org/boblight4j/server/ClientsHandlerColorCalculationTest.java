@@ -6,9 +6,8 @@ import java.util.List;
 
 import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.config.Channel;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.Light;
+import org.boblight4j.server.config.LightConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import org.mockito.Mockito;
 
 public class ClientsHandlerColorCalculationTest {
 
+	private LightConfig bottom;
 	private Light bottom1;
 	private Channel bottom1blue;
 	private Channel bottom1green;
@@ -25,35 +25,23 @@ public class ClientsHandlerColorCalculationTest {
 	private Device device;
 	private AbstractClientsHandler<ConnectedClient> testable;
 
-	private void nextStep(final long time, final double expected) {
-		double value;
-		this.testable.fillChannels(this.channels, time, this.device);
-
-		value = this.bottom1red.getValue(time);
-		Assert.assertEquals(expected, value, 0.0001);
-	}
-
-	private void setLight(final float d, final float e, final float f,
-			final int timeDiff) {
-		this.bottom1.setRgb(new float[] { d, e, f }, timeDiff);
-	}
-
 	@Before
 	public void setUp() throws Exception {
-		ArrayList<Light> value = new ArrayList<Light>();
-		final List<Light> vector = value;
+		ArrayList<LightConfig> value = new ArrayList<LightConfig>();
+		final List<Light> lights = new ArrayList<Light>();
 
-		this.bottom1 = new Light();
+		bottom = new LightConfig("bottom1");
+		this.bottom1 = new Light(bottom, false);
 		this.bottom1.setInterpolation(true);
-		this.bottom1.setName("bottom1");
-		this.bottom1.addColor(ColorUtils.red());
-		this.bottom1.addColor(ColorUtils.green());
-		this.bottom1.addColor(ColorUtils.blue());
-		vector.add(this.bottom1);
+		bottom.addColor(ColorUtils.red());
+		bottom.addColor(ColorUtils.green());
+		bottom.addColor(ColorUtils.blue());
+		value.add(bottom);
+		lights.add(bottom1);
 
 		this.device = Mockito.mock(Device.class);
 
-		this.testable = new AbstractClientsHandler<ConnectedClient>(vector) {
+		this.testable = new AbstractClientsHandler<ConnectedClient>() {
 
 			@Override
 			public void doSendVersion(ConnectedClient client, String version)
@@ -73,25 +61,41 @@ public class ClientsHandlerColorCalculationTest {
 			protected void writeFull(ConnectedClient client) throws IOException {
 			}
 		};
+		testable.createLights(value);
 
 		this.channels = new ArrayList<Channel>();
-		this.bottom1red = new Channel(0, 0);
+		this.bottom1red = new Channel(0, 0, "bottom1");
 		this.bottom1red.setValue(1.0f);
 		this.channels.add(this.bottom1red);
 
-		this.bottom1green = new Channel(1, 0);
+		this.bottom1green = new Channel(1, 0, "bottom1");
 		this.bottom1green.setValue(1.0f);
 		this.channels.add(this.bottom1green);
 
-		this.bottom1blue = new Channel(2, 0);
+		this.bottom1blue = new Channel(2, 0, "bottom1");
 		this.bottom1blue.setValue(1.0f);
 		this.channels.add(this.bottom1blue);
 
 		this.client = Mockito.mock(ConnectedClient.class);
 		Mockito.when(client.isConnected()).thenReturn(true);
-		Mockito.when(client.getLights()).thenReturn(value);
+		Mockito.when(client.getLights()).thenReturn(lights);
+		Mockito.when(client.getLight("bottom1")).thenReturn(bottom1);
+
 		this.testable.addClient(this.client);
 
+	}
+
+	private void nextStep(final long time, final double expected) {
+		double value;
+		this.testable.fillChannels(this.channels, time, this.device);
+
+		value = this.bottom1red.getValue(time);
+		Assert.assertEquals(expected, value, 0.0001);
+	}
+
+	private void setLight(final float d, final float e, final float f,
+			final int timeDiff) {
+		this.bottom1.setRgb(new float[] { d, e, f }, timeDiff);
 	}
 
 	@Test

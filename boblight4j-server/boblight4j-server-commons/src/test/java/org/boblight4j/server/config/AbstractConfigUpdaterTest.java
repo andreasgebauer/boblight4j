@@ -24,14 +24,16 @@ public class AbstractConfigUpdaterTest {
 	private File watchFile;
 	@Mock
 	private ClientsHandler<?> clientsHandler;
+	@Mock
+	private ConfigCreator configCreator;
 
 	@Before
 	public void setUp() throws Exception {
 
 		MockitoAnnotations.initMocks(this);
 
-		testable = new AbstractConfigUpdater(watchFile, clientsHandler, config,
-				null, null) {
+		testable = new AbstractConfigUpdater(watchFile, this.configCreator,
+				clientsHandler, config) {
 		};
 
 	}
@@ -44,7 +46,6 @@ public class AbstractConfigUpdaterTest {
 		verify(clientsHandler).blockConnect(true);
 
 		verify(config).clearConfig();
-		verify(config).loadConfigFromFile(any(File.class));
 
 		verify(clientsHandler).blockConnect(false);
 	}

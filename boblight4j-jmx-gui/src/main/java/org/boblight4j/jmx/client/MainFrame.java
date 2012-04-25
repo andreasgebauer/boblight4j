@@ -32,7 +32,7 @@ import javax.swing.event.ChangeListener;
 
 import org.boblight4j.jmx.client.CurveEditorPanel.Model;
 import org.boblight4j.server.config.IPoint;
-import org.boblight4j.server.config.LightAccessorMBean;
+import org.boblight4j.server.config.LightConfigAccessorMBean;
 import org.boblight4j.server.config.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +59,9 @@ public class MainFrame extends JFrame {
 								"org.boblight.server.config", "type", "Light ["
 										+ lightName + "]"));
 
-				final LightAccessorMBean newMXBeanProxy = JMX.newMBeanProxy(
+				final LightConfigAccessorMBean newMXBeanProxy = JMX.newMBeanProxy(
 						mbsc, objectInstance.getObjectName(),
-						LightAccessorMBean.class);
+						LightConfigAccessorMBean.class);
 
 				final Map<String, IPoint[]> colorAdjustments = newMXBeanProxy
 						.getColorAdjustments();
@@ -221,9 +221,9 @@ public class MainFrame extends JFrame {
 					if (keyProperty.equals("Light [" + model.lightName + "]"))
 					{
 
-						final LightAccessorMBean newMXBeanProxy = JMX
+						final LightConfigAccessorMBean newMXBeanProxy = JMX
 								.newMBeanProxy(mbsc, objectName,
-										LightAccessorMBean.class);
+										LightConfigAccessorMBean.class);
 
 						newMXBeanProxy.setColorAdjustments(model.colorIndex,
 								model.points.toArray(new Point[10]));

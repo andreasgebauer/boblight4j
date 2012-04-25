@@ -2,8 +2,6 @@ package org.boblight4j.server;
 
 import java.util.List;
 
-import org.boblight4j.server.config.Light;
-
 public interface ConnectedClient {
 
 	boolean isConnected();
@@ -22,6 +20,6 @@ public interface ConnectedClient {
 
 	List<Light> getLights();
 
-	int lightNameToInt(String lightname);
+	Light getLight(String lightname);
 
 }

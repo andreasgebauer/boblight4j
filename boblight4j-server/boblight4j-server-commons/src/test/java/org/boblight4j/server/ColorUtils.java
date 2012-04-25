@@ -1,25 +1,25 @@
 package org.boblight4j.server;
 
-import org.boblight4j.server.config.Color;
+import org.boblight4j.server.config.ColorConfig;
 
 public class ColorUtils {
 
-	public static Color blue() {
-		final Color color = new Color();
+	public static ColorConfig blue() {
+		final ColorConfig color = new ColorConfig();
 		color.setName("bblue");
 		color.setRgb(new float[] { 0, 0, 1 });
 		return color;
 	}
 
-	public static Color green() {
-		final Color color = new Color();
+	public static ColorConfig green() {
+		final ColorConfig color = new ColorConfig();
 		color.setName("green");
 		color.setRgb(new float[] { 0, 1, 0 });
 		return color;
 	}
 
-	public static Color red() {
-		final Color color = new Color();
+	public static ColorConfig red() {
+		final ColorConfig color = new ColorConfig();
 		color.setName("red");
 		color.setRgb(new float[] { 1, 0, 0 });
 		return color;
