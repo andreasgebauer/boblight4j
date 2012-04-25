@@ -12,9 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.boblight4j.exception.BoblightException;
-import org.boblight4j.server.config.Channel;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.Light;
+import org.boblight4j.server.config.LightConfig;
 import org.boblight4j.utils.MessageQueue;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,13 +25,13 @@ public class SocketClientsHandlerImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		testable = new SocketClientsHandlerImpl(new ArrayList<Light>());
+		testable = new SocketClientsHandlerImpl();
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<SocketConnectedClientImpl> getClients() {
-		return (List<SocketConnectedClientImpl>) Whitebox.getInternalState(testable,
-				"clients");
+		return (List<SocketConnectedClientImpl>) Whitebox.getInternalState(
+				testable, "clients");
 	}
 
 	@Test
@@ -74,9 +73,10 @@ public class SocketClientsHandlerImplTest {
 	@Test
 	public void testFillChannels() throws IOException {
 		// setup
-		final SocketConnectedClientImpl client = new SocketConnectedClientImpl(null);
+		final SocketConnectedClientImpl client = new SocketConnectedClientImpl(
+				null);
 		final ArrayList<Light> lights = new ArrayList<Light>();
-		lights.add(new Light());
+		lights.add(new Light(new LightConfig("bottom1"), true));
 		Whitebox.setInternalState(testable, "lights", lights);
 
 		// add a client

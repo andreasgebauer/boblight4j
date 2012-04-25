@@ -53,10 +53,9 @@ public class ConfigUpdater extends AbstractConfigUpdater implements Runnable {
 	private final Object monitor = new Object();
 	private boolean stop;
 
-	public ConfigUpdater(final File file, final ClientsHandler<?> clients,
-			final AbstractConfig config, final List<Device> devices,
-			final List<Light> lights) {
-		super(file, clients, config, devices, lights);
+	public ConfigUpdater(final File file, ConfigCreator configCreator,
+			final ClientsHandler<?> clients, final AbstractConfig config) {
+		super(file, configCreator, clients, config);
 	}
 
 	@Override

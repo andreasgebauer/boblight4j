@@ -70,8 +70,8 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
-							<includeScope>compile</includeScope>
-							<excludeGroupIds>org.boblight</excludeGroupIds>
+							<includeScope>runtime</includeScope>
+							<excludeGroupIds>${project.groupId}</excludeGroupIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -86,6 +86,11 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
+							<artifactSet>
+								<includes>
+									<include>${project.groupId}:*</include>
+								</includes>
+							</artifactSet>
 							<!-- put your configurations here -->
 							<transformers>
 								<transformer

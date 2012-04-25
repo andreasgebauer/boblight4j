@@ -14,7 +14,7 @@ import org.boblight4j.exception.BoblightCommunicationException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.exception.BoblightParseException;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.Light;
+import org.boblight4j.server.config.LightConfig;
 import org.boblight4j.server.utils.NioUtils;
 import org.boblight4j.utils.Message;
 import org.boblight4j.utils.Misc;
@@ -37,9 +37,7 @@ public class SocketClientsHandlerImpl extends
 
 	private int port;
 
-	public SocketClientsHandlerImpl(final List<Light> lights)
-			throws IOException {
-		super(lights);
+	public SocketClientsHandlerImpl() throws IOException {
 	}
 
 	@Override
@@ -184,21 +182,16 @@ public class SocketClientsHandlerImpl extends
 
 	private void parseSetLight(final ConnectedClient client,
 			final Message message) throws BoblightParseException {
-		String lightname;
-		String lightkey;
-		int lightnr = -1;
+		String lightname = Misc.getWord(message.message);
+		String lightkey = Misc.getWord(message.message);
 
-		lightname = Misc.getWord(message.message);
-		lightkey = Misc.getWord(message.message);
-		int lightIdx = lightnr = client.lightNameToInt(lightname);
-		if (lightIdx == -1) {
+		final Light clrCalc = client.getLight(lightname);
+		if (clrCalc == null) {
 			throw new BoblightParseException("Unable to resolve lightname '"
 					+ lightname + "' to index.");
 		}
-
 		String value = null;
 		try {
-			final Light cLight = client.getLights().get(lightnr);
 			if (lightkey.equals("rgb")) {
 				final float rgb[] = new float[3];
 				for (int i = 0; i < 3; i++) {
@@ -212,23 +205,23 @@ public class SocketClientsHandlerImpl extends
 					}
 					rgb[i] = Float.valueOf(value);
 				}
-				cLight.setRgb(rgb, message.time);
+				clrCalc.setRgb(rgb, message.time);
 			} else if (lightkey.equals("speed")) {
 				value = Misc.getWord(message.message);
 				final float speed = Float.parseFloat(value);
-				cLight.setSpeed(speed);
+				clrCalc.setSpeed(speed);
 			} else if (lightkey.equals("interpolation")) {
 				value = Misc.getWord(message.message);
 				final boolean interpolation = Boolean.parseBoolean(value);
-				cLight.setInterpolation(interpolation);
+				clrCalc.setInterpolation(interpolation);
 			} else if (lightkey.equals("use")) {
 				value = Misc.getWord(message.message);
 				final boolean use = Boolean.parseBoolean(value);
-				cLight.setUse(use);
+				clrCalc.setUse(use);
 			} else if (lightkey.equals("singlechange")) {
 				value = Misc.getWord(message.message);
 				final float singlechange = Float.parseFloat(value);
-				cLight.setSingleChange(singlechange);
+				clrCalc.setSingleChange(singlechange);
 			} else {
 				throw new BoblightParseException(String.format(
 						"%s sent gibberish", client));
@@ -237,6 +230,7 @@ public class SocketClientsHandlerImpl extends
 			throw new BoblightParseException(String.format(
 					"%s sent gibberish: %s", client, value), e);
 		}
+
 	}
 
 	private void parseSync(final ConnectedClient client) {
@@ -291,13 +285,14 @@ public class SocketClientsHandlerImpl extends
 				+ client.getLights().size() + "\n");
 
 		for (int i = 0; i < client.getLights().size(); i++) {
-			msg.append("light " + client.getLights().get(i).getName() + " ");
+			LightConfig config = client.getLights().get(i).getConfig();
+			msg.append("light " + config.getName() + " ");
 
 			msg.append("scan ");
-			msg.append(client.getLights().get(i).getVscan()[0] + " ");
-			msg.append(client.getLights().get(i).getVscan()[1] + " ");
-			msg.append(client.getLights().get(i).getHscan()[0] + " ");
-			msg.append(client.getLights().get(i).getHscan()[1]);
+			msg.append(config.getVscan()[0] + " ");
+			msg.append(config.getVscan()[1] + " ");
+			msg.append(config.getHscan()[0] + " ");
+			msg.append(config.getHscan()[1]);
 			msg.append("\n");
 		}
 
@@ -367,4 +362,5 @@ public class SocketClientsHandlerImpl extends
 			throws IOException {
 		NioUtils.write((SocketConnectedClientImpl) client, "full\n");
 	}
+
 }

@@ -2,6 +2,7 @@ package org.boblight4j.server.config;
 
 import java.awt.geom.Point2D;
 
+import org.boblight4j.server.Channel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,7 +18,7 @@ public class ChannelTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.channel = new Channel(0, 0);
+		this.channel = new Channel(0, 0, "channel1");
 	}
 
 	@Test

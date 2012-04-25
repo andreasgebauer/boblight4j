@@ -8,11 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class LightAccessor implements LightAccessorMBean {
+public class LightConfigAccessor implements LightConfigAccessorMBean {
 
-	private final Light light;
+	private final LightConfig light;
 
-	public LightAccessor(final Light light) {
+	public LightConfigAccessor(final LightConfig light) {
 		this.light = light;
 	}
 
@@ -38,12 +38,12 @@ public class LightAccessor implements LightAccessorMBean {
 	public Map<String, IPoint[]> getColorAdjustments() {
 		final Map<String, IPoint[]> value = new HashMap<String, IPoint[]>();
 
-		final Collection<Color> colors = this.light.getColors();
+		final Collection<ColorConfig> colors = this.light.getColors();
 
 		int i = 0;
-		for (final Iterator<Color> iterator = colors.iterator(); iterator
+		for (final Iterator<ColorConfig> iterator = colors.iterator(); iterator
 				.hasNext(); i++) {
-			final Color color = iterator.next();
+			final ColorConfig color = iterator.next();
 
 			final List<Point> points = new ArrayList<Point>();
 			final Float[] adjusts = this.light.getAdjusts(i);
@@ -78,26 +78,6 @@ public class LightAccessor implements LightAccessorMBean {
 	}
 
 	@Override
-	public int getNrUsers() {
-		return this.light.getNrUsers();
-	}
-
-	@Override
-	public float[] getRgb() {
-		return this.light.getRgb();
-	}
-
-	@Override
-	public float getSpeed() {
-		return this.light.getSpeed();
-	}
-
-	@Override
-	public long getTime() {
-		return this.light.getTime();
-	}
-
-	@Override
 	public float[] getVscan() {
 		return this.light.getVscan();
 	}
@@ -122,8 +102,4 @@ public class LightAccessor implements LightAccessorMBean {
 		this.light.getHscan()[0] = hScanStart;
 	}
 
-	@Override
-	public void setSpeed(final float speed) {
-		this.light.setSpeed(speed);
-	}
 }

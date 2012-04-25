@@ -15,7 +15,7 @@ package org.boblight4j.server.config;
  * @author andreas_gebauer
  * 
  */
-public class Color {
+public class ColorConfig {
 
 	private float adjust;
 
@@ -24,7 +24,7 @@ public class Color {
 	private String name;
 	private float[] rgb = new float[3];
 
-	public Color() {
+	public ColorConfig() {
 		this.gamma = 1.0f;
 		this.adjust = 1.0f;
 		this.blacklevel = 0.0f;

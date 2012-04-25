@@ -43,100 +43,12 @@ public class TcpServerConfigImplTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.testable = new TcpServerConfigImpl();
-	}
-
-	@Test
-	public void testBuildColorConfig() throws Exception {
-		this.testable.buildColorConfig();
-	}
-
-	@Test
-	public void testBuildConfig() throws Exception {
-
-		final List<Device> devices = new ArrayList<Device>();
-		final List<Light> lights = new ArrayList<Light>();
-
-		final String hostname = "localhost";
-		testable.globalConfigLines.add(new ConfigLine("interface " + hostname,
-				1));
-		testable.globalConfigLines.add(new ConfigLine("port 19333", 1));
-
-		this.testable.buildConfig(this.clientsHandler, devices, lights);
-
-		verify(this.clientsHandler).setInterface(
-				argThat(new ArgumentMatcher<InetAddress>() {
-					@Override
-					public boolean matches(Object item) {
-						if (item instanceof InetAddress
-								&& ((InetAddress) item).getHostName().equals(
-										hostname))
-							return true;
-						return false;
-					}
-				}), eq(19333));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testBuildDeviceConfig() throws Exception {
-		final ConfigGroup cfgGrp = new ConfigGroup();
-		cfgGrp.lines.add(new ConfigLine("name arduino", 1));
-		cfgGrp.lines.add(new ConfigLine("output /dev/ttyACM0", 2));
-		cfgGrp.lines.add(new ConfigLine("channels 60", 2));
-		cfgGrp.lines.add(new ConfigLine("rate 115200", 2));
-		cfgGrp.lines.add(new ConfigLine("interval 20000", 2));
-		cfgGrp.lines.add(new ConfigLine("type momo", 2));
-		cfgGrp.lines.add(new ConfigLine("prefix FF", 2));
-		cfgGrp.lines.add(new ConfigLine("postfix 33", 2));
-		cfgGrp.lines.add(new ConfigLine("escape 99", 2));
-		((Collection<ConfigGroup>) Whitebox.getInternalState(testable,
-				"deviceLines")).add(cfgGrp);
-
-		final List<Device> devices = this.testable
-				.buildDeviceConfig(this.clientsHandler);
-
-		final DeviceRS232 device = (DeviceRS232) devices.get(0);
-		Assert.assertEquals(255, device.getProtocol().getStartFlag());
-		Assert.assertEquals(0x33, device.getProtocol().getEndFlag());
-		Assert.assertEquals(0x99, device.getProtocol().getEscapeFlag());
-
-	}
-
-	@Test
-	public void testBuildLightConfig() throws Exception {
-		final List<Device> devices = new ArrayList<Device>();
-		final List<Color> colors = new ArrayList<Color>();
-		this.testable.buildLightConfig(devices, colors);
-	}
-
-	@Test
-	public void testCheckConfig() throws BoblightException,
-			IllegalArgumentException, IllegalAccessException {
-
-		this.ex.expect(BoblightException.class);
-
-		final List<ConfigLine> m_globalconfiglines = new ArrayList<ConfigLine>();
-		m_globalconfiglines.add(new ConfigLine("interface 127.0.0.1", 2));
-		m_globalconfiglines.add(new ConfigLine("port 127.0.0.1", 3));
-
-		final Field field = WhiteboxImpl.getField(TcpServerConfigImpl.class,
-				"globalConfigLines");
-
-		field.set(this.testable, m_globalconfiglines);
-
-		this.testable.checkConfig();
+		this.testable = new TcpServerConfigImpl(null);
 	}
 
 	@Test
 	public void testClearConfig() {
 		this.testable.clearConfig();
-	}
-
-	@Test
-	public void testLoadConfigFromFile() throws Exception {
-		this.testable.loadConfigFromFile(new File(TcpServerConfigImplTest.class
-				.getResource("/boblight.50pc.conf").toURI()));
 	}
 
 }

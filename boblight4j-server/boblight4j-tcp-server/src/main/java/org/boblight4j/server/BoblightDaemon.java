@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.boblight4j.exception.BoblightException;
+import org.boblight4j.server.config.ConfigReader;
 import org.boblight4j.server.config.ConfigUpdater;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.Light;
+import org.boblight4j.server.config.LightConfig;
+import org.boblight4j.server.config.PlainTextConfigFileReader;
 import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -96,22 +98,24 @@ public class BoblightDaemon {
 			}
 		}));
 
-		final List<Light> lights = new ArrayList<Light>(); // lights pool
-		final SocketClientsHandlerImpl clients = new SocketClientsHandlerImpl(
-				lights);
+		final SocketClientsHandlerImpl clients = new SocketClientsHandlerImpl();
 
-		// class for loading and parsing config load and parse config
-		final TcpServerConfigImpl config = new TcpServerConfigImpl();
-		config.loadConfigFromFile(this.args.configFile);
+		// class for loading
+		final ConfigReader configReader = new PlainTextConfigFileReader(
+				this.args.configFile);
 
-		config.checkConfig();
+		// class for parsing config
+		final TcpServerConfigCreator configCreator = new TcpServerConfigCreator(
+				configReader);
 
-		// where we store devices
-		final List<Device> devices = new ArrayList<Device>();
-		config.buildConfig(clients, devices, lights);
+		final TcpServerConfigImpl config = configCreator.loadConfig(clients,
+				null);
+		clients.createLights(config.getLights());
+
+		final List<Device> devices = config.getDevices();
 
 		final ConfigUpdater updater = new ConfigUpdater(this.args.configFile,
-				clients, config, devices, lights);
+				configCreator, clients, config);
 		updater.startThread();
 
 		// start the devices

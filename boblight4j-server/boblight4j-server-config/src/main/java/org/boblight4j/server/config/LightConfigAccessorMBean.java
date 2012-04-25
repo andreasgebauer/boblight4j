@@ -2,7 +2,7 @@ package org.boblight4j.server.config;
 
 import java.util.Map;
 
-public interface LightAccessorMBean {
+public interface LightConfigAccessorMBean {
 
 	float[] getAdjust();
 
@@ -21,14 +21,6 @@ public interface LightAccessorMBean {
 
 	float getHscanStart();
 
-	int getNrUsers();
-
-	float[] getRgb();
-
-	float getSpeed();
-
-	long getTime();
-
 	float[] getVscan();
 
 	void setColorAdjustment(int colorNr, float adjust);
@@ -39,5 +31,4 @@ public interface LightAccessorMBean {
 
 	void setHscanStart(float hScanStart);
 
-	void setSpeed(float speed);
 }

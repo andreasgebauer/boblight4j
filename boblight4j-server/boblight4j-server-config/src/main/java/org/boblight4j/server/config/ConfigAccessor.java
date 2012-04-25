@@ -14,9 +14,9 @@ public class ConfigAccessor implements ConfigAccessorMBean {
 	@Override
 	public String[] getGlobalConfigLines() {
 		final List<String> lines = new ArrayList<String>();
-		for (final ConfigLine line : this.config.getGlobalConfigLines()) {
-			lines.add(line.line);
-		}
+//		for (final ConfigLine line : this.config.getGlobalConfigLines()) {
+//			lines.add(line.line);
+//		}
 
 		return lines.toArray(new String[lines.size()]);
 	}

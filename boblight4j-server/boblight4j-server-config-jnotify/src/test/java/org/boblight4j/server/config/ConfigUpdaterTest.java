@@ -1,5 +1,7 @@
 package org.boblight4j.server.config;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,14 +26,14 @@ public class ConfigUpdaterTest {
 	private ClientsHandler<?> clients;
 	private List<Device> devices;
 	private File file;
-	private List<Light> lights;
 	private ConfigUpdater testable;
+
+	private ConfigCreator configCReator;
 
 	@Before
 	public void setUp() throws Exception {
 		this.file = new File(ConfigUpdaterTest.class.getResource(
 				"/boblight.10pc.conf").toURI());
-		this.lights = new ArrayList<Light>();
 		this.clients = Mockito.mock(ClientsHandler.class);
 
 		AbstractConfig config = Mockito.mock(AbstractConfig.class);
@@ -40,8 +42,9 @@ public class ConfigUpdaterTest {
 		Mockito.when(device.getName()).thenReturn("arduino");
 		Mockito.when(device.getNrChannels()).thenReturn(60);
 		this.devices.add(device);
-		this.testable = new ConfigUpdater(this.file, this.clients, config,
-				this.devices, this.lights);
+		this.configCReator = mock(ConfigCreator.class);
+		this.testable = new ConfigUpdater(this.file, this.configCReator,
+				this.clients, config);
 	}
 
 	@Test

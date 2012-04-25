@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.boblight</groupId>
@@ -10,11 +11,14 @@
 	<description>This project represents Java port of boblight. There are four clients currently. A screen grabber which works with
 	 	X11 and needs X11 listen to port 6000. The second is a video grabber which works with V4L, the third is a constant light. 
 	 	The last but not least is a spectrum analyzer.</description>
-	<url>http://boblight4j.googlecode.com/</url>
+	<url>http://code.google.com/p/boblight4j/wiki/</url>
 	<inceptionYear>2011</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<junit.version>4.10</junit.version>
+		<mockito.version>1.9.0</mockito.version>
+		<powermock.version>1.4.12</powermock.version>
 	</properties>
 
 	<scm>
@@ -39,19 +43,19 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.8.5</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
-			<version>1.4.10</version>
+			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
-			<version>1.4.10</version>
+			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -68,6 +72,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
@@ -116,7 +126,6 @@
 						</goals>
 						<phase>generate-test-resources</phase>
 						<configuration>
-							<includeScope>provided</includeScope>
 							<includeClassifiers>${nativeclassifier}</includeClassifiers>
 							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
@@ -148,8 +157,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>"-Djava.library.path=${project.build.directory}/lib:${project.build.directory}/lib"</argLine>
-					<detail>true</detail>
+					<argLine>"-Djava.library.path=${project.build.directory}/lib"</argLine>
+					<parallel>both</parallel>
+					<threadCount>4</threadCount>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -183,7 +193,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.10</version>
+					<version>2.12</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>

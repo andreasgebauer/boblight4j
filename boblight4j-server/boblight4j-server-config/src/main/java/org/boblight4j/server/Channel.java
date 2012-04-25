@@ -1,4 +1,4 @@
-package org.boblight4j.server.config;
+package org.boblight4j.server;
 
 import java.awt.geom.Point2D.Float;
 
@@ -22,6 +22,7 @@ public class Channel {
 	private double gamma;
 	private long lastupdate;
 	private final int light;
+	private final String lightName;
 	/**
 	 * The multiplier of the difference of wanted value and current value which
 	 * afterwards is added to the current value.
@@ -31,9 +32,10 @@ public class Channel {
 	private boolean used;
 	private float wantedvalue;
 
-	public Channel(final int color, final int light) {
+	public Channel(final int color, final int light, final String lightName) {
 		this.color = color;
 		this.light = light;
+		this.lightName = lightName;
 
 		this.used = false;
 
@@ -57,6 +59,10 @@ public class Channel {
 		return this.light;
 	}
 
+	public String getLightName() {
+		return this.lightName;
+	}
+
 	/**
 	 * Gets the computed value for the specified time.
 	 * 
@@ -66,19 +72,15 @@ public class Channel {
 	 */
 	public double getValue(final long time) {
 		// we need two calls for the speed
-		if (this.lastupdate == -1)
-		{
+		if (this.lastupdate == -1) {
 			this.lastupdate = time;
 			return this.currentvalue;
 		}
 
 		// speed of 100.0 means max
-		if (this.speed == 100.0)
-		{
+		if (this.speed == 100.0) {
 			this.currentvalue = this.wantedvalue;
-		}
-		else
-		{
+		} else {
 			// difference between where we want to be, and where we are
 			final double diff = this.wantedvalue - this.currentvalue;
 			// difference in time in microseconds between now and the last
@@ -97,8 +99,7 @@ public class Channel {
 		}
 
 		// single change
-		if (this.singlechange > 0.0)
-		{
+		if (this.singlechange > 0.0) {
 			this.currentvalue += (this.wantedvalue - this.currentvalue)
 					* this.singlechange;
 		}
@@ -114,31 +115,25 @@ public class Channel {
 		// post processing
 
 		// gamma correction
-		if (this.gamma != 1.0)
-		{
+		if (this.gamma != 1.0) {
 			outputvalue = Math.pow(outputvalue, this.gamma);
 		}
 		// adjust correction
-		if (this.adjust != 1.0)
-		{
+		if (this.adjust != 1.0) {
 			outputvalue *= this.adjust;
 		}
 		// adjust correction
-		if (this.adjusts != null)
-		{
+		if (this.adjusts != null) {
 			boolean set = false;
 			boolean checkLast = false;
 			Float float1 = null;
-			for (int i = 0; i < this.adjusts.length; i++)
-			{
+			for (int i = 0; i < this.adjusts.length; i++) {
 				// nearest low point found
 				float1 = this.adjusts[i];
-				if (float1.x < outputvalue)
-				{
+				if (float1.x < outputvalue) {
 					checkLast = true;
 					// be sure to not throw IndexArrayOutOfBoundsException
-					if (i + 2 <= this.adjusts.length)
-					{
+					if (i + 2 <= this.adjusts.length) {
 						// do line bla bla
 						final Float float2 = this.adjusts[i + 1];
 						// m
@@ -155,15 +150,11 @@ public class Channel {
 				}
 			}
 
-			if (!set && float1 != null)
-			{
+			if (!set && float1 != null) {
 				Float float2 = null;
-				if (checkLast)
-				{
+				if (checkLast) {
 					float2 = new Float(1, 1);
-				}
-				else
-				{
+				} else {
 					float2 = new Float(0, 0);
 				}
 				// m
@@ -177,8 +168,7 @@ public class Channel {
 
 		}
 		// blacklevel correction
-		if (this.blacklevel != 1.0)
-		{
+		if (this.blacklevel != 1.0) {
 			outputvalue = outputvalue * (1.0 - this.blacklevel)
 					+ this.blacklevel;
 		}
@@ -214,8 +204,7 @@ public class Channel {
 	 */
 	public void setSingleChange(final double singlechange) {
 
-		if (singlechange > this.singlechange)
-		{
+		if (singlechange > this.singlechange) {
 			this.singlechange = singlechange;
 		}
 	}

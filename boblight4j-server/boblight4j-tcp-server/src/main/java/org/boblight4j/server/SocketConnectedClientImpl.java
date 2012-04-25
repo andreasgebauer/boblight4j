@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.boblight4j.server.config.Light;
 import org.boblight4j.utils.MathUtils;
 import org.boblight4j.utils.MessageQueue;
 import org.slf4j.Logger;
@@ -17,10 +18,11 @@ public class SocketConnectedClientImpl implements ConnectedClient {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SocketConnectedClientImpl.class);
 	long connectTime;
-	private List<Light> lights;
 	MessageQueue messagequeue = new MessageQueue();
 	private int priority;
 	private final SocketChannel socketChannel;
+	private List<Light> lights;
+	private Map<String, Light> lightNameMap = new HashMap<String, Light>();
 
 	public SocketConnectedClientImpl(final SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
@@ -28,16 +30,6 @@ public class SocketConnectedClientImpl implements ConnectedClient {
 
 	public SocketChannel getSocketChannel() {
 		return this.socketChannel;
-	}
-
-	@Override
-	public int lightNameToInt(final String lightname) {
-		for (int i = 0; i < this.lights.size(); i++) {
-			if (this.lights.get(i).getName().equals(lightname)) {
-				return i;
-			}
-		}
-		return -1;
 	}
 
 	public void setPriority(final int priority) {
@@ -58,6 +50,9 @@ public class SocketConnectedClientImpl implements ConnectedClient {
 	@Override
 	public void setLights(List<Light> lights) {
 		this.lights = lights;
+		for (Light light : lights) {
+			this.lightNameMap.put(light.getConfig().getName(), light);
+		}
 	}
 
 	@Override
@@ -97,6 +92,11 @@ public class SocketConnectedClientImpl implements ConnectedClient {
 		} catch (final IOException e) {
 			LOG.error("Error during Socket.close()", e);
 		}
+	}
+
+	@Override
+	public Light getLight(String lightname) {
+		return this.lightNameMap.get(lightname);
 	}
 
 	@Override

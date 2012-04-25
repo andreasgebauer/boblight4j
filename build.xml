@@ -5,7 +5,7 @@
 		</copy>
 	</target>
 	<target name="deploy">
-		<apply executable="/bin/sh">
+		<apply executable="/bin/sh" >
 			<fileset dir="${basedir}" casesensitive="yes">
 				<include name="**/deploy.sh" />
 			</fileset>
