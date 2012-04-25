@@ -17,7 +17,11 @@
 		<!-- the server executable -->
 		<fileSet>
 			<directory>${project.build.directory}/dependency/boblight4j-tcp-server-${project.version}</directory>
-			<outputDirectory>/bin/server</outputDirectory>
+			<includes>
+				<include>**/*.jar</include>
+				<include>**/native/**</include>
+			</includes>
+			<outputDirectory>/bin</outputDirectory>
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/resources</directory>
