@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.Collection;
 
 import org.boblight4j.Constants;
 import org.boblight4j.client.mbean.ClientAccessor;

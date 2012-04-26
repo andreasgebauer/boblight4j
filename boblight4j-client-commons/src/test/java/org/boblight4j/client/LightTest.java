@@ -67,6 +67,71 @@ public class LightTest {
 				+ " actual: " + Arrays.toString(actual),
 				Arrays.equals(expected, actual));
 
+		// with hsv adjust (red)
+		this.testable.setValue(.5f);
+
+		this.testable.rgb[0] = 255;
+		this.testable.rgb[1] = 0;
+		this.testable.rgb[2] = 0;
+		this.testable.rgb[3] = 1;
+
+		actual = this.testable.getRgb();
+
+		expected = new float[] { .5f, 0, 0, 0 };
+
+		Assert.assertTrue("Arrays not equal: " + Arrays.toString(expected)
+				+ " actual: " + Arrays.toString(actual),
+				Arrays.equals(expected, actual));
+
+		// with hsv adjust (green)
+		this.testable.setValue(.5f);
+
+		this.testable.rgb[0] = 0;
+		this.testable.rgb[1] = 255;
+		this.testable.rgb[2] = 0;
+		this.testable.rgb[3] = 1;
+
+		actual = this.testable.getRgb();
+
+		expected = new float[] { 0, .5f, 0, 0 };
+
+		Assert.assertTrue("Arrays not equal: " + Arrays.toString(expected)
+				+ " actual: " + Arrays.toString(actual),
+				Arrays.equals(expected, actual));
+
+		// with hsv adjust (blue)
+		this.testable.setValue(.5f);
+
+		this.testable.rgb[0] = 0;
+		this.testable.rgb[1] = 0;
+		this.testable.rgb[2] = 255;
+		this.testable.rgb[3] = 1;
+
+		actual = this.testable.getRgb();
+
+		expected = new float[] { 0, 0, .5f, 0 };
+
+		Assert.assertTrue("Arrays not equal: " + Arrays.toString(expected)
+				+ " actual: " + Arrays.toString(actual),
+				Arrays.equals(expected, actual));
+
+		// with autospeed and hsv adjust
+		this.testable.setAutospeed(.1f);
+		this.testable.setValue(.5f);
+
+		this.testable.rgb[0] = 255;
+		this.testable.rgb[1] = 0;
+		this.testable.rgb[2] = 0;
+		this.testable.rgb[3] = 1;
+
+		actual = this.testable.getRgb();
+
+		expected = new float[] { .5f, 0, 0, 0 };
+
+		Assert.assertTrue("Arrays not equal: " + Arrays.toString(expected)
+				+ " actual: " + Arrays.toString(actual),
+				Arrays.equals(expected, actual));
+
 	}
 
 	@Test

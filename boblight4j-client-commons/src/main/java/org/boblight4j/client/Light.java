@@ -135,100 +135,102 @@ public class Light extends LightConfig {
 
 	private void adjustHSV(final float[] rgbNew) {
 		// we need some hsv adjustments
-		if (this.getValue() != 1.0f || this.getValueRangeStart() != 0.0f
+		boolean hsvCondition = this.getValue() != 1.0f
+				|| this.getValueRangeStart() != 0.0f
 				|| this.getValueRangeEnd() != 1.0f
 				|| this.getSaturation() != 1.0f
 				|| this.getSatRangeStart() != 0.0f
-				|| this.getSatRangeEnd() != 1.0f) {
-			// rgb - hsv conversion, thanks wikipedia!
-			final float hsv[] = new float[3];
-			final float max = Math.max(rgbNew[0],
-					Math.max(rgbNew[1], rgbNew[2]));
-			final float min = Math.min(rgbNew[0],
-					Math.min(rgbNew[1], rgbNew[2]));
+				|| this.getSatRangeEnd() != 1.0f;
+		if (!hsvCondition) {
+			return;
+		}
 
-			if (min == max) // grayscale
+		// rgb - hsv conversion, thanks wikipedia!
+		final float hsv[] = new float[3];
+		final float max = Math.max(rgbNew[0], Math.max(rgbNew[1], rgbNew[2]));
+		final float min = Math.min(rgbNew[0], Math.min(rgbNew[1], rgbNew[2]));
+
+		if (min == max) // grayscale
+		{
+			hsv[0] = -1.0f; // undefined
+			hsv[1] = 0.0f; // no saturation
+			hsv[2] = min; // value
+		} else {
+			if (max == rgbNew[0]) // red zone
 			{
-				hsv[0] = -1.0f; // undefined
-				hsv[1] = 0.0f; // no saturation
-				hsv[2] = min; // value
-			} else {
-				if (max == rgbNew[0]) // red zone
-				{
-					hsv[0] = HSV_DEGREES_BASE
-							* ((rgbNew[1] - rgbNew[2]) / (max - min))
-							+ HSV_DEGREES_RED;
-					while (hsv[0] >= HSV_DEGREES_RED) {
-						hsv[0] -= HSV_DEGREES_RED;
-					}
-				} else if (max == rgbNew[1]) // green zone
-				{
-					hsv[0] = HSV_DEGREES_BASE
-							* ((rgbNew[2] - rgbNew[0]) / (max - min))
-							+ HSV_DEGREES_GREEN;
-				} else if (max == rgbNew[2]) // blue zone
-				{
-					hsv[0] = HSV_DEGREES_BASE
-							* ((rgbNew[0] - rgbNew[1]) / (max - min))
-							+ HSV_DEGREES_BLUE;
+				hsv[0] = HSV_DEGREES_BASE
+						* ((rgbNew[1] - rgbNew[2]) / (max - min))
+						+ HSV_DEGREES_RED;
+				while (hsv[0] >= HSV_DEGREES_RED) {
+					hsv[0] -= HSV_DEGREES_RED;
 				}
-
-				hsv[1] = (max - min) / max; // saturation
-				hsv[2] = max; // value
+			} else if (max == rgbNew[1]) // green zone
+			{
+				hsv[0] = HSV_DEGREES_BASE
+						* ((rgbNew[2] - rgbNew[0]) / (max - min))
+						+ HSV_DEGREES_GREEN;
+			} else if (max == rgbNew[2]) // blue zone
+			{
+				hsv[0] = HSV_DEGREES_BASE
+						* ((rgbNew[0] - rgbNew[1]) / (max - min))
+						+ HSV_DEGREES_BLUE;
 			}
 
-			// saturation and value adjustment
-			hsv[1] = MathUtils.clamp(hsv[1] * this.getSaturation(),
-					this.getSatRangeStart(), this.getSatRangeEnd());
-			hsv[2] = MathUtils.clamp(hsv[2] * this.getValue(),
-					this.getValueRangeStart(), this.getValueRangeEnd());
+			hsv[1] = (max - min) / max; // saturation
+			hsv[2] = max; // value
+		}
 
-			if (hsv[0] == -1.0f) // grayscale
-			{
-				for (int i = 0; i < 3; i++) {
-					rgbNew[i] = hsv[2];
-				}
-			} else {
-				final int hi = (int) (hsv[0] / HSV_DEGREES_BASE) % 6;
-				final float f = hsv[0] / HSV_DEGREES_BASE
-						- (int) (hsv[0] / HSV_DEGREES_BASE);
+		// saturation and value adjustment
+		hsv[1] = MathUtils.clamp(hsv[1] * this.getSaturation(),
+				this.getSatRangeStart(), this.getSatRangeEnd());
+		hsv[2] = MathUtils.clamp(hsv[2] * this.getValue(),
+				this.getValueRangeStart(), this.getValueRangeEnd());
 
-				final float s = hsv[1];
-				final float v = hsv[2];
-				final float p = v * (1.0f - s);
-				final float q = v * (1.0f - f * s);
-				final float t = v * (1.0f - (1.0f - f) * s);
-
-				if (hi == 0) {
-					rgbNew[0] = v;
-					rgbNew[1] = t;
-					rgbNew[2] = p;
-				} else if (hi == 1) {
-					rgbNew[0] = q;
-					rgbNew[1] = v;
-					rgbNew[2] = p;
-				} else if (hi == 2) {
-					rgbNew[0] = p;
-					rgbNew[1] = v;
-					rgbNew[2] = t;
-				} else if (hi == 3) {
-					rgbNew[0] = p;
-					rgbNew[1] = q;
-					rgbNew[2] = v;
-				} else if (hi == 4) {
-					rgbNew[0] = t;
-					rgbNew[1] = p;
-					rgbNew[2] = v;
-				} else if (hi == 5) {
-					rgbNew[0] = v;
-					rgbNew[1] = p;
-					rgbNew[2] = q;
-				}
-			}
-
+		if (hsv[0] == -1.0f) // grayscale
+		{
 			for (int i = 0; i < 3; i++) {
-				rgbNew[i] = MathUtils.clamp(rgbNew[i], 0.0f, 1.0f);
+				rgbNew[i] = hsv[2];
 			}
+		} else {
+			final int hi = (int) (hsv[0] / HSV_DEGREES_BASE) % 6;
+			final float f = hsv[0] / HSV_DEGREES_BASE
+					- (int) (hsv[0] / HSV_DEGREES_BASE);
+
+			final float s = hsv[1];
+			final float v = hsv[2];
+			final float p = v * (1.0f - s);
+			final float q = v * (1.0f - f * s);
+			final float t = v * (1.0f - (1.0f - f) * s);
+
+			if (hi == 0) {
+				rgbNew[0] = v;
+				rgbNew[1] = t;
+				rgbNew[2] = p;
+			} else if (hi == 1) {
+				rgbNew[0] = q;
+				rgbNew[1] = v;
+				rgbNew[2] = p;
+			} else if (hi == 2) {
+				rgbNew[0] = p;
+				rgbNew[1] = v;
+				rgbNew[2] = t;
+			} else if (hi == 3) {
+				rgbNew[0] = p;
+				rgbNew[1] = q;
+				rgbNew[2] = v;
+			} else if (hi == 4) {
+				rgbNew[0] = t;
+				rgbNew[1] = p;
+				rgbNew[2] = v;
+			} else if (hi == 5) {
+				rgbNew[0] = v;
+				rgbNew[1] = p;
+				rgbNew[2] = q;
+			}
+		}
+
+		for (int i = 0; i < 3; i++) {
+			rgbNew[i] = MathUtils.clamp(rgbNew[i], 0.0f, 1.0f);
 		}
 	}
 
