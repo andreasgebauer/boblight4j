@@ -3,7 +3,7 @@
 
 	<groupId>org.boblight</groupId>
 	<artifactId>boblight4j</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Boblight4J Parent</name>
@@ -21,8 +21,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/tags/boblight4j-0.1.0</developerConnection>
-		<connection>http://boblight4j.googlecode.com/svn/tags/boblight4j-0.1.0</connection>
+		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/branches/release-0.1.x</developerConnection>
+		<connection>http://boblight4j.googlecode.com/svn/branches/release-0.1.x</connection>
 	</scm>
 
 	<modules>
