@@ -306,6 +306,18 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>unixi686</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<arch>i686</arch>
+				</os>
+			</activation>
+			<properties>
+				<nativeclassifier>linux</nativeclassifier>
+			</properties>
+		</profile>
+		<profile>
 			<id>unixamd64</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
