@@ -306,11 +306,11 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>unixi686</id>
+			<id>Linux-i386</id>
 			<activation>
 				<os>
-					<family>unix</family>
-					<arch>i686</arch>
+					<name>Linux</name>
+					<arch>i386</arch>
 				</os>
 			</activation>
 			<properties>
