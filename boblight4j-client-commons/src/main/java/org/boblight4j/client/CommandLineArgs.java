@@ -21,19 +21,20 @@ public class CommandLineArgs {
 			parse(string);
 		}
 
-		private void parse(String server) {
-			if (server != null && server.indexOf(':') != -1) {
-				this.address = server.substring(0, server.indexOf(':'));
-				server = server.substring(server.indexOf(':') + 1);
+		private void parse(final String optArg) {
+			String port;
+			if (optArg != null && optArg.indexOf(':') != -1) {
+				this.address = optArg.substring(0, optArg.indexOf(':'));
+				port = optArg.substring(optArg.indexOf(':') + 1);
 				try {
-					this.port = Integer.valueOf(server);
+					this.port = Integer.valueOf(port);
 				} catch (final NumberFormatException nfe) {
-					throw new BoblightRuntimeException("Wrong option " + server
+					throw new BoblightRuntimeException("Wrong option " + optArg
 							+ " for argument -s");
 				}
 
 				if (this.port != -1 && this.port < 0 || this.port > 65535) {
-					throw new BoblightRuntimeException("Wrong option " + server
+					throw new BoblightRuntimeException("Wrong option " + optArg
 							+ " for argument -s");
 				}
 			}
