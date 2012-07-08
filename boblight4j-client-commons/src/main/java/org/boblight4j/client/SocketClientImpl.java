@@ -40,8 +40,8 @@ public class SocketClientImpl extends AbstractRemoteClient {
 	private static final int DEFAULT_PORT = 19333;
 	private static final int MAXDATA = 100000;
 
-	private String address;
-	private int port;
+	private final String address;
+	private final int port;
 	/**
 	 * timeout in milliseconds.
 	 */
@@ -54,8 +54,11 @@ public class SocketClientImpl extends AbstractRemoteClient {
 	/**
 	 * Default constructor.
 	 */
-	public SocketClientImpl(final LightsHolder lightsHolder) {
+	public SocketClientImpl(final LightsHolder lightsHolder, final String host,
+			final int port) {
 		super(lightsHolder);
+		this.address = host;
+		this.port = port;
 		MBeanUtils.registerBean("org.boblight.client:type=Lights",
 				new ClientAccessor(this));
 	}
@@ -82,21 +85,7 @@ public class SocketClientImpl extends AbstractRemoteClient {
 		// int64_t target;
 		String word;
 
-		// set address
 		this.mSecTimeout = mSecTimeout;
-		if (address == null) {
-			this.address = "127.0.0.1";
-		} else {
-			this.address = address;
-		}
-
-		// set port
-		if (port >= 0) {
-			this.port = port;
-		} else {
-			// set to default port
-			this.port = DEFAULT_PORT;
-		}
 
 		try {
 			this.socketChannel = SocketChannel.open();
@@ -356,6 +345,11 @@ public class SocketClientImpl extends AbstractRemoteClient {
 		}
 		return true;
 
+	}
+
+	@Override
+	public void ping(Object object, boolean b) throws BoblightException {
+		// TODO implement ping
 	}
 
 }

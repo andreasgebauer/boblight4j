@@ -2,6 +2,8 @@ package org.boblight4j.client.X11;
 
 import org.boblight4j.Constants;
 import org.boblight4j.client.AbstractRemoteBoblightClient;
+import org.boblight4j.client.AbstractRemoteClient;
+import org.boblight4j.client.Client;
 import org.boblight4j.client.LightsHolderImpl;
 import org.boblight4j.client.SocketClientImpl;
 import org.boblight4j.client.grabber.ActiveGrabber;
@@ -65,8 +67,8 @@ public class BoblightX11 extends AbstractRemoteBoblightClient {
 		}
 
 		while (!this.isStop()) {
-			final SocketClientImpl client = new SocketClientImpl(
-					new LightsHolderImpl());
+			AbstractRemoteClient client = new SocketClientImpl(new LightsHolderImpl(),
+					flagManager.getAddress(), flagManager.getPort());
 			try {
 				// init boblight
 				// void* boblight = boblight_init();

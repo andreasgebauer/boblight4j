@@ -9,7 +9,7 @@ class FlagManagerConstant extends AbstractFlagManager<ConstantClientArgs> {
 
 	public class ConstantClientArgs extends CommandLineArgs {
 
-		@Argument(multiValued = false, usage = "color in RRGGBB hex notation", required = true)
+		@Argument(multiValued = false, usage = "color in RRGGBB hex notation", metaVar = "COLOR", required = true)
 		String color;
 	}
 
@@ -32,7 +32,13 @@ class FlagManagerConstant extends AbstractFlagManager<ConstantClientArgs> {
 		return argBean;
 	}
 
-	public void printHelpMessage(final CmdLineParser parser) {
+	public void printHelpMessage() {
+		System.out.println("Usage: boblight-constant [OPTION] COLOR");
+		System.out.println("");
+		System.out.println("[OPTION]:");
+		System.out.println("");
+
+		final CmdLineParser parser = new CmdLineParser(getArgBean());
 		parser.printUsage(System.out);
 	}
 

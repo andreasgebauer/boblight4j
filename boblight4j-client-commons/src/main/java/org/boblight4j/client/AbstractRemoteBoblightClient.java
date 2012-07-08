@@ -16,7 +16,7 @@ public abstract class AbstractRemoteBoblightClient {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractRemoteBoblightClient.class);
 
-	private final FlagManager flagManager;
+	protected final FlagManager flagManager;
 	private boolean stop = false;
 
 	/**
@@ -48,7 +48,10 @@ public abstract class AbstractRemoteBoblightClient {
 		while (!this.stop) {
 			// will run the client until it returns ( in case of error or normal
 			// termination)
-			return this.run();
+			int run = this.run();
+			if (run != 0) {
+				return run;
+			}
 		}
 		return 1;
 	}

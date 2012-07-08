@@ -159,4 +159,7 @@ public abstract class AbstractRemoteClient implements RemoteClient {
 		return this.lightsHolder;
 	}
 
+	public abstract void ping(Object object, boolean b)
+			throws BoblightException;
+
 }

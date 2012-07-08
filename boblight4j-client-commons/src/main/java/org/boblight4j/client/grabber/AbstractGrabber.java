@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import org.boblight4j.Constants;
 import org.boblight4j.client.Client;
-import org.boblight4j.client.RemoteClient;
 
 /**
  * This is base class for a grabber implementation which grabs pixels from a
@@ -21,12 +20,20 @@ public abstract class AbstractGrabber implements Grabber {
 
 	private static final int DEFAULT_DEBUG_WINDOW_HEIGHT = 200;
 	private static final int DEFAULT_DEBUG_WINDOW_WIDTH = 200;
-	private final Client client;
+
 	protected final boolean sync;
+	/**
+	 * Width of grabbed image.
+	 */
 	protected final int width;
+	/**
+	 * Height of grabbed image.
+	 */
 	protected final int height;
 
-	boolean debug;
+	protected boolean debug;
+
+	private final Client client;
 
 	private int debugWindowHeight;
 	private int debugWindowWidth;
@@ -122,6 +129,11 @@ public abstract class AbstractGrabber implements Grabber {
 		}
 	}
 
+	/**
+	 * Returns the client.
+	 * 
+	 * @return
+	 */
 	public Client getClient() {
 		return client;
 	}

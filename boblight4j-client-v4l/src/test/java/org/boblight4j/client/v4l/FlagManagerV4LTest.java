@@ -30,8 +30,4 @@ public class FlagManagerV4LTest {
 		Assert.assertTrue(this.testable.debug);
 	}
 
-	@Test
-	public void testPostGetopt() {
-	}
-
 }

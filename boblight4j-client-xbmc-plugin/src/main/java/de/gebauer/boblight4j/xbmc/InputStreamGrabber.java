@@ -17,7 +17,8 @@ public class InputStreamGrabber extends AbstractPassiveGrabber implements
 			final FlagManagerInputStreamGrabber flagManager = new FlagManagerInputStreamGrabber();
 			flagManager.parseFlags(args);
 			final InputStreamGrabber grabber = new InputStreamGrabber(
-					new SocketClientImpl(new LightsHolderImpl()),
+					new SocketClientImpl(new LightsHolderImpl(),
+							flagManager.getAddress(), flagManager.getPort()),
 					flagManager.isSync(), 20, 20);
 			grabber.setup(flagManager);
 		} catch (BoblightException e) {

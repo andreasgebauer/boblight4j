@@ -32,34 +32,28 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 	 * Starts the processing.
 	 */
 	public final void run() {
-		this.getClient().getLightsHolder().setScanRange(this.width, this.height);
+		this.getClient().getLightsHolder()
+				.setScanRange(this.width, this.height);
 
-		while (!this.stop)
-		{
+		while (!this.stop) {
 			this.updateDimensions();
 
 			this.grabPixels(this.width, this.height, this.getScreenWidth(),
 					this.getScreenHeight());
 
 			// send rgb values to boblightd
-			try
-			{
+			try {
 				this.getClient().sendRgb(this.sync, null);
-			}
-			catch (final IOException e)
-			{
+			} catch (final IOException e) {
 				// recoverable error
 				return;
-			}
-			catch (final BoblightException e)
-			{
+			} catch (final BoblightException e) {
 				// recoverable error
 				return;
 			}
 
 			// put debug image on debug window
-			if (this.debug)
-			{
+			if (this.debug) {
 				this.drawDebugImage();
 
 			}
@@ -71,14 +65,14 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 	private void grabPixels(final int height, final int width,
 			final int screenWidth, final int screenHeight) {
 
-		for (int y = 0; y < height && !this.stop; y++)
-		{
-			for (int x = 0; x < width && !this.stop; x++)
-			{
+		final double colWidth = (double) screenWidth / (double) width;
+		final double rowHeight = (double) screenHeight / (double) height;
+
+		// loop from top to bottom
+		for (int y = 0; y < height && !this.stop; y++) {
+			// loop from left to right
+			for (int x = 0; x < width && !this.stop; x++) {
 				// position of pixel to capture
-				final double colWidth = (double) screenWidth / (double) width;
-				final double rowHeight = (double) screenHeight
-						/ (double) height;
 
 				final int xpos = (int) (x * colWidth + colWidth / 2);
 				final int ypos = (int) (y * rowHeight + rowHeight / 2);
@@ -89,8 +83,7 @@ public abstract class AbstractActiveGrabber extends AbstractGrabber implements
 				this.getClient().getLightsHolder().addPixel(x, y, rgb);
 
 				// put pixel on debug image
-				if (this.debug)
-				{
+				if (this.debug) {
 					this.setDebugPixel(x, y, rgb);
 				}
 			}

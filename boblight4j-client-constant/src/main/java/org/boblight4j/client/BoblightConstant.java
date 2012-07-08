@@ -25,7 +25,8 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 		while (!isStop()) {
 			SocketClientImpl boblight = new SocketClientImpl(
-					new LightsHolderImpl());
+					new LightsHolderImpl(), flagmanager.getAddress(),
+					flagmanager.getPort());
 
 			if (!trySetup(boblight)) {
 				continue;

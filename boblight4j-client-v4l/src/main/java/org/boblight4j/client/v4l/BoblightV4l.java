@@ -37,8 +37,6 @@ public class BoblightV4l extends AbstractRemoteBoblightClient {
 		System.exit(new BoblightV4l(args).run());
 	}
 
-	private boolean stop;
-
 	/**
 	 * Creates a new V4L client.
 	 * 
@@ -51,70 +49,66 @@ public class BoblightV4l extends AbstractRemoteBoblightClient {
 
 	@Override
 	protected final int run() {
-		while (!this.stop) {
-			// init boblight
-			// void* boblight = boblight_init();
-			final Client client = new SocketClientImpl(
-					new LightsHolderImpl());
+		// init boblight
+		// void* boblight = boblight_init();
+		Client client = new SocketClientImpl(new LightsHolderImpl(),
+				flagManager.getAddress(), flagManager.getPort());
 
-			if (!this.trySetup(client)) {
-				LOG.warn("Setup failed. Retrying ...");
-				continue;
+		if (!this.trySetup(client)) {
+			LOG.warn("Setup failed. Retrying ...");
+			return 0;
+		}
+
+		LOG.info("Connection to boblightd opened");
+
+		// if we can't parse the boblight option lines (given with -o)
+		// properly, just exit
+		try {
+			flagManager.parseBoblightOptions(client);
+		} catch (final Exception error) {
+			LOG.error("Error parsing boblight options", error);
+			return 1;
+		}
+
+		// set up videograbber
+		final Grabber grabber = new ImageGrabberFactory().getImageGrabber(
+				client, true, this.flagManager.width, this.flagManager.height);
+		try {
+			grabber.setup(flagManager);
+
+			if (flagManager.debug) {
+				grabber.setupDebug();
 			}
 
-			LOG.info("Connection to boblightd opened");
-
-			// if we can't parse the boblight option lines (given with -o)
-			// properly, just exit
+		} catch (final BoblightException error) {
+			LOG.error(
+					"Error occurred while setting up device. Retrying in 5 seconds.",
+					error);
 			try {
-				flagManager.parseBoblightOptions(client);
+				Thread.sleep(SLEEP_AFTER_ERROR);
+			} catch (final InterruptedException e) {
+				LOG.warn("Error during call of Thread.sleep().", e);
+			}
+			client.destroy();
+			return 0;
+		}
+
+		if (grabber instanceof ActiveGrabber) {
+			try {
+				// this will keep looping until we should stop or boblight
+				// gives
+				// an error
+				((ActiveGrabber) grabber).run();
 			} catch (final Exception error) {
-				LOG.error("Error parsing boblight options", error);
+				LOG.error("Fatal error occurred", error);
+				grabber.cleanup();
+				client.destroy();
 				return 1;
 			}
 
-			// set up videograbber
-			final Grabber grabber = new ImageGrabberFactory().getImageGrabber(
-					client, true, this.flagManager.width,
-					this.flagManager.height);
-			try {
-				grabber.setup(flagManager);
+			grabber.cleanup();
 
-				if (flagManager.debug) {
-					grabber.setupDebug();
-				}
-
-			} catch (final BoblightException error) {
-				LOG.error(
-						"Error occurred while setting up device. Retrying in 5 seconds.",
-						error);
-				try {
-					Thread.sleep(SLEEP_AFTER_ERROR);
-				} catch (final InterruptedException e) {
-					LOG.warn("Error during call of Thread.sleep().", e);
-				}
-				client.destroy();
-				continue;
-			}
-
-			if (grabber instanceof ActiveGrabber) {
-				try {
-					// this will keep looping until we should stop or boblight
-					// gives
-					// an error
-					((ActiveGrabber) grabber).run();
-				} catch (final Exception error) {
-					LOG.error("Fatal error occurred", error);
-					grabber.cleanup();
-					client.destroy();
-					return 1;
-				}
-
-				grabber.cleanup();
-
-				client.destroy();
-			}
-
+			client.destroy();
 		}
 
 		return 0;

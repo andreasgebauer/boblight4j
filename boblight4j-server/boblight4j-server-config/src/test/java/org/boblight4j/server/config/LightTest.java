@@ -1,9 +1,5 @@
 package org.boblight4j.server.config;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.Vector;
-
 import org.boblight4j.server.Light;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,20 +35,17 @@ public class LightTest {
 		this.testable.setRgb(new float[] { 1, 1, 1 }, 2);
 		this.testable.setRgb(new float[] { 1, 1, 1 }, 3);
 
-		final ColorConfig red = new ColorConfig();
-		red.setName("red");
+		final ColorConfig red = new ColorConfig("red");
 		red.setRgb(new float[] { 1, 0, 0 });
 		red.setBlacklevel(0.1f);
 		LightConfig config = this.testable.getConfig();
 		config.addColor(red);
 
-		final ColorConfig green = new ColorConfig();
-		green.setName("green");
+		final ColorConfig green = new ColorConfig("green");
 		green.setRgb(new float[] { 0, 1, 0 });
 		config.addColor(green);
 
-		final ColorConfig blue = new ColorConfig();
-		blue.setName("blue");
+		final ColorConfig blue = new ColorConfig("blue");
 		blue.setRgb(new float[] { 0, 0, 1 });
 		config.addColor(blue);
 

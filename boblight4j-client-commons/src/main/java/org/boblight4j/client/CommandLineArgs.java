@@ -1,5 +1,7 @@
 package org.boblight4j.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.boblight4j.cli.BooleanOptionHandler;
@@ -53,7 +55,7 @@ public class CommandLineArgs {
 	private boolean printBoblightOptions;
 
 	@Option(name = "-o", handler = BoblightOptionHandler.class, usage = "add libboblight option, syntax: [light:]option=value")
-	private List<String> options;
+	private List<String> options = new ArrayList<String>();
 
 	@Option(name = "-p", metaVar = "priority", usage = "from 0 to 255, default is 128", handler = PriorityOptionHandler.class)
 	private int priority = DefaultArgs.PRIORITY;

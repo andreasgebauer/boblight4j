@@ -1,15 +1,19 @@
 package org.boblight4j.server.config;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.boblight4j.device.AbstractDevice;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
+import org.boblight4j.exception.BoblightDeviceException;
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.ClientsHandler;
 import org.junit.Assert;
@@ -57,9 +61,9 @@ public class ConfigCreatorBaseTest {
 		assertEquals("colorName", colorConfig.getName());
 		Assert.assertArrayEquals(new float[] { .5f, 0, 1.0f },
 				colorConfig.getRgb(), 0.01f);
-		assertEquals(.9f, colorConfig.getGamma());
-		assertEquals(.5f, colorConfig.getAdjust());
-		assertEquals(.2f, colorConfig.getBlacklevel());
+		assertEquals(.9f, colorConfig.getGamma(), 0);
+		assertEquals(.5f, colorConfig.getAdjust(), 0);
+		assertEquals(.2f, colorConfig.getBlacklevel(), 0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,9 +94,32 @@ public class ConfigCreatorBaseTest {
 
 	@Test
 	public void testBuildLightConfig() throws Exception {
+		final ConfigGroup cfgGrp = new ConfigGroup();
+		cfgGrp.lines.add(new ConfigLine("name		left5", 1));
+		cfgGrp.lines.add(new ConfigLine("color		red     arduino 0 .8", 2));
+		cfgGrp.lines.add(new ConfigLine("color		green   arduino 1", 3));
+		cfgGrp.lines.add(new ConfigLine("color		blue    arduino 2", 4));
+
+		Collection<ConfigGroup> deviceLines = (Collection<ConfigGroup>) Whitebox
+				.getInternalState(configReader, "lightLines");
+		deviceLines.add(cfgGrp);
+
 		final List<Device> devices = new ArrayList<Device>();
+		Device mock = mock(Device.class);
+		when(mock.getNrChannels()).thenReturn(3);
+		when(mock.getName()).thenReturn("arduino");
+		devices.add(mock);
+		
 		final List<ColorConfig> colors = new ArrayList<ColorConfig>();
-		this.testable.buildLightConfig(devices, colors);
+		colors.add(new ColorConfig("red"));
+		colors.add(new ColorConfig("green"));
+		colors.add(new ColorConfig("blue"));
+		List<LightConfig> buildLightConfig = this.testable.buildLightConfig(
+				devices, colors);
+
+		LightConfig lightConfig = buildLightConfig.get(0);
+
+		assertEquals(0.8f, lightConfig.getAdjust(0), 0);
 	}
 
 }

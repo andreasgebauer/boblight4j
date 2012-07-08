@@ -55,7 +55,8 @@ public class SpectrumAnalyzer extends AbstractRemoteBoblightClient {
 	protected int run() {
 
 		final AbstractRemoteClient boblight = new SocketClientImpl(
-				new LightsHolderImpl());
+				new LightsHolderImpl(), flagManager.getAddress(),
+				flagManager.getPort());
 		if (!this.trySetup(boblight)) {
 			return 1;
 		}

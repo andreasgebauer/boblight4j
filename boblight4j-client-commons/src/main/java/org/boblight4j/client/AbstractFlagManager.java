@@ -132,7 +132,6 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e1) {
-			printHelpMessage();
 			throw new BoblightConfigurationException(
 					"Error parsing program arguments.", e1);
 		}
@@ -186,10 +185,10 @@ public abstract class AbstractFlagManager<T extends CommandLineArgs> implements
 	 * Prints the help message.
 	 */
 	@Override
-	public final void printHelpMessage() {
+	public void printHelpMessage() {
 		System.out.println("Usage: boblight-[type] [OPTION]");
 		System.out.println("");
-		System.out.println("  [OPTION]:");
+		System.out.println("[OPTION]:");
 		System.out.println("");
 
 		final CmdLineParser parser = new CmdLineParser(getArgBean());

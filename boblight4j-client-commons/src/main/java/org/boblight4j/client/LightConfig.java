@@ -31,7 +31,7 @@ public class LightConfig implements LightConfigMBean {
 
 	@Override
 	public int[] getHScanScaled() {
-		return this.hScanScaled.clone();
+		return this.hScanScaled;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class LightConfig implements LightConfigMBean {
 
 	@Override
 	public int[] getVScanScaled() {
-		return this.vScanScaled.clone();
+		return this.vScanScaled;
 	}
 
 	@Override

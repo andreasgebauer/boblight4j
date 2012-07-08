@@ -1,10 +1,10 @@
 package org.boblight4j.client.v4l;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.lang.reflect.Method;
 
 import org.boblight4j.client.LightsHolder;
 import org.boblight4j.client.SocketClientImpl;
@@ -40,8 +40,8 @@ public class BoblightV4lTest {
 		final BoblightV4l testable = new BoblightV4l("".split("\\s"));
 
 		final SocketClientImpl client = Mockito.mock(SocketClientImpl.class);
-		whenNew(SocketClientImpl.class).withArguments(any(LightsHolder.class))
-				.thenReturn(client);
+		whenNew(SocketClientImpl.class).withArguments(any(LightsHolder.class),
+				anyString(), anyInt()).thenReturn(client);
 
 		when(client.setup(Matchers.anyInt())).thenAnswer(new Answer<Boolean>() {
 

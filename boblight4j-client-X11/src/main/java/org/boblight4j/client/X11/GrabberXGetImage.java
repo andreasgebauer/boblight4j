@@ -15,13 +15,19 @@ import org.boblight4j.client.Client;
  */
 public class GrabberXGetImage extends AbstractX11Grabber {
 
-	private static final int ALL_PLANES = 0x00ffffff;
+	static final int ALL_PLANES = 0x00ffffff;
 
-	public GrabberXGetImage(final Client client, final boolean sync,
-			int width, int height, double interval) {
+	public GrabberXGetImage(final Client client, final boolean sync, int width,
+			int height, double interval) {
 		super(client, sync, width, height, interval);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Grabs a pixel from the screen at the specified position.
+	 * 
+	 */
 	public int[] grabPixelAt(final int xpos, final int ypos) {
 		final int rgb[] = new int[3];
 		// get an image of size 1x1 at the location

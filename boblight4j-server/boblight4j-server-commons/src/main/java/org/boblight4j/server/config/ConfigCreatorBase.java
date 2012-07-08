@@ -118,6 +118,23 @@ public abstract class ConfigCreatorBase implements ConfigCreator {
 							configGroup.lines.get(j).linenr, colorname));
 				}
 
+				try {
+					final String adjust = Misc.getWord(linePtr);
+
+					try {
+						Float adjustVal = Float.valueOf(adjust);
+						light.setAdjust(light.getColors().size() - 1, adjustVal);
+					} catch (NumberFormatException e) {
+						throw new BoblightConfigurationException(
+								"Unable to parse value '" + adjust
+										+ "' to float");
+					}
+
+				} catch (BoblightParseException e) {
+					// no value given
+
+				}
+
 				final int ichannel = Integer.valueOf(devicechannel);
 
 				// loop through the devices, check if one with this name exists
@@ -221,7 +238,7 @@ public abstract class ConfigCreatorBase implements ConfigCreator {
 
 		final List<ColorConfig> colors = new ArrayList<ColorConfig>();
 		for (int i = 0; i < this.configReader.getColorLines().size(); i++) {
-			final ColorConfig color = new ColorConfig();
+			final ColorConfig color = new ColorConfig(null);
 
 			for (int j = 0; j < this.configReader.getColorLines().get(i).lines
 					.size(); j++) {

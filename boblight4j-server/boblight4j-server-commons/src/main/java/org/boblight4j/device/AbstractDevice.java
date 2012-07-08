@@ -161,7 +161,7 @@ public abstract class AbstractDevice implements Device, Runnable {
 				this.name, this.output }));
 
 		while (!this.stop) {
-			// keep trying to set up the device every 10 seconds
+			// keep trying to set up the device every second
 			while (!this.stop) {
 				LOG.info(String.format("%s: setting up", this.name));
 				if (!this.setup()) {

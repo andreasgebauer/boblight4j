@@ -24,7 +24,8 @@ public class ColorConfig {
 	private String name;
 	private float[] rgb = new float[3];
 
-	public ColorConfig() {
+	public ColorConfig(final String name) {
+		this.name = name;
 		this.gamma = 1.0f;
 		this.adjust = 1.0f;
 		this.blacklevel = 0.0f;

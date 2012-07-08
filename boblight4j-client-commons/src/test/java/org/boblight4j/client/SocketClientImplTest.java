@@ -41,7 +41,7 @@ public class SocketClientImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.testable = new SocketClientImpl(new LightsHolderImpl());
+		this.testable = new SocketClientImpl(new LightsHolderImpl(), "", 0);
 		this.socketChannel = Mockito.mock(SocketChannel.class);
 		Whitebox.setInternalState(this.testable, SocketChannel.class,
 				this.socketChannel);
@@ -224,8 +224,7 @@ public class SocketClientImplTest {
 	}
 
 	@Test
-	public void testTrySetup() throws BoblightException,
-			IOException {
+	public void testTrySetup() throws BoblightException, IOException {
 
 		final ByteArrayInputStream hello = new ByteArrayInputStream(
 				"hello\n".getBytes());

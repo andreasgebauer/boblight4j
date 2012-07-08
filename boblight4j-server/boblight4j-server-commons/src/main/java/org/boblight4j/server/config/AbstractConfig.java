@@ -23,7 +23,6 @@ public abstract class AbstractConfig implements Config {
 		return devices;
 	}
 
-	@Override
 	public void setDevices(List<Device> devices) {
 		this.devices = devices;
 	}
@@ -32,12 +31,10 @@ public abstract class AbstractConfig implements Config {
 		return lights;
 	}
 
-	@Override
 	public void setLights(List<LightConfig> lights) {
 		this.lights = lights;
 	}
 
-	@Override
 	public void clearConfig() {
 		// TODO implement
 	}

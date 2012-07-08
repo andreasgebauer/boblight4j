@@ -17,6 +17,7 @@ import org.boblight4j.server.SocketClientsHandlerImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,11 +27,8 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.powermock.reflect.internal.WhiteboxImpl;
 
+@Ignore
 public class TcpServerConfigImplTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
 	@Rule
 	public ExpectedException ex = ExpectedException.none();
