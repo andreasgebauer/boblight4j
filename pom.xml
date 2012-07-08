@@ -22,7 +22,7 @@
 
 	<scm>
 		<developerConnection>scm:svn:https://boblight4j.googlecode.com/svn/branches/release-0.1.x</developerConnection>
-		<connection>http://boblight4j.googlecode.com/svn/branches/release-0.1.x</connection>
+		<url>http://boblight4j.googlecode.com/svn/branches/release-0.1.x</url>
 	</scm>
 
 	<modules>
