@@ -59,9 +59,11 @@ public class Light extends LightConfig {
 	public final void calculateScaledScanRange(final int width, final int height) {
 		this.setHscanScaledStart((int) (this.hscan[0] / HUNDRET * height));
 		this.setHscanScaledEnd((int) (this.hscan[1] / HUNDRET * height));
-		this.getVScanScaled()[0] = (int) (this.vscan[0] / HUNDRET * width);
-		this.getVScanScaled()[1] = (int) (this.vscan[1] / HUNDRET * width);
+		this.setVScanScaledStart((int) (this.vscan[0] / HUNDRET * width));
+		this.getVScanScaledEnd((int) (this.vscan[1] / HUNDRET * width));
 	}
+
+
 
 	@Override
 	public final float getAutospeed() {

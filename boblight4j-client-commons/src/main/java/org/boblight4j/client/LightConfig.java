@@ -7,7 +7,6 @@ public class LightConfig implements LightConfigMBean {
 	// affected by getRgb method //
 	// considered to be global
 	private float autospeed = -1;
-	private final int hScanScaled[] = new int[2];
 
 	private float satRangeEnd = -1;
 	private float satRangeStart = -1;
@@ -21,6 +20,8 @@ public class LightConfig implements LightConfigMBean {
 	private float value = -1;
 	private float valueRangeEnd = -1;
 	private float valueRangeStart = -1;
+
+	private final int hScanScaled[] = new int[2];
 	private int vScanScaled[] = new int[2];
 
 	@Override
@@ -146,6 +147,14 @@ public class LightConfig implements LightConfigMBean {
 	@Override
 	public void setVScanScaled(final int[] vscanscaled) {
 		this.vScanScaled = vscanscaled.clone();
+	}
+
+	public void setVScanScaledStart(int i) {
+		this.vScanScaled[0] = i;
+	}
+
+	protected void getVScanScaledEnd(int i) {
+		this.vScanScaled[1] = i;
 	}
 
 }

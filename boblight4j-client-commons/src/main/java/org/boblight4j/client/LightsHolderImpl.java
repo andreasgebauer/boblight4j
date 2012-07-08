@@ -30,16 +30,7 @@ public class LightsHolderImpl implements LightsHolder {
 					&& yPos <= light.getHScanScaled()[1]
 					&& xPos >= light.getVScanScaled()[0]
 					&& xPos <= light.getVScanScaled()[1]) {
-				// any of the three color values must be greater than the
-				// threshold
-				if (rgb[0] >= light.getThreshold()
-						|| rgb[1] >= light.getThreshold()
-						|| rgb[2] >= light.getThreshold()) {
-					light.rgb[0] += MathUtils.clamp(rgb[0], 0, MAX_VALUE_BYTE);
-					light.rgb[1] += MathUtils.clamp(rgb[1], 0, MAX_VALUE_BYTE);
-					light.rgb[2] += MathUtils.clamp(rgb[2], 0, MAX_VALUE_BYTE);
-				}
-				light.rgb[3]++;
+				addPixel(rgb, light);
 			}
 		}
 	}
@@ -72,6 +63,8 @@ public class LightsHolderImpl implements LightsHolder {
 	}
 
 	private void addPixel(final int[] rgb, Light light) {
+		// any of the three color values must be greater than the
+		// threshold
 		if (rgb[0] >= light.getThreshold() || rgb[1] >= light.getThreshold()
 				|| rgb[2] >= light.getThreshold()) {
 			light.rgb[0] += MathUtils.clamp(rgb[0], 0, 255);

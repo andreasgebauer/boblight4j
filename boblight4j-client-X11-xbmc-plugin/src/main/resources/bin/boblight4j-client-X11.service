@@ -14,6 +14,7 @@ JAR=$BOBLIGHT_DIR/boblight4j-X11-${project.version}.jar
 
 # program options
 SPEED=`grep id=\"speed\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
+DEBUG=`grep id=\"debug\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
 PIXELS=`grep id=\"pixels\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
 PIXELS=${PIXELS/.*}
 SATURATION=`grep id=\"saturation\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
@@ -23,6 +24,11 @@ THRESHOLD=${THRESHOLD/.*}
 VALUE=`grep id=\"value\" $ADDON_SETTINGS | awk '{print $3 }' | sed -e "s,value=,," -e "s,\",,g"`
 
 OPTS="-o speed="$SPEED" -o interpolation="$INTERPOLATION" -o threshold="$THRESHOLD" -o saturation="$SATURATION" -o value="$VALUE
+
+if [ "$DEBUG" -eq "true" ]; then
+	JAVA="$JAVA -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000"
+fi
+
 ARGS="-u "$PIXELS" -x "$OPTS
 
 CMD="$JAVA -jar $JAR $ARGS"
