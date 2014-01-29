@@ -84,21 +84,28 @@ public class SocketClientImpl extends AbstractRemoteClient {
 
 		// set address
 		this.mSecTimeout = mSecTimeout;
-		if (address == null) {
+		if (address == null)
+		{
 			this.address = "127.0.0.1";
-		} else {
+		}
+		else
+		{
 			this.address = address;
 		}
 
 		// set port
-		if (port >= 0) {
+		if (port >= 0)
+		{
 			this.port = port;
-		} else {
+		}
+		else
+		{
 			// set to default port
 			this.port = DEFAULT_PORT;
 		}
 
-		try {
+		try
+		{
 			this.socketChannel = SocketChannel.open();
 			// socketChannel.configureBlocking(false);
 
@@ -112,7 +119,8 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			this.readDataToQueue();
 
 			message = this.messageQueue.nextMessage();
-			if (!this.parseWord(message, "hello")) {
+			if (!this.parseWord(message, "hello"))
+			{
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " sent gibberish: "
 						+ message.message.toString());
@@ -126,14 +134,16 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			message = this.messageQueue.nextMessage();
 
 			if (!this.parseWord(message, "version")
-					|| (word = Misc.getWord(message.message)) == null) {
+					|| (word = Misc.getWord(message.message)) == null)
+			{
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " sent gibberish");
 			}
 
 			// if we don't get the same protocol version back as we have, we
 			// can't work together
-			if (!word.equals(PROTOCOLVERSION)) {
+			if (!word.equals(PROTOCOLVERSION))
+			{
 				throw new BoblightCommunicationException("version mismatch, "
 						+ this.address + ":" + this.port + " has version \""
 						+ word + "\", libboblight has version \""
@@ -148,7 +158,9 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			message = this.messageQueue.nextMessage();
 
 			this.parseLights(message);
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			throw new BoblightCommunicationException(e);
 		}
 
@@ -158,16 +170,20 @@ public class SocketClientImpl extends AbstractRemoteClient {
 	 * Destroy the client. Does nothing right now.
 	 */
 	public void destroy() {
-		try {
+		try
+		{
 			this.socketChannel.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			LOG.error("Error during close socket.", e);
 		}
 	}
 
 	public Message nextMessage() throws BoblightCommunicationException {
 		// read some data to the message queue if we have no messages
-		if (this.messageQueue.getNrMessages() == 0) {
+		if (this.messageQueue.getNrMessages() == 0)
+		{
 			this.readDataToQueue();
 		}
 		return this.messageQueue.nextMessage();
@@ -177,7 +193,8 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			throws BoblightException {
 		String word;
 
-		if (send) {
+		if (send)
+		{
 			this.writeDataToSocket("ping\n");
 		}
 
@@ -186,21 +203,27 @@ public class SocketClientImpl extends AbstractRemoteClient {
 		final Message message = this.messageQueue.nextMessage();
 
 		if ((word = Misc.getWord(message.message)) == null
-				|| !word.equals("ping")) {
+				|| !word.equals("ping"))
+		{
 			throw new BoblightException(this.address + ":" + this.port
 					+ " sent gibberish");
 		}
 
 		// client can set outputused to NULL
 		// should return the value?
-		if (outputused != null) {
-			try {
+		if (outputused != null)
+		{
+			try
+			{
 				Integer.valueOf(word);
-				if ((word = Misc.getWord(message.message)) == null) {
+				if ((word = Misc.getWord(message.message)) == null)
+				{
 					throw new BoblightException(this.address + ":" + this.port
 							+ " sent gibberish");
 				}
-			} catch (final NumberFormatException e) {
+			}
+			catch (final NumberFormatException e)
+			{
 				throw new BoblightException(this.address + ":" + this.port
 						+ " sent gibberish", e);
 			}
@@ -216,20 +239,23 @@ public class SocketClientImpl extends AbstractRemoteClient {
 	 * @throws BoblightCommunicationException
 	 */
 	private void readDataToQueue() throws BoblightCommunicationException {
-		try {
+		try
+		{
 			long now = System.currentTimeMillis();
 			final long target = now + this.mSecTimeout;
 			final int nrmessages = this.messageQueue.getNrMessages();
 
 			while (now < target
-					&& this.messageQueue.getNrMessages() == nrmessages) {
+					&& this.messageQueue.getNrMessages() == nrmessages)
+			{
 				InputStream is;
 				String line = null;
 				final char[] data = new char[MAXDATA];
 				is = this.socketChannel.socket().getInputStream();
 				final InputStreamReader br = new InputStreamReader(is);
 				final int read = br.read(data);
-				if (read == -1) {
+				if (read == -1)
+				{
 					throw new BoblightCommunicationException(
 							"No data available. EOS.");
 				}
@@ -237,7 +263,8 @@ public class SocketClientImpl extends AbstractRemoteClient {
 
 				this.messageQueue.addData(line);
 
-				if (this.messageQueue.getRemainingDataSize() > MAXDATA) {
+				if (this.messageQueue.getRemainingDataSize() > MAXDATA)
+				{
 					throw new BoblightCommunicationException(this.address + ":"
 							+ this.port + " sent too much data");
 				}
@@ -245,11 +272,14 @@ public class SocketClientImpl extends AbstractRemoteClient {
 				now = System.currentTimeMillis();
 			}
 
-			if (nrmessages == this.messageQueue.getNrMessages()) {
+			if (nrmessages == this.messageQueue.getNrMessages())
+			{
 				throw new BoblightCommunicationException(this.address + ":"
 						+ this.port + " read timed out");
 			}
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			throw new BoblightCommunicationException(e);
 		}
 	}
@@ -266,29 +296,34 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			throws IOException, BoblightException {
 		final StringBuilder data = new StringBuilder();
 
-		for (Light light : this.getLightsHolder().getLights()) {
+		for (Light light : this.getLightsHolder().getLights())
+		{
 			final float[] rgb = light.getRgb();
 			data.append(CMD_SET_LIGHT + light.getName() + " rgb " + rgb[0]
 					+ " " + rgb[1] + " " + rgb[2] + "\n");
-			if (light.getAutospeed() > 0.0 && light.getSinglechange() > 0.0) {
+			if (light.getAutospeed() > 0.0 && light.getSinglechange() > 0.0)
+			{
 				data.append(CMD_SET_LIGHT + light.getName() + " singlechange "
 						+ light.getSinglechange() + "\n");
 			}
 		}
 
 		// send a message that we want devices to sync to our input
-		if (sync) {
+		if (sync)
+		{
 			data.append("sync\n");
 		}
 
 		// if we want to check if our output is used, send a ping message
-		if (outputused != null) {
+		if (outputused != null)
+		{
 			data.append("ping\n");
 		}
 
 		this.writeDataToSocket(data.toString());
 
-		if (outputused != null) {
+		if (outputused != null)
+		{
 			this.ping(outputused, false);
 		}
 	}
@@ -316,26 +351,36 @@ public class SocketClientImpl extends AbstractRemoteClient {
 	 */
 	private void writeDataToSocket(final String string)
 			throws BoblightException {
-		if (this.socketChannel == null) {
+		if (this.socketChannel == null)
+		{
 			throw new IllegalStateException(
 					"Ensure to connect to server before writing data.");
 		}
 		if (!this.socketChannel.isConnected() || !this.socketChannel.isOpen()
-				|| this.socketChannel.socket().isOutputShutdown()) {
+				|| this.socketChannel.socket().isOutputShutdown())
+		{
 			throw new BoblightCommunicationException(
 					"Server closed connection unexpectedly.");
 		}
-		try {
+		try
+		{
 			this.socketChannel.write(ByteBuffer.wrap(string.getBytes()));
-		} catch (final IOException e) {
+		}
+		catch (final IOException e)
+		{
 			throw new BoblightCommunicationException(e);
 		}
 
 	}
 
 	@Override
-	public boolean setup(int priority) {
-		try {
+	public boolean setup(FlagManager flagManager) {
+
+		this.address = flagManager.getAddress();
+		this.port = flagManager.getPort();
+
+		try
+		{
 
 			LOG.info("Connecting to boblightd");
 
@@ -343,13 +388,18 @@ public class SocketClientImpl extends AbstractRemoteClient {
 			// boblight
 			connect(this.address, this.port, Constants.CONNECTION_TIMEOUT);
 
-			sendPriority(priority);
-		} catch (final BoblightException e) {
+			sendPriority(flagManager.getPriority());
+		}
+		catch (final BoblightException e)
+		{
 			LOG.info("Waiting 10 seconds before trying again", e);
 			destroy();
-			try {
+			try
+			{
 				Thread.sleep(Constants.RETRY_DELAY_ERROR);
-			} catch (final InterruptedException ex) {
+			}
+			catch (final InterruptedException ex)
+			{
 				LOG.warn("", ex);
 			}
 			return false;

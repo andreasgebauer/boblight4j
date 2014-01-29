@@ -55,7 +55,8 @@
 							<includeScope>compile</includeScope>
 							<actTransitively>false</actTransitively>
 							<transitive>false</transitive>
-							<includeArtifactIds>boblight4j-server</includeArtifactIds>
+							<includeArtifactIds>boblight4j-tcp-server</includeArtifactIds>
+							<markersDirectory>${project.build.directory}/markers/server</markersDirectory>
 							<outputDirectory>${project.build.directory}/server</outputDirectory>
 						</configuration>
 					</execution>
@@ -69,7 +70,7 @@
 							<includeScope>runtime</includeScope>
 							<includeClassifiers>${nativeclassifier}</includeClassifiers>
 							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
-							<includeArtifactIds>boblight4j-server</includeArtifactIds>
+							<includeArtifactIds>boblight4j-tcp-server</includeArtifactIds>
 							<markersDirectory>${project.build.directory}/markers/server</markersDirectory>
 							<outputDirectory>${project.build.directory}/server/lib</outputDirectory>
 						</configuration>
@@ -84,7 +85,8 @@
 							<includeScope>compile</includeScope>
 							<actTransitively>false</actTransitively>
 							<transitive>false</transitive>
-							<excludeArtifactIds>boblight4j-server</excludeArtifactIds>
+							<excludeArtifactIds>boblight4j-tcp-server</excludeArtifactIds>
+							<markersDirectory>${project.build.directory}/markers/clients</markersDirectory>
 							<outputDirectory>${project.build.directory}/clients</outputDirectory>
 						</configuration>
 					</execution>

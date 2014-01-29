@@ -1,11 +1,18 @@
 #!/bin/bash
 
-JAVA=/storage/programs/java/jre/bin/java
-BOBLIGHT_DIR=/storage/programs/boblight4j-0.0.2-SNAPSHOT-linux64/server/boblight4j-server-0.0.2-SNAPSHOT
+BOBLIGHT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+JAVA=java
+CONF=$BOBLIGHT_DIR/conf/boblight.conf
+
+# DEBUG
 DEBUGPORT=8000
 DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address="$DEBUGPORT",server=y,suspend=n"
 
-JVM_OPTIONS="-Djava.rmi.server.hostname=zbox.local -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+DEVICE=$(grep output $CONF)
+DEVICE=${DEVICE#output}
 
-$JAVA $JVM_OPTIONS $DEBUG -Djava.library.path=$BOBLIGHT_DIR/lib/native -jar $BOBLIGHT_DIR/boblight4j-server-0.0.2-SNAPSHOT.jar -c $BOBLIGHT_DIR/boblight.15pc.conf &
+JMX_OPTIONS="-Djava.rmi.server.hostname=raspberrypi -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+JVM_OPTIONS="-Dgnu.io.rxtx.SerialPorts=$DEVICE $DEBUG"
+
+$JAVA $JVM_OPTIONS -Djava.library.path=$BOBLIGHT_DIR/lib/native -cp $BOBLIGHT_DIR/conf;$BOBLIGHT_DIR/${project.artifactId}-${project.version}.jar org.boblight4j.server.BoblightDaemon -c $CONF &

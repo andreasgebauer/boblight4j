@@ -4,8 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.lang.reflect.Method;
-
+import org.boblight4j.client.FlagManager;
 import org.boblight4j.client.LightsHolder;
 import org.boblight4j.client.SocketClientImpl;
 import org.junit.Before;
@@ -43,14 +42,16 @@ public class BoblightV4lTest {
 		whenNew(SocketClientImpl.class).withArguments(any(LightsHolder.class))
 				.thenReturn(client);
 
-		when(client.setup(Matchers.anyInt())).thenAnswer(new Answer<Boolean>() {
+		when(client.setup(Matchers.isA(FlagManager.class))).thenAnswer(
+				new Answer<Boolean>() {
 
-			@Override
-			public Boolean answer(InvocationOnMock invocation) throws Throwable {
-				Whitebox.setInternalState(testable, "stop", true);
-				return false;
-			}
-		});
+					@Override
+					public Boolean answer(InvocationOnMock invocation)
+							throws Throwable {
+						Whitebox.setInternalState(testable, "stop", true);
+						return false;
+					}
+				});
 
 		whenNew(BoblightV4l.class).withArguments(any(String[].class))
 				.thenReturn(testable);

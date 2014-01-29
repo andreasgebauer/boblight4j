@@ -14,6 +14,7 @@
 			</includes>
 			<outputDirectory>/</outputDirectory>
 		</fileSet>
+		<!-- libraries -->
 		<fileSet>
 			<directory>${project.build.directory}/dependency</directory>
 			<includes>
@@ -21,13 +22,15 @@
 			</includes>
 			<outputDirectory>/lib</outputDirectory>
 		</fileSet>
+		<!-- native libraries -->
 		<fileSet>
-			<directory>${project.build.directory}/lib</directory>
+			<directory>${native.lib.dir}</directory>
 			<includes>
 				<include>**/**</include>
 			</includes>
 			<outputDirectory>/lib/native</outputDirectory>
 		</fileSet>
+		<!-- scripts -->
 		<fileSet>
 			<directory>${project.build.directory}/scripts</directory>
 			<fileMode>0644</fileMode>
@@ -35,6 +38,14 @@
 				<include>**/**</include>
 			</includes>
 			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		<!-- configuration -->
+		<fileSet>
+			<directory>${project.build.directory}/conf</directory>
+			<includes>
+				<include>**/**</include>
+			</includes>
+			<outputDirectory>/conf</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

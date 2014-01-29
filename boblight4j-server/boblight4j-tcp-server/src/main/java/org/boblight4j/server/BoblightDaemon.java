@@ -2,14 +2,12 @@ package org.boblight4j.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.boblight4j.exception.BoblightException;
 import org.boblight4j.server.config.ConfigReader;
 import org.boblight4j.server.config.ConfigUpdater;
 import org.boblight4j.server.config.Device;
-import org.boblight4j.server.config.LightConfig;
 import org.boblight4j.server.config.PlainTextConfigFileReader;
 import org.boblight4j.server.config.TcpServerConfigImpl;
 import org.kohsuke.args4j.CmdLineException;
@@ -60,9 +58,12 @@ public class BoblightDaemon {
 	 */
 	public static void main(final String[] args) {
 		BoblightDaemon boblightDaemon = new BoblightDaemon();
-		try {
+		try
+		{
 			boblightDaemon.init(args);
-		} catch (final Exception e) {
+		}
+		catch (final Exception e)
+		{
 			LOG.error("Fatal error occurred", e);
 			boblightDaemon.printHelpMessage();
 			System.exit(1);
@@ -81,7 +82,8 @@ public class BoblightDaemon {
 	private void init(final String[] args) throws IOException,
 			BoblightException {
 		this.args = this.parseFlags(args);
-		if (this.args.help) {
+		if (this.args.help)
+		{
 			throw new BoblightException("help");
 		}
 
@@ -114,30 +116,35 @@ public class BoblightDaemon {
 
 		final List<Device> devices = config.getDevices();
 
-		final ConfigUpdater updater = new ConfigUpdater(this.args.configFile,
-				configCreator, clients, config);
-		updater.startThread();
+		new ConfigUpdater(this.args.configFile, configCreator, clients, config)
+				.startThread();
 
 		// start the devices
 		LOG.info("starting devices");
-		for (int i = 0; i < devices.size(); i++) {
+		for (int i = 0; i < devices.size(); i++)
+		{
 			devices.get(i).startThread();
 		}
 
 		// run the clients handler
 		clients.process();
 
-		while (!stop) {
-			try {
+		while (!stop)
+		{
+			try
+			{
 				Thread.sleep(100);
-			} catch (final InterruptedException e) {
+			}
+			catch (final InterruptedException e)
+			{
 				LOG.warn("Error during Thread.sleep call.", e);
 			}
 		}
 
 		// signal that the devices should stop
 		LOG.info("signaling devices to stop");
-		for (int i = 0; i < devices.size(); i++) {
+		for (int i = 0; i < devices.size(); i++)
+		{
 			devices.get(i).asyncStopThread();
 		}
 
@@ -146,18 +153,22 @@ public class BoblightDaemon {
 
 		// stop the devices
 		LOG.info("waiting for devices to stop");
-		for (int i = 0; i < devices.size(); i++) {
+		for (int i = 0; i < devices.size(); i++)
+		{
 			devices.get(i).stopThread();
 		}
 		LOG.info("exiting");
 	}
 
 	private ServerArgs parseFlags(final String[] args) throws BoblightException {
-		try {
+		try
+		{
 			final ServerArgs argsBean = new ServerArgs();
 			new CmdLineParser(argsBean).parseArgument(args.clone());
 			return argsBean;
-		} catch (CmdLineException e) {
+		}
+		catch (CmdLineException e)
+		{
 			throw new BoblightException(e);
 		}
 	}
@@ -165,7 +176,8 @@ public class BoblightDaemon {
 	private void printFlags(final int length, final String[] args) {
 		StringBuilder flags = new StringBuilder("starting");
 
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < length; i++)
+		{
 			flags.append(' ');
 			flags.append(args[i]);
 		}

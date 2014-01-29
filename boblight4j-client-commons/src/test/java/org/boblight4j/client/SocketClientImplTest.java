@@ -139,11 +139,16 @@ public class SocketClientImplTest {
 					public boolean matches(final Object item) {
 						final ByteBuffer buf = (ByteBuffer) item;
 						final String string = new String(buf.array());
-						if (string.equals("hello\n")) {
+						if (string.equals("hello\n"))
+						{
 							return true;
-						} else if (string.equals("get version\n")) {
+						}
+						else if (string.equals("get version\n"))
+						{
 							return true;
-						} else if (string.equals("get lights\n")) {
+						}
+						else if (string.equals("get lights\n"))
+						{
 							return true;
 						}
 						return false;
@@ -224,8 +229,7 @@ public class SocketClientImplTest {
 	}
 
 	@Test
-	public void testTrySetup() throws BoblightException,
-			IOException {
+	public void testTrySetup() throws BoblightException, IOException {
 
 		final ByteArrayInputStream hello = new ByteArrayInputStream(
 				"hello\n".getBytes());
@@ -245,7 +249,7 @@ public class SocketClientImplTest {
 		PowerMockito.mockStatic(Thread.class);
 
 		// will do a sleep of 10 secs
-		this.testable.setup(0);
+		this.testable.setup(Mockito.mock(FlagManager.class));
 
 		verify(socketChannel).write(ByteBuffer.wrap("hello\n".getBytes()));
 		verify(socketChannel)

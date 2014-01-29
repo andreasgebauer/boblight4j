@@ -23,11 +23,13 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 	protected final int run() {
 
-		while (!isStop()) {
+		while (!isStop())
+		{
 			SocketClientImpl boblight = new SocketClientImpl(
 					new LightsHolderImpl());
 
-			if (!trySetup(boblight)) {
+			if (!trySetup(boblight))
+			{
 				continue;
 			}
 
@@ -35,9 +37,12 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 			// if we can't parse the boblight option lines (given with -o)
 			// properly, just exit
-			try {
+			try
+			{
 				flagmanager.parseBoblightOptions(boblight);
-			} catch (Exception error) {
+			}
+			catch (Exception error)
+			{
 				LOG.error("", error);
 				return 1;
 			}
@@ -48,7 +53,8 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 					(flagmanager.getColor() >> 8) & BYTE_SHIFT,
 					flagmanager.getColor() & BYTE_SHIFT };
 
-			try {
+			try
+			{
 				// set all lights to the color we want and send it
 				boblight.getLightsHolder().addPixel(null, rgb);
 
@@ -56,7 +62,9 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 				// broken, so bitch and try again
 				boblight.sendRgb(true, null);
 
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 
 				LOG.error(
 						"Exception occured during add pixel or sending rgb values",
@@ -67,18 +75,25 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 			// keep checking the connection to boblightd every 10 seconds, if it
 			// breaks we try to connect again
-			while (!isStop()) {
+			while (!isStop())
+			{
 
-				try {
+				try
+				{
 					boblight.ping(null, true);
-				} catch (BoblightException e) {
+				}
+				catch (BoblightException e)
+				{
 					LOG.error("BoblightException occurred during Ping", e);
 					break;
 				}
 
-				try {
+				try
+				{
 					Thread.sleep(10000);
-				} catch (InterruptedException e) {
+				}
+				catch (InterruptedException e)
+				{
 					LOG.error("", e);
 				}
 			}
@@ -92,7 +107,8 @@ public class BoblightConstant extends AbstractRemoteBoblightClient {
 
 	@Override
 	protected FlagManager getFlagManager() {
-		if (this.flagmanager == null) {
+		if (this.flagmanager == null)
+		{
 			this.flagmanager = new FlagManagerConstant();
 		}
 		return this.flagmanager;

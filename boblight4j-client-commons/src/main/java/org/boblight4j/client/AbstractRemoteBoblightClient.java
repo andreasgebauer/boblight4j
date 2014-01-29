@@ -45,7 +45,8 @@ public abstract class AbstractRemoteBoblightClient {
 			}
 		}));
 
-		while (!this.stop) {
+		while (!this.stop)
+		{
 			// will run the client until it returns ( in case of error or normal
 			// termination)
 			return this.run();
@@ -79,15 +80,20 @@ public abstract class AbstractRemoteBoblightClient {
 	 */
 	public final void parseArgs(final FlagManager flagmanager,
 			final String[] args) {
-		try {
+		try
+		{
 			flagmanager.parseFlags(args);
-		} catch (final BoblightConfigurationException error) {
+		}
+		catch (final BoblightConfigurationException error)
+		{
 			LOG.error(
 					"Error occured configuring client with passed program arguments.",
 					error);
 			flagmanager.printHelpMessage();
 			System.exit(1);
-		} catch (final BoblightRuntimeException error) {
+		}
+		catch (final BoblightRuntimeException error)
+		{
 			flagmanager.printHelpMessage();
 			System.exit(1);
 		}
@@ -99,7 +105,8 @@ public abstract class AbstractRemoteBoblightClient {
 		}
 
 		// print boblight options (-o [light:]option=value)
-		if (flagmanager.isPrintOptions()) {
+		if (flagmanager.isPrintOptions())
+		{
 			flagmanager.printOptions();
 			System.exit(1);
 		}
@@ -123,7 +130,7 @@ public abstract class AbstractRemoteBoblightClient {
 	 * @return true if setup succeeds, false otherwise
 	 */
 	public final boolean trySetup(final Client client) {
-		return client.setup(this.flagManager.getPriority());
+		return client.setup(this.flagManager);
 	}
 
 }

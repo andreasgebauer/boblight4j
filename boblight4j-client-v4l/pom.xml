@@ -50,7 +50,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>"-Djava.library.path=${project.build.directory}/lib"</argLine>
+					<!-- avoid problems running unit tests with powermock and jdk7 -->
+					<argLine>-XX:-UseSplitVerifier -Djava.library.path=${project.build.directory}/lib</argLine>
 					<detail>true</detail>
 				</configuration>
 			</plugin>

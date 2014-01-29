@@ -2,8 +2,6 @@ package org.boblight4j.client;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -133,7 +131,7 @@ public class AbstractRemoteBoblightClientTest {
 		RemoteClient client = mock(RemoteClient.class);
 		this.testable.trySetup(client);
 
-		verify(client).setup(0);
+		verify(client).setup(this.flagManager);
 	}
 
 }

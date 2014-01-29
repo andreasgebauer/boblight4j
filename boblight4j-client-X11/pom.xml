@@ -79,7 +79,7 @@
 							<includes>**/*.so,**/*.dll,**/*.dylib</includes>
 							<!-- <excludeArtifactIds>boblight4j-server</excludeArtifactIds> -->
 							<markersDirectory>${project.build.directory}/markers/clients</markersDirectory>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<outputDirectory>${native.lib.dir}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

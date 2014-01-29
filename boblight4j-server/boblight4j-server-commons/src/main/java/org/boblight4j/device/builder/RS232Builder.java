@@ -2,7 +2,6 @@ package org.boblight4j.device.builder;
 
 import java.util.List;
 
-import org.boblight4j.device.AbstractDevice.DeviceType;
 import org.boblight4j.device.DeviceRS232;
 import org.boblight4j.exception.BoblightConfigurationException;
 import org.boblight4j.exception.BoblightParseException;
@@ -45,13 +44,18 @@ public class RS232Builder extends AbstractDeviceBuilder {
 
 		this.setDeviceBits(deviceRS232, configGroup);
 
-		if (type.equals("momo")) {
+		if (type.equals("momo"))
+		{
 			this.setDevicePrefix(deviceRS232, configGroup);
 			this.setDevicePostfix(deviceRS232, configGroup);
 			this.setDeviceEscapeFlag(deviceRS232, configGroup);
 			deviceRS232.getProtocol().checkValid();
-		} else if (type.equals("atmo")) {
-		} else if (type.equals("karate")) {
+		}
+		else if (type.equals("atmo"))
+		{
+		}
+		else if (type.equals("karate"))
+		{
 		}
 
 		return deviceRS232;
@@ -62,14 +66,18 @@ public class RS232Builder extends AbstractDeviceBuilder {
 
 		final Pointer<String> line = new Pointer<String>();
 		final int linenr = this.getLineWithKey("bits", configGroup.lines, line);
-		if (linenr == -1) {
+		if (linenr == -1)
+		{
 			return;
 		}
 
 		String strvalue;
-		try {
+		try
+		{
 			strvalue = Misc.getWord(line);
-		} catch (final BoblightParseException e) {
+		}
+		catch (final BoblightParseException e)
+		{
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'bits'", e);
 		}
@@ -85,15 +93,19 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int postfix = 0;
 		final int linenr = this.getLineWithKey("escape", configGroup.lines,
 				line);
-		if (linenr == -1) {
+		if (linenr == -1)
+		{
 			return; // postfix is optional, so this is not an error
 		}
 
 		String strvalue;
-		try {
+		try
+		{
 			strvalue = Misc.getWord(line);
 			postfix = Integer.valueOf(strvalue, 16);
-		} catch (final BoblightParseException e) {
+		}
+		catch (final BoblightParseException e)
+		{
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key channels", e);
 		}
@@ -108,15 +120,19 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int postfix = 0;
 		final int linenr = this.getLineWithKey("postfix", configGroup.lines,
 				line);
-		if (linenr == -1) {
+		if (linenr == -1)
+		{
 			throw new BoblightConfigurationException(
 					"No postfix given for device " + device.getName());
 		}
 
 		String strvalue;
-		try {
+		try
+		{
 			strvalue = Misc.getWord(line);
-		} catch (final BoblightParseException e) {
+		}
+		catch (final BoblightParseException e)
+		{
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'postfix'", e);
 		}
@@ -131,14 +147,18 @@ public class RS232Builder extends AbstractDeviceBuilder {
 		int prefix = 0;
 		final int linenr = this.getLineWithKey("prefix", configGroup.lines,
 				line);
-		if (linenr == -1) {
+		if (linenr == -1)
+		{
 			return; // prefix is optional, so this is not an error
 		}
 
 		String strvalue;
-		try {
+		try
+		{
 			strvalue = Misc.getWord(line);
-		} catch (final BoblightParseException e) {
+		}
+		catch (final BoblightParseException e)
+		{
 			throw new BoblightConfigurationException(
 					"Unable to parse value for config key 'prefix'", e);
 		}

@@ -1,6 +1,5 @@
 package org.boblight4j.client;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -59,7 +58,7 @@ public class AbstractRemoteClientTest {
 			}
 
 			@Override
-			public boolean setup(int prio) {
+			public boolean setup(FlagManager flagManager) {
 				// TODO Auto-generated method stub
 				return false;
 			}

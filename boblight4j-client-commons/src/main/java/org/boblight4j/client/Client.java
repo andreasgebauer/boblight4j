@@ -12,7 +12,7 @@ public interface Client {
 	 * 
 	 * @return
 	 */
-	boolean setup(int priority);
+	boolean setup(FlagManager flagManager);
 
 	/**
 	 * Sets a boblight option.
