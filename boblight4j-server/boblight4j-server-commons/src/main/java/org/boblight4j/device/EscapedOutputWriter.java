@@ -79,7 +79,7 @@ public class EscapedOutputWriter extends AbstractOutputWriter {
 
 		if (value == this.getEndFlag() || value == this.getEscapeFlag()
 				|| value == this.getStartFlag()) {
-			if (this.debug) {
+			if (buf != null) {
 				final String format = String.format("%x", this.getEscapeFlag())
 						.toUpperCase(Locale.ENGLISH);
 				if (format.length() == 1) {
@@ -90,7 +90,7 @@ public class EscapedOutputWriter extends AbstractOutputWriter {
 			this.getOutput().write(this.getEscapeFlag());
 		}
 
-		if (this.debug) {
+		if (buf != null) {
 			final String format = String.format("%x", value).toUpperCase(
 					Locale.ENGLISH);
 			if (format.length() == 1) {

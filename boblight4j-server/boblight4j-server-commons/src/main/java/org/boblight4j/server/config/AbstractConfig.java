@@ -7,39 +7,38 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractConfig implements Config {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractConfig.class);
 
-	private List<Device> devices;
-	private List<LightConfig> lights;
+    private List<Device> devices;
+    private List<LightConfig> lights;
 
-	private final String fileName;
+    private final String fileName;
 
-	public AbstractConfig(String fileName) {
-		this.fileName = fileName;
-	}
+    public AbstractConfig(String fileName) {
+	this.fileName = fileName;
+    }
 
-	public List<Device> getDevices() {
-		return devices;
-	}
+    public List<Device> getDevices() {
+	return devices;
+    }
 
-	@Override
-	public void setDevices(List<Device> devices) {
-		this.devices = devices;
-	}
+    @Override
+    public void setDevices(List<Device> devices) {
+	this.devices = devices;
+    }
 
-	public List<LightConfig> getLights() {
-		return lights;
-	}
+    public List<LightConfig> getLights() {
+	return lights;
+    }
 
-	@Override
-	public void setLights(List<LightConfig> lights) {
-		this.lights = lights;
-	}
+    @Override
+    public void setLights(List<LightConfig> lights) {
+	this.lights = lights;
+    }
 
-	@Override
-	public void clearConfig() {
-		// TODO implement
-	}
+    @Override
+    public void clear() {
+	// TODO implement
+    }
 
 }

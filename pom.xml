@@ -29,15 +29,10 @@
 
 	<modules>
 		<module>boblight4j-common</module>
+		<module>boblight4j-client</module>
 		<module>boblight4j-server</module>
-		<module>boblight4j-client-commons</module>
-		<module>boblight4j-client-constant</module>
-		<module>boblight4j-client-lightingprogram</module>
-		<module>boblight4j-client-video-commons</module>
-		<module>boblight4j-client-jmf</module>
 		<module>boblight4j-jmx-gui</module>
 		<module>boblight4j-package</module>
-		<module>boblight4j-client-xbmc-plugin</module>
 	</modules>
 
 	<dependencies>
@@ -300,19 +295,6 @@
 	</reporting>
 
 	<profiles>
-		<profile>
-			<id>unix</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
-			<modules>
-				<module>boblight4j-client-v4l</module>
-				<module>boblight4j-client-X11</module>
-				<module>boblight4j-client-X11-xbmc-plugin</module>
-			</modules>
-		</profile>
 		<profile>
 			<id>unixx86</id>
 			<activation>

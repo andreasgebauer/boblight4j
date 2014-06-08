@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.boblight</groupId>
+		<artifactId>boblight4j</artifactId>
+		<version>0.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>boblight4j-client</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>boblight4j-client-commons</module>
+		<module>boblight4j-client-constant</module>
+		<module>boblight4j-client-lightingprogram</module>
+		<module>boblight4j-client-video-commons</module>
+		<module>boblight4j-client-jmf</module>
+		<module>boblight4j-client-xbmc-plugin</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>unix</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<modules>
+				<module>boblight4j-client-v4l</module>
+				<module>boblight4j-client-X11</module>
+				<module>boblight4j-client-X11-xbmc-plugin</module>
+			</modules>
+		</profile>
+	</profiles>
+</project>

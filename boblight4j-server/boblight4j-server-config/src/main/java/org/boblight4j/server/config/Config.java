@@ -2,11 +2,9 @@ package org.boblight4j.server.config;
 
 import java.util.List;
 
-import org.boblight4j.exception.BoblightException;
-
 public interface Config {
 
-	void clearConfig();
+	void clear();
 
 	void setDevices(List<Device> devices);
 

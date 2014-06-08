@@ -7,10 +7,8 @@ import org.boblight4j.server.ClientsHandler;
 
 public interface ConfigCreator {
 
-	Config loadConfig(ClientsHandler<?> clients, Config config)
-			throws BoblightException;
+    Config loadConfig(ClientsHandler<?> clients, Config config) throws BoblightException;
 
-	List<LightConfig> buildLightConfig(List<Device> devices, List<ColorConfig> colors)
-			throws BoblightException;
+    List<LightConfig> buildLightConfig(List<Device> devices, List<ColorConfig> colors) throws BoblightException;
 
 }

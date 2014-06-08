@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>boblight4j-client</artifactId>
+		<groupId>org.boblight</groupId>
+		<version>0.2.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>boblight4j-client-v4l</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>boblight4j-client-video-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>au.edu.jcu</groupId>
+			<artifactId>v4l4j</artifactId>
+			<version>0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>au.edu.jcu</groupId>
+			<artifactId>v4l4j-native</artifactId>
+			<version>0.8</version>
+			<type>jar</type>
+			<scope>provided</scope>
+			<classifier>${nativeclassifier}</classifier>
+		</dependency>
+
+		<!-- Experimental -->
+		<dependency>
+			<groupId>jmagick</groupId>
+			<artifactId>jmagick</artifactId>
+			<version>6.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- avoid problems running unit tests with powermock and jdk7 -->
+					<argLine>-XX:-UseSplitVerifier -Djava.library.path=${project.build.directory}/lib</argLine>
+					<detail>true</detail>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<artifactSet>
+								<excludes>
+									<exclude>*:*:${nativeclassifier}</exclude>
+								</excludes>
+							</artifactSet>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.boblight4j.client.v4l.BoblightV4l</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>gnu.getopt:java-getopt</artifact>
+									<excludes>
+										<exclude>META-INF/TESTKEY.SF</exclude>
+										<exclude>META-INF/TESTKEY.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

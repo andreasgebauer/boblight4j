@@ -5,11 +5,10 @@ import org.slf4j.LoggerFactory;
 
 public class TcpServerConfigImpl extends AbstractConfig {
 
-	public static final Logger LOG = LoggerFactory
-			.getLogger(TcpServerConfigImpl.class);
+    public static final Logger LOG = LoggerFactory.getLogger(TcpServerConfigImpl.class);
 
-	public TcpServerConfigImpl(String fileName) {
-		super(fileName);
-	}
+    public TcpServerConfigImpl(final String fileName) {
+	super(fileName);
+    }
 
 }
